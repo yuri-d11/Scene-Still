@@ -1,0 +1,372 @@
+@charset "utf-8";
+/* CSS Document for Scene Still */
+
+@font-face {
+  font-family: 'Jost';
+  src: url("../fonts/Jost-VariableFont_wght.ttf") format('truetype');
+  font-weight: 100 900;       
+  font-style: normal;         
+  font-display: swap;
+}
+
+body {
+	font-family: Jost, sans-serif;
+	background-color: #120D0D;
+	margin: 0;
+	padding: 0;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.wrapper{
+    width: 100%;
+	max-width: 1280px;	
+	margin: 0 auto;
+	padding: 10px 50px;
+	flex-grow: 1;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: transparent;
+    padding: 0.5rem 0; 
+	flex-wrap: wrap;
+}
+
+.nav-list {
+	list-style: none;
+	display: flex;
+	margin: 0;
+	padding: 0;
+	flex-wrap: wrap;
+}
+
+.nav-list li {
+	margin-right: 30px;
+}
+
+.nav-list li a {
+	font-weight: 400;
+	font-size: 16px;
+	color: #FAFAFA;
+	text-decoration: none;
+	margin: 8px 0px;
+	display: block;
+	transition: color 0.3s, background 0.3s;
+}
+
+.nav-list li a:hover {
+	color: #B3B3B3;
+}
+
+.nav-list li a[aria-current="page"] {
+            font-weight: 600;
+            border-bottom: 2px solid #FAFAFA;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    border: 1px solid #4B4B4B;
+    border-radius: 3px;
+    background-color: #333;
+    color: #FAFAFA;
+    font-size: 14px;
+    height: 26px;
+    width: 220px;
+    box-shadow: 4px 5px 4px 0 rgba(0, 0, 0, 0.2);
+    transition: border-color 0.3s;
+	padding: .375rem .75rem;
+}
+
+.search-input::placeholder {
+    color: #aaa;
+}
+
+.search-input:focus {
+    background-color: #333;
+    color: #FAFAFA;
+    border-color: #B3B3B3;
+}
+
+
+h1{
+	color: #FAFAFA;
+	font-size: 36px;
+	font-weight: 600;
+	margin-top: 8px;
+}
+
+h4{
+	color: #FAFAFA;
+	font-size: 1.25rem;
+	font-weight: 400;
+	width: 64%;
+}
+
+p{
+	color: #FAFAFA;
+	font-size: 1rem;
+	font-weight: 300;
+	margin-top: 10px;
+}
+
+.section_start{
+	margin-top: 45px;
+}
+
+.image-container {
+	display: flex;
+	justify-content: left;
+	gap: 50px;
+	padding: 12px 0px 0px;
+	flex-wrap: wrap;
+	margin: 0px;
+	margin-bottom: 50px;
+}
+
+.image-card {
+	text-align: center;
+	transition: transform 0.2s;
+	flex-shrink: 0;
+}
+
+.image-card a {
+	text-decoration: none;
+	color: #FAFAFA;
+	display: block;
+	text-align: left;
+}
+
+.image-card img {
+	width: 360px;
+	height: 450px;
+	object-fit: cover;
+	border-radius: 2px;
+	display: block;
+	transition: transform 0.3s ease;
+	box-shadow: 4px 5px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.image-card h4 {
+	padding-top: 12px;
+	width: 100%;
+	transition: color 0.3s, background 0.3s;
+	margin-bottom: 0;
+}
+
+.image-card img:hover {
+	transform: scale(1.02);
+}
+
+.image-card h4:hover {
+	color: #B3B3B3;
+}
+
+.d-block{
+	height: 450px;
+	object-fit: cover;
+}
+
+.carousel-indicators{
+	 position: absolute;
+      bottom: -30px; 
+      left: 50%;
+      transform: translateX(-50%);
+      margin: 0;
+      padding: 0;
+}
+
+.carousel-indicators li{
+	width: 10px;
+	height: 10px;
+	border-radius: 100%;
+	background-color: #FAFAFA;
+	opacity: 1;
+           
+}
+
+.carousel-indicators .active{
+	opacity: .3;
+}
+
+.carousel-item .custom-caption {
+    position: absolute;
+    bottom: 2px; 
+    left: 12px; 
+    padding: 8px 8px;  
+    color: #FAFAFA; 
+    font-size: 0.875rem; 
+    border-top-right-radius: 2px;
+    pointer-events: none;
+    max-width: 50%;
+    text-shadow:
+    -1px -1px 0 #000,
+     0   -1px 0 #000,
+     1px -1px 0 #000,
+     1px  0   0 #000,
+     1px  1px 0 #000,
+     0    1px 0 #000,
+    -1px  1px 0 #000,
+    -1px  0   0 #000;
+        }
+
+.carousel-fade .carousel-item {
+    transition: opacity 0.4s ease-in-out;
+    opacity: 0.3;
+    transform: none;
+}
+
+.carousel-fade .carousel-item.active {
+    opacity: 1;
+}
+#carouselExampleIndicators{
+	box-shadow: 4px 5px 4px 0 rgba(0, 0, 0, 0.2);
+	margin-top: 20px;
+}
+
+footer{
+	width: 100%;
+    max-width: 1280px;
+	margin-left: auto;
+    margin-right: auto;
+	margin-top: auto; 
+	padding: 20px 50px;
+	box-sizing: border-box;
+	text-align: left;
+}
+
+hr{
+	width: 419px;         
+	margin-left: 0;       
+	margin-right: auto;
+	margin-bottom: 0px;
+	border: none;
+	border-top: 1px solid #FAFAFA;
+}
+
+footer p{
+	font-weight: 400;
+	font-size: 0.875rem;
+	color: #FAFAFA;
+	margin: 8px 0px;
+	display: block;
+}
+
+footer p a{
+	color: #B4b4b4;
+}
+
+footer p a:hover{
+	color: #FAFAFA;
+	text-decoration: none
+}
+
+/* --- Responsive CSS --- */
+
+/* Tablet Styles */
+@media (max-width: 1024px) {
+    .wrapper, footer {
+        padding: 10px 30px;
+    }
+
+    h4 {
+        width: 80%;
+    }
+
+    .image-container {
+        justify-content: center; /* Center images when they wrap */
+        gap: 30px;
+    }
+
+    .image-card img {
+        width: 300px; /* Adjust image size for tablets */
+        height: 375px;
+    }
+}
+
+/* Mobile Styles - Large */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .search-form {
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+        box-sizing: border-box; /* Include padding in the width */
+    }
+
+    h1 {
+        font-size: 30px;
+    }
+
+    h4 {
+        font-size: 1.1rem;
+        width: 100%;
+    }
+
+    .image-card img {
+        width: 250px;
+        height: 312px;
+    }
+}
+
+/* Mobile Styles - Small */
+@media (max-width: 480px) {
+    .wrapper, footer {
+        padding: 10px 15px;
+    }
+
+    .nav-list {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-list li {
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    h4 {
+        font-size: 1rem;
+    }
+
+    .image-container {
+        flex-direction: column;
+        align-items: center; /* Stack images vertically */
+        gap: 30px;
+    }
+
+    .image-card {
+        width: 100%;
+    }
+
+    .image-card img {
+        width: 100%; /* Make images full-width */
+        height: auto; /* Maintain aspect ratio */
+    }
+
+    footer {
+        text-align: center;
+    }
+
+    hr {
+        width: 100%; /* Make footer line full-width */
+    }
+}

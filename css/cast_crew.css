@@ -1,0 +1,68 @@
+@charset "utf-8";
+/* CSS Document for Cast & Crew */
+
+        h5 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #FAFAFA; 
+            margin-top: 0;
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+        }
+
+        .column-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 100px; 
+            margin-top: 45px;
+        }
+        
+        .column-block {
+            /*background-color: #1E1A1A;
+            padding: 25px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);*/
+        }
+
+        .name-list {
+            list-style: none; 
+            padding: 0;
+            margin: 0;
+        }
+        
+        .name-list li {
+            font-size: 1rem;
+            font-weight: 400;
+            padding: 5px 0;
+        }
+        
+
+        .name-list li a {
+            color: #B3B3B3;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .name-list li a:hover {
+            color: #FAFAFA;
+        }
+
+
+        @media (max-width: 992px) {
+            .column-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 30px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .column-grid {
+                grid-template-columns: 1fr;
+            }
+            .main-wrapper {
+                padding: 10px 20px;
+            }
+            .column-block {
+                padding: 15px;
+            }
+        }
