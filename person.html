@@ -4,7 +4,8 @@
     <meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Timothée Chalamet</title>
+    <title id="page-title">Loading Person...</title>
+	<meta name="description" id="meta-description" content="Loading person details...">
 	<link href="css/bootstrap-4.4.1.css" rel="stylesheet">
 	<link href="css/style.css" rel="stylesheet">
 	<style>
@@ -17,8 +18,7 @@
 	<div class="wrapper">
 		<nav>
 			<ul class="nav-list">
-			  <li><a href="index.html">Home</a></li>
-			  <li><a href="films.html">Films</a></li>
+			  <li><a href="index.html">Films</a></li>
 			  <li><a href="cast_crew.html">Cast &amp; Crew</a></li>
 			  <li><a href="contact.html">Contact</a></li>
 			</ul>
@@ -26,21 +26,22 @@
                 <input type="text" placeholder="Search by film or person..." name="search" class="search-input">
             </form>
 		</nav>
-		<h1>Timothée Chalamet</h1>
-		<h4>Actor</h4>
-		<h4 class="section_start">Starring Films:</h4>
-		<div class="image-container">
-			<div class="image-card">
-			  <a href="dune2.html">
-				<img src="img/Dune2/dune_part_two_ver2.jpg" alt="Image 1">
-				<h4>Dune: Part Two (2024)</h4>
-			  </a>
-			</div>
+		<h1></h1>
+		<h4></h4>
+		<h4 class="section_start"> Films:</h4>
+		<div class="image-container" id="film-cards-container">
+			<!-- FILM_CARDS_PLACEHOLDER -->
 	  	</div>
 	</div>
-	<footer>
+    <footer>
 		<hr>
 		<p>by Yuri Dandashi | <a href="contact.html">Contact</a></p>
 	</footer>
+	<script src="js/jquery-3.4.1.min.js"></script>
+	<script src="js/popper.min.js"></script>
+	<script src="js/bootstrap-4.4.1.js"></script>
+	<script src="js/utils-csv.js?v=1"></script>
+	<script src="js/utils-tmdb.js"></script>
+	<script src="js/person-page-data.js"></script>
   </body>
 </html>

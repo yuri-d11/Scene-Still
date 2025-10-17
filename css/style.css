@@ -123,15 +123,13 @@ p{
 
 .image-container {
 	display: flex;
-	justify-content: left;
-	gap: 50px;
-	padding: 12px 0px 0px;
-	flex-wrap: wrap;
-	margin: 0px;
-	margin-bottom: 50px;
-}
-
-.image-card {
+    justify-content: left;
+    gap: 30px;
+    padding: 12px 0px 0px;
+    flex-wrap: wrap;
+    margin: 0px;
+    margin-bottom: 50px;
+}.image-card {
 	text-align: center;
 	transition: transform 0.2s;
 	flex-shrink: 0;
@@ -145,8 +143,8 @@ p{
 }
 
 .image-card img {
-	width: 360px;
-	height: 450px;
+	width: 272.5px;
+	height: 350px;
 	object-fit: cover;
 	border-radius: 2px;
 	display: block;

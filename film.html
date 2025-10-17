@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title id="page-title">Loading Movie...</title>
+    <meta name="description" id="meta-description" content="Loading movie details...">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" >
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/film.css">
+
+</head>
+
+<body>
+    <div class="wrapper">
+        <nav>
+			<ul class="nav-list">
+			  <li><a href="index.html">Films</a></li>
+			  <li><a href="cast_crew.html">Cast &amp; Crew</a></li>
+			  <li><a href="contact.html">Contact</a></li>
+			</ul>
+			<form class="search-form" action="#" method="get">
+                <input type="text" placeholder="Search by film or person..." name="search" class="search-input">
+            </form>
+		</nav>
+        
+        <h1 id="movie-title">&emsp;</h1>
+        <div class="credits-container">
+            <div class="credit-line">
+                <span class="credit-title">Director:</span>
+                <span class="credit-name" id="director"></span>
+            </div>
+            <div class="credit-line">
+                <span class="credit-title">Cinematographer:</span>
+                <span class="credit-name" id="cinematographer"></span>
+            </div>
+			<div class="credit-line">
+                <span class="credit-title">Cast:</span>
+                <span class="credit-name" id="cast"></span>
+            </div>
+        </div>
+        <!-- Main Image -->
+        <div class="mt-3">
+            <img id="main-image" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Main film still" class="img-fluid main-image-placeholder">
+            <div id="main-palette-container" class="row no-gutters"></div>
+        </div>
+		<p>Click one of the thumbnails below to select a main image.
+		Click the main image to make it bigger.</p>
+        <!-- Thumbnail Grid -->
+        <div class="row thumbnail-grid" id="thumbnail-grid">
+            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
+            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
+            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
+            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
+            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
+            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
+            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
+            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
+        </div>
+    </div>
+        <footer class="wrapper">
+                <hr>
+                <p>by Yuri Dandashi | <a href="contact.html">Contact</a></p>
+        </footer>
+	<div id="image-modal" class="modal-overlay">
+                <span class="close-modal">&times;</span>
+                <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" class="modal-content" id="modal-image">
+        </div>
+    <script src="js/color-palette.js"></script>
+    <script src="utils/utils-http.js"></script>
+    <script src="utils/utils-csv.js"></script>
+    <script src="js/load-csv.js"></script>
+    <script src="utils/utils-cache.js"></script>
+    <script src="utils/utils-tmdb.js"></script>
+        <script>
+        async function populateMoviePage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const TMDB_MOVIE_ID = urlParams.get('id');
+
+            if (!TMDB_MOVIE_ID) {
+                document.getElementById('movie-title').textContent = 'Error: Movie ID not provided in URL';
+                return;
+            }
+
+            if (!window.SZ || !window.SZ.tmdb) {
+                document.getElementById('movie-title').textContent = 'Error: TMDb utils not loaded';
+                return;
+            }
+
+            try {
+                const movieDetails = await window.SZ.tmdb.getMovieDetails(TMDB_MOVIE_ID);
+                if (!movieDetails) {
+                    document.getElementById('movie-title').textContent = 'Movie not found on TMDb';
+                    return;
+                }
+
+                document.getElementById('page-title').textContent = movieDetails.title + ' | Scene Still';
+                document.getElementById('meta-description').content = movieDetails.title + ' – handpicked high quality film screencaptures';
+                document.getElementById('movie-title').textContent = `${movieDetails.title} (${new Date(movieDetails.release_date).getFullYear()})`;
+
+                // Director (assuming director is in crew)
+                const director = movieDetails.credits?.crew?.find(person => person.job === 'Director');
+                if (director) {
+                    document.getElementById('director').innerHTML = `<a href="person.html?name=${encodeURIComponent(director.name)}&role=Director">${director.name}</a>`;
+                } else {
+                    document.getElementById('director').textContent = 'N/A';
+                }
+
+                // Cinematographer (Director of Photography)
+                const cinematographer = movieDetails.credits?.crew?.find(person => person.job === 'Director of Photography');
+                if (cinematographer) {
+                    document.getElementById('cinematographer').innerHTML = `<a href="person.html?name=${encodeURIComponent(cinematographer.name)}&role=Cinematographer">${cinematographer.name}</a>`;
+                } else {
+                    document.getElementById('cinematographer').textContent = 'N/A';
+                }
+
+                // Cast
+                const castContainer = document.getElementById('cast');
+                const mainCast = movieDetails.credits?.cast?.slice(0, 5); // Get top 5 cast members
+                if (mainCast && mainCast.length > 0) {
+                    castContainer.innerHTML = mainCast.map(person => `<a href="person.html?name=${encodeURIComponent(person.name)}&role=Actor">${person.name}</a>`).join(', ');
+                } else {
+                    castContainer.textContent = 'N/A';
+                }
+
+                // Load stills from CSV
+                const csvData = await window.SZ.utils.loadCsv('Scene still DB - Sheet1.csv');
+                const movieEntry = csvData.find(row => row['Movie ID'] === String(TMDB_MOVIE_ID));
+
+                // Set aspect ratio for main image
+                let aspectRatio = null;
+                if (movieEntry && movieEntry['Aspect ratio']) {
+                    aspectRatio = movieEntry['Aspect ratio'];
+                    document.getElementById('main-image').style.aspectRatio = aspectRatio;
+                }
+
+                let localStills = [];
+                let compressedStills = [];
+                if (movieEntry && movieEntry.Stills) {
+                    localStills = movieEntry.Stills.split('|');
+                }
+                if (movieEntry && movieEntry['Stills compressed']) {
+                    compressedStills = movieEntry['Stills compressed'].split('|');
+                }
+
+                if (localStills.length > 0) {
+                    document.getElementById('main-image').src = localStills[0];
+                } else {
+                    document.getElementById('main-image').src = ''; // Placeholder or error image
+                }
+
+                // Thumbnails
+                const grid = document.getElementById('thumbnail-grid');
+                grid.innerHTML = '';
+                localStills.forEach((still, index) => {
+                    const col = document.createElement('div');
+                    col.className = 'col-lg-3 col-md-6 mb-4'; // Changed to col-lg-3 for 4 columns per row
+                    const wrap = document.createElement('div');
+                    wrap.className = 'thumbnail-wrapper';
+                    const img = document.createElement('img');
+                    img.src = compressedStills[index] || still; // Use compressed still if available, otherwise full still
+                    img.className = 'thumbnail-image';
+                    img.dataset.fullSrc = still; // Store full resolution image URL
+                    wrap.appendChild(img);
+                    col.appendChild(wrap);
+                    grid.appendChild(col);
+                });
+
+                // Apply aspect ratio to thumbnails after they are created
+                if (aspectRatio) {
+                    document.querySelectorAll('.thumbnail-image').forEach(img => {
+                        img.style.aspectRatio = aspectRatio;
+                    });
+                }
+
+                // Initialize color palette after images are set
+                const mainImageElement = document.getElementById('main-image');
+                const firstThumbnailWrapper = grid.querySelector('.thumbnail-wrapper');
+                if (mainImageElement && firstThumbnailWrapper && window.SZ?.colorPalette?.updateMainImageAndPalette) {
+                    window.SZ.colorPalette.updateMainImageAndPalette(mainImageElement.src, firstThumbnailWrapper);
+                }
+
+                // Modal functionality for main image
+                const imageModal = document.getElementById('image-modal');
+                const modalImage = document.getElementById('modal-image');
+                const closeModal = document.querySelector('.close-modal');
+
+                mainImageElement.addEventListener('click', () => {
+                    modalImage.src = mainImageElement.src;
+                    imageModal.style.display = 'block';
+                });
+
+                closeModal.addEventListener('click', () => {
+                    imageModal.style.display = 'none';
+                });
+
+                imageModal.addEventListener('click', (event) => {
+                    if (event.target === imageModal) {
+                        imageModal.style.display = 'none';
+                    }
+                });
+
+            } catch (err) {
+                document.getElementById('movie-title').textContent = 'Error loading movie data from TMDb';
+                console.error(err);
+            }
+        }
+        window.addEventListener('DOMContentLoaded', populateMoviePage);
+        </script>
+</body>
+</html>

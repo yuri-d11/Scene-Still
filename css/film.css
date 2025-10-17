@@ -40,6 +40,8 @@
         #main-image {
             width: 100%;
             aspect-ratio: 1280 / 494; 
+            min-height: 400px;
+            min-width: 100%; /* Add a minimum height to prevent layout shift */
             height: auto;
             object-fit: cover;
             border-radius: 2px;
@@ -47,6 +49,10 @@
             background-color: #222;
             cursor: pointer;
 			margin-top: 8px;
+        }
+
+        .main-image-placeholder {
+            background: #333; /* Darker background for placeholder */
         }
 
         #main-palette-container {
@@ -75,12 +81,14 @@
         .thumbnail-image {
             width: 100%;
             aspect-ratio: 1280 / 494; 
+            min-height: 100px;
             height: auto;
             object-fit: cover;
             border-radius: 2px;
             cursor: pointer;
             transition: filter 0.2s ease;
             box-shadow: 4px 5px 4px 0 rgba(0, 0, 0, 0.2);
+            background: #333; /* Darker background for placeholder */
         }
         
         .thumbnail-image:hover {

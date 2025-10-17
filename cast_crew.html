@@ -14,8 +14,7 @@
 		<div class="wrapper">
 			<nav>
 				<ul class="nav-list">
-				  <li><a href="index.html">Home</a></li>
-				  <li><a href="films.html">Films</a></li>
+				  <li><a href="index.html">Films</a></li>
 				  <li><a href="cast_crew.html" aria-current="page">Cast &amp; Crew</a></li>
 				  <li><a href="contact.html">Contact</a></li>
 				</ul>
@@ -25,52 +24,20 @@
 			</nav>
 			<h1>Scene Still</h1>
 			<h4>A handpicked gallery of high quality film screencaptures that highlight the visual language of cinema and the power of storytelling through composition, light, and color.</h4>
-			<div class="column-grid">  
+			<div class="column-grid" id="cast-crew-grid">  
 				<div class="column-block">
 					<h5>Cinematographers</h5>
-					<ul class="name-list">
-						<li><a href="greig_fraser.html">Greig Fraser</a></li>
-						<li><a href="takashi_kawamata.html">Takashi Kawamata</a></li>
-						<li><a href="#">Balthazar</a></li>
-						<li><a href="#">Cassian</a></li>
-						<li><a href="#">Dorian</a></li>
-						<li><a href="#">Elena</a></li>
-						<li><a href="#">Freyja</a></li>
-						<li><a href="#">Gideon</a></li>
-						<li><a href="#">Hera</a></li>
-						<li><a href="#">Inigo</a></li>
-						<li><a href="#">Iris</a></li>
+					<ul class="name-list" id="cinematographers-list">
 					</ul>
 				</div>
 				<div class="column-block">
 					<h5>Directors</h5>
-					<ul class="name-list">
-						<li><a href="denis_villeneuve.html">Denis Villeneuve</a></li>
-						<li><a href="yoshitaro_namura.html">Yoshitarō Nomura</a></li>
-						<li><a href="paul_tthomas_anderson.html">Paul Thomas Anderson</a></li>
-						<li><a href="#">Leland</a></li>
-						<li><a href="#">Maia</a></li>
-						<li><a href="#">Noel</a></li>
-						<li><a href="#">Orion</a></li>
-						<li><a href="#">Piper</a></li>
-						<li><a href="#">Quentin</a></li>
-						<li><a href="#">Rhea</a></li>
-						<li><a href="#">Rowan</a></li>
+					<ul class="name-list" id="directors-list">
 					</ul>
 				</div>
 				<div class="column-block">
 					<h5>Cast</h5>
-					<ul class="name-list">
-						<li><a href="timothee_chalamet.html">Timothée Chalamet</a></li>
-						<li><a href="testuro_tamba.html">Tetsuro Tamba</a></li>
-						<li><a href="daniel_day_lewis.html">Daniel Day-Lewis</a></li>
-						<li><a href="#">Valor</a></li>
-						<li><a href="#">Wren</a></li>
-						<li><a href="#">Xander</a></li>
-						<li><a href="#">Yara</a></li>
-						<li><a href="#">Zane</a></li>
-						<li><a href="#">Zoe</a></li>
-						<li><a href="#">Zeus</a></li>
+					<ul class="name-list" id="cast-list">
 					</ul>
 				</div>
 			</div>
@@ -79,5 +46,70 @@
 		<hr>
 		<p>by Yuri Dandashi | <a href="contact.html">Contact</a></p>
 	</footer>
+	<script src="utils/utils-http.js"></script>
+	<script src="utils/utils-csv.js"></script>
+	<script src="utils/utils-cache.js"></script>
+	<script src="utils/utils-tmdb.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', async () => {
+			const movieIds = [];
+			const csvText = await window.SZ.http.fetchWithRetry('Scene still DB - Sheet1.csv');
+			const csvData = window.SZ.csv.parseCSVToObjects(csvText.text);
+			csvData.forEach(row => {
+				if (row['Movie ID']) {
+					movieIds.push(parseInt(row['Movie ID']));
+				}
+			});
+
+			const directors = new Set();
+			const cinematographers = new Set();
+			const cast = new Set();
+
+			const movieDetailsPromises = movieIds.map(movieId => window.SZ.tmdb.getMovieDetails(movieId));
+			const allMovieDetails = await Promise.all(movieDetailsPromises);
+
+			allMovieDetails.forEach(movieDetails => {
+				if (movieDetails && movieDetails.credits) {
+					// Directors
+					movieDetails.credits.crew.filter(p => p.job === 'Director').forEach(p => directors.add(p.name));
+					// Cinematographers
+					movieDetails.credits.crew.filter(p => p.job === 'Director of Photography').forEach(p => cinematographers.add(p.name));
+					// Cast
+					movieDetails.credits.cast.slice(0, 5).forEach(p => cast.add(p.name)); // Top 5 cast members
+				}
+			});
+
+			const sortedDirectors = Array.from(directors).sort();
+			const sortedCinematographers = Array.from(cinematographers).sort();
+			const sortedCast = Array.from(cast).sort();
+
+			const createPersonListItem = (name, role) => {
+				const li = document.createElement('li');
+				const a = document.createElement('a');
+				// Function to convert special characters to ASCII equivalents for filenames
+				const sanitizeNameForUrl = (personName) => {
+					return personName
+						.toLowerCase()
+						.replace(/[äöü]/g, (c) => ({'ä': 'a', 'ö': 'o', 'ü': 'u'}[c])) // Replace German umlauts
+						.replace(/[éáíóú]/g, (c) => ({'é': 'e', 'á': 'a', 'í': 'i', 'ó': 'o', 'ú': 'u'}[c])) // Replace acute accents
+						.replace(/ō/g, 'o') // Replace romaji 'ō'
+						.replace(/[^a-z0-9]+/g, '_') // Replace non-alphanumeric with underscore
+						.replace(/^_+|_+$/g, ''); // Trim leading/trailing underscores
+				};
+				a.href = `person.html?name=${encodeURIComponent(name)}&role=${encodeURIComponent(role)}`;
+				a.textContent = name;
+				li.appendChild(a);
+				return li;
+			};
+
+			const directorsList = document.getElementById('directors-list');
+			const cinematographersList = document.getElementById('cinematographers-list');
+			const castList = document.getElementById('cast-list');
+
+						sortedDirectors.forEach(name => directorsList.appendChild(createPersonListItem(name, 'Director')));
+			sortedCinematographers.forEach(name => cinematographersList.appendChild(createPersonListItem(name, 'Cinematographer')));
+			sortedCast.forEach(name => castList.appendChild(createPersonListItem(name, 'Actor')));
+		});
+	</script>
 	</body>
 </html>
