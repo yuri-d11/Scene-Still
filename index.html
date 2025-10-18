@@ -17,13 +17,13 @@
 			  <li><a href="contact.html">Contact</a></li>
 			</ul>
 			<form class="search-form" action="#" method="get">
-                <input type="text" placeholder="Search by film or person..." name="search" class="search-input">
+                <input type="text" placeholder="Search by film or person..." name="search" class="search-input" id="search-input">
             </form>
 		</nav>
 		<h1>Scene Still</h1>
 		<h4>A handpicked gallery of high quality film screencaptures that highlight the visual language of cinema and the power of storytelling through composition, light, and color.</h4>
 		<h4 class="section_start">All Films:</h4>
-		<div class="image-container">
+		<div class="image-container" id="film-cards-container">
 	  	</div>
 	</div>
     <footer>
@@ -36,5 +36,15 @@
 	<script src="js/utils-csv.js?v=1"></script>
 	<script src="js/utils-tmdb.js"></script>
 	<script src="js/load-films.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			window.SZ.searchManager.initializeSearch({
+				searchInputId: 'search-input',
+				filmCardsContainerId: 'film-cards-container',
+				mainContentSelector: '.wrapper > h1, .wrapper > h4:not(.section_start)',
+				keepContentVisible: true
+			});
+		});
+	</script>
   </body>
 </html>

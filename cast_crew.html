@@ -19,7 +19,7 @@
 				  <li><a href="contact.html">Contact</a></li>
 				</ul>
 				<form class="search-form" action="#" method="get">
-					<input type="text" placeholder="Search by film or person..." name="search" class="search-input">
+					<input type="text" placeholder="Search by film or person..." name="search" class="search-input" id="search-input">
 				</form>
 			</nav>
 			<h1>Scene Still</h1>
@@ -41,6 +41,9 @@
 					</ul>
 				</div>
 			</div>
+			<h4 class="search-results-header" style="display: none; margin-top: 10px;">Search Results:</h4>
+			<div class="image-container" id="film-cards-container" style="display: none;">
+			</div>
 		</div>
     <footer>
 		<hr>
@@ -50,6 +53,7 @@
 	<script src="utils/utils-csv.js"></script>
 	<script src="utils/utils-cache.js"></script>
 	<script src="utils/utils-tmdb.js"></script>
+	<script src="js/load-films.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', async () => {
 			const movieIds = [];
@@ -109,6 +113,13 @@
 						sortedDirectors.forEach(name => directorsList.appendChild(createPersonListItem(name, 'Director')));
 			sortedCinematographers.forEach(name => cinematographersList.appendChild(createPersonListItem(name, 'Cinematographer')));
 			sortedCast.forEach(name => castList.appendChild(createPersonListItem(name, 'Actor')));
+		});
+
+		// Initialize search functionality
+		window.SZ.searchManager.initializeSearch({
+			searchInputId: 'search-input',
+			filmCardsContainerId: 'film-cards-container',
+			mainContentSelector: '#cast-crew-grid, .wrapper > h1, .wrapper > h4:not(.search-results-header)'
 		});
 	</script>
 	</body>

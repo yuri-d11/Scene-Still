@@ -21,7 +21,7 @@
 			  <li><a href="contact.html">Contact</a></li>
 			</ul>
 			<form class="search-form" action="#" method="get">
-                <input type="text" placeholder="Search by film or person..." name="search" class="search-input">
+                <input type="text" placeholder="Search by film or person..." name="search" class="search-input" id="search-input">
             </form>
 		</nav>
         
@@ -40,8 +40,13 @@
                 <span class="credit-name" id="cast"></span>
             </div>
         </div>
+        <!-- Search Results Section -->
+        <h4 class="search-results-header" style="display: none; margin-top: 10px;">Search Results:</h4>
+        <div class="image-container" id="film-cards-container" style="display: none;">
+        </div>
+
         <!-- Main Image -->
-        <div class="mt-3">
+        <div class="mt-3" id="main-content">
             <img id="main-image" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Main film still" class="img-fluid main-image-placeholder">
             <div id="main-palette-container" class="row no-gutters"></div>
         </div>
@@ -73,6 +78,7 @@
     <script src="js/load-csv.js"></script>
     <script src="utils/utils-cache.js"></script>
     <script src="utils/utils-tmdb.js"></script>
+    <script src="js/load-films.js"></script>
         <script>
         async function populateMoviePage() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -98,6 +104,13 @@
                 document.getElementById('page-title').textContent = movieDetails.title + ' | Scene Still';
                 document.getElementById('meta-description').content = movieDetails.title + ' – handpicked high quality film screencaptures';
                 document.getElementById('movie-title').textContent = `${movieDetails.title} (${new Date(movieDetails.release_date).getFullYear()})`;
+
+                // Initialize search functionality
+                window.SZ.searchManager.initializeSearch({
+                    searchInputId: 'search-input',
+                    filmCardsContainerId: 'film-cards-container',
+                    mainContentSelector: '#main-content, #thumbnail-grid, .credits-container, .wrapper > h1, .wrapper > p'
+                });
 
                 // Director (assuming director is in crew)
                 const director = movieDetails.credits?.crew?.find(person => person.job === 'Director');
