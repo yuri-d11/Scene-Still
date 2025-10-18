@@ -23,7 +23,7 @@
 			  <li><a href="contact.html">Contact</a></li>
 			</ul>
 			<form class="search-form" action="#" method="get">
-                <input type="text" placeholder="Search by film or person..." name="search" class="search-input">
+                <input type="text" placeholder="Search by film or person..." name="search" class="search-input" id="search-input">
             </form>
 		</nav>
 		<h1></h1>
@@ -40,8 +40,21 @@
 	<script src="js/jquery-3.4.1.min.js"></script>
 	<script src="js/popper.min.js"></script>
 	<script src="js/bootstrap-4.4.1.js"></script>
-	<script src="js/utils-csv.js?v=1"></script>
-	<script src="js/utils-tmdb.js"></script>
+	<script src="utils/utils-http.js"></script>
+	<script src="utils/utils-csv.js"></script>
+	<script src="utils/utils-cache.js"></script>
+	<script src="utils/utils-tmdb.js"></script>
+	<script src="js/load-films.js"></script>
 	<script src="js/person-page-data.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			window.SZ.searchManager.initializeSearch({
+				searchInputId: 'search-input',
+				filmCardsContainerId: 'film-cards-container',
+				mainContentSelector: '.wrapper > h1, .wrapper > h4',
+				keepContentVisible: true
+			});
+		});
+	</script>
   </body>
 </html>

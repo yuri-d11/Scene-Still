@@ -22,39 +22,87 @@
         return title;
     };
 
+    // Function to render a single film card
+    const renderFilmCard = (film, container, position = null) => {
+        // Check if film already exists
+        const existingCard = container.querySelector(`[data-movie-id="${film.movieId}"]`);
+        if (existingCard) {
+            return;
+        }
+
+        const filmCard = document.createElement('div');
+        filmCard.className = 'image-card';
+        filmCard.setAttribute('data-movie-id', film.movieId);
+        filmCard.innerHTML = `
+            <a href="film.html?id=${film.movieId}">
+                <img src="${film.poster}" alt="${film.movieName} Poster">
+                <h4>${film.movieName} (${film.movieYear})</h4>
+            </a>
+        `;
+
+        if (position === null || position >= container.children.length) {
+            container.appendChild(filmCard);
+        } else {
+            container.insertBefore(filmCard, container.children[position]);
+        }
+    };
+
     // Function to render film cards
-    const renderFilmCards = (filmsToRender, containerId) => {
+    const renderFilmCards = (filmsToRender, containerId, isSearch = false) => {
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        container.innerHTML = '';
+        // Clear and show "no results" if empty
         if (filmsToRender.length === 0) {
             container.innerHTML = '<p>No films found.</p>';
             return;
         }
 
-        let htmlContent = '';
-        filmsToRender.forEach(film => {
-            htmlContent += `
-                <div class="image-card">
-                    <a href="film.html?id=${film.movieId}">
-                        <img src="${film.poster}" alt="${film.movieName} Poster">
-                        <h4>${film.movieName} (${film.movieYear})</h4>
-                    </a>
-                </div>
-            `;
-        });
-        container.innerHTML = htmlContent;
+        // For search results or when rendering all films at once
+        if (isSearch) {
+            container.innerHTML = '';
+            let htmlContent = '';
+            filmsToRender.forEach(film => {
+                htmlContent += `
+                    <div class="image-card" data-movie-id="${film.movieId}">
+                        <a href="film.html?id=${film.movieId}">
+                            <img src="${film.poster}" alt="${film.movieName} Poster">
+                            <h4>${film.movieName} (${film.movieYear})</h4>
+                        </a>
+                    </div>
+                `;
+            });
+            container.innerHTML = htmlContent;
+        } else {
+            // For initial loading, render incrementally
+            container.innerHTML = '';
+            filmsToRender.forEach((film, index) => {
+                renderFilmCard(film, container);
+            });
+        }
     };
 
     // Function to fetch and process all film data
     const fetchAllFilms = async () => {
         try {
+            // Show loading indicator in the container
+            const container = document.getElementById('film-cards-container');
+            if (container) {
+                container.innerHTML = '<h4 class="loading">Loading films...</h4>';
+            }
+
+            // Fetch CSV data
             const response = await fetch('Scene still DB - Sheet1.csv');
             const csvText = await response.text();
             const rows = window.SZ.csv.parseCSVToObjects(csvText);
 
-            const films = [];
+            // Clear loading message but keep container empty for incremental loading
+            if (container) {
+                container.innerHTML = '';
+            }
+
+            // Process films one by one
+            let processedFilms = [];
             for (const row of rows) {
                 const movieId = row['Movie ID'];
                 let movieName = row['Movie Name'];
@@ -63,29 +111,56 @@
                 let castAndCrewNames = [];
 
                 if (movieId) {
-                    const tmdbDetails = await window.SZ.tmdb.getMovieDetails(movieId);
-                    if (tmdbDetails) {
-                        movieName = tmdbDetails.title;
-                        movieYear = new Date(tmdbDetails.release_date).getFullYear();
-                        if (!row['Poster']) {
-                            poster = `https://image.tmdb.org/t/p/w500${tmdbDetails.poster_path}`;
-                        }
+                    try {
+                        const tmdbDetails = await window.SZ.tmdb.getMovieDetails(movieId);
+                        if (tmdbDetails) {
+                            movieName = tmdbDetails.title;
+                            movieYear = new Date(tmdbDetails.release_date).getFullYear();
+                            if (!row['Poster']) {
+                                poster = `https://image.tmdb.org/t/p/w500${tmdbDetails.poster_path}`;
+                            }
 
-                        // Extract cast and crew names
-                        if (tmdbDetails.credits && tmdbDetails.credits.cast) {
-                            castAndCrewNames = castAndCrewNames.concat(tmdbDetails.credits.cast.map(person => person.name));
+                            // Extract cast and crew names
+                            if (tmdbDetails.credits && tmdbDetails.credits.cast) {
+                                castAndCrewNames = castAndCrewNames.concat(tmdbDetails.credits.cast.map(person => person.name));
+                            }
+                            if (tmdbDetails.credits && tmdbDetails.credits.crew) {
+                                castAndCrewNames = castAndCrewNames.concat(tmdbDetails.credits.crew.map(person => person.name));
+                            }
                         }
-                        if (tmdbDetails.credits && tmdbDetails.credits.crew) {
-                            castAndCrewNames = castAndCrewNames.concat(tmdbDetails.credits.crew.map(person => person.name));
-                        }
+                    } catch (error) {
+                        console.warn(`Failed to fetch TMDB details for movie ${movieId}:`, error);
                     }
                 }
-                films.push({ movieId, movieName, movieYear, poster, castAndCrewNames });
+
+                const film = { movieId, movieName, movieYear, poster, castAndCrewNames };
+                
+                // Find the correct position to insert the new film
+                const insertIndex = processedFilms.findIndex(existing => 
+                    removeArticles(existing.movieName).localeCompare(removeArticles(film.movieName)) > 0
+                );
+                
+                // Add to processed films array at the correct position
+                if (insertIndex === -1) {
+                    processedFilms.push(film);
+                } else {
+                    processedFilms.splice(insertIndex, 0, film);
+                }
+                
+                allFilms = processedFilms;
+
+                // Only render if we're on the index page
+                const isPersonPage = window.location.pathname.endsWith('person.html');
+                if (!isPersonPage) {
+                    const container = document.getElementById('film-cards-container');
+                    if (container) {
+                        renderFilmCard(film, container, insertIndex);
+                    }
+                }
             }
 
             // Sort films alphabetically by movieName, ignoring leading articles
-            films.sort((a, b) => removeArticles(a.movieName).localeCompare(removeArticles(b.movieName)));
-            allFilms = films;
+            allFilms = processedFilms.sort((a, b) => removeArticles(a.movieName).localeCompare(removeArticles(b.movieName)));
 
             // Only render all films if we're not on the person page
             const isPersonPage = window.location.pathname.endsWith('person.html');
@@ -185,7 +260,7 @@
                     name && name.toLowerCase().includes(searchTerm)
                 ))
             );
-            renderFilmCards(filteredFilms, config.filmCardsContainerId);
+            renderFilmCards(filteredFilms, config.filmCardsContainerId, true);
         });
     };
 })();

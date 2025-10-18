@@ -1,3 +1,7 @@
+// Initialize global namespace
+window.SZ = window.SZ || {};
+window.SZ.personFilms = [];
+
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const personName = urlParams.get('name');
@@ -26,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('Scene still DB - Sheet1.csv');
         const csvText = await response.text();
-        const rows = parseCSV(csvText);
+        const rows = window.SZ.csv.parseCSVToObjects(csvText);
 
         for (const row of rows) {
             const movieId = row['Movie ID'];
@@ -38,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             let poster = row['Poster'];
 
             if (movieId) {
-                const tmdbDetails = await getMovieDetails(movieId);
+                const tmdbDetails = await window.SZ.tmdb.getMovieDetails(movieId);
                 if (tmdbDetails) {
                     movieName = tmdbDetails.title;
                     movieYear = new Date(tmdbDetails.release_date).getFullYear();
@@ -63,6 +67,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (isRelated) {
+                // Add to person films array for search functionality
+                window.SZ.personFilms.push({
+                    movieId,
+                    movieName,
+                    movieYear,
+                    poster,
+                    castAndCrewNames: [director, cinematographer, ...cast].filter(Boolean)
+                });
+
                 const filmCard = `
                     <div class="image-card">
                         <a href="film.html?id=${movieId}">
