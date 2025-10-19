@@ -131,6 +131,29 @@
     
     let activeThumbnailWrapper = null;
 
+    const scrollToMainImageOnMobile = () => {
+        // Check if on mobile (viewport width <= 768px)
+        if (window.innerWidth <= 768) {
+            const mainImage = document.getElementById('main-image');
+            if (mainImage) {
+                // Get the position of the main image
+                const mainImageRect = mainImage.getBoundingClientRect();
+                const absoluteTop = window.pageYOffset + mainImageRect.top;
+                
+                // Calculate scroll position to center the image
+                const windowHeight = window.innerHeight;
+                const imageHeight = mainImageRect.height;
+                const scrollTo = absoluteTop - (windowHeight / 2) + (imageHeight / 2);
+                
+                // Smooth scroll to center the main image
+                window.scrollTo({
+                    top: Math.max(0, scrollTo),
+                    behavior: 'smooth'
+                });
+            }
+        }
+    };
+
     const updateMainImageAndPalette = (imageUrl, clickedThumbnailWrapper) => {
         const mainImage = document.getElementById('main-image');
         const mainPaletteContainer = document.getElementById('main-palette-container');
@@ -148,6 +171,9 @@
             clickedThumbnailWrapper.classList.add('active');
             activeThumbnailWrapper = clickedThumbnailWrapper;
         }
+
+        // Scroll to main image on mobile
+        scrollToMainImageOnMobile();
 
         const analysisImg = new Image();
         analysisImg.crossOrigin = "Anonymous"; // Keep for potential future TMDb images or other origins
@@ -174,10 +200,12 @@
 
         // --- Event Listeners ---
         if (thumbnailGrid) {
+            // Use event delegation to handle both grid and slider layouts
             thumbnailGrid.addEventListener('click', (e) => {
-                if (e.target && e.target.classList.contains('thumbnail-image')) {
-                    const thumbnailWrapper = e.target.closest('.thumbnail-wrapper');
-                    window.SZ.colorPalette.updateMainImageAndPalette(e.target.dataset.fullSrc, thumbnailWrapper);
+                const thumbnailImage = e.target.closest('.thumbnail-image');
+                if (thumbnailImage) {
+                    const thumbnailWrapper = thumbnailImage.closest('.thumbnail-wrapper');
+                    window.SZ.colorPalette.updateMainImageAndPalette(thumbnailImage.dataset.fullSrc, thumbnailWrapper);
                 }
             });
         }

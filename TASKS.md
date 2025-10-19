@@ -14,24 +14,24 @@ This document outlines the tasks for enhancing the Scene Still website with new 
     - [x] Dynamically update the Cast & Crew page based on all movie pages.
 - [x] **Dynamically Load Films Page**:
     - [x] Populate `films.html` with all movies from `Scene still DB - Sheet1.csv` in alphabetical order.
-- [ ] **Implement Dynamic Search Functionality**:
-    - [ ] Create a search function that filters movies and cast dynamically as the user types.
-    - [ ] Update the page content based on search results.
+- [x] **Implement Dynamic Search Functionality**:
+    - [x] Create a search function that filters movies and cast dynamically as the user types.
+    - [x] Update the page content based on search results.
 - [x] **Improve Image Loading Performance**:
     - [x] Use local images for `barry_lyndon.html` instead of TMDb images.
     - [x] Create 16 thumbnail elements for `barry_lyndon.html` with the first image as the main image.
     - [x] Ensure color palette extractor works correctly with local images on movie pages.
-    - [ ] Implement image compression for movie stills.
-    - [ ] Display compressed images for thumbnails on movie pages.
-    - [ ] Load original size images when a thumbnail is clicked for the main image.
+    - [x] Implement image compression for movie stills.
+    - [x] Display compressed images for thumbnails on movie pages.
+    - [x] Load original size images when a thumbnail is clicked for the main image.
 
 ## Future Tasks
 
 - [ ] **Create User Image Color Palette Extraction Page**:
     - [ ] Design a page for users to upload images.
     - [ ] Implement JavaScript to extract a color palette from uploaded images, reusing existing `color-palette.js` functionality.
-- [ ] **Implement Lazy Loading for Films Page**:
-    - [ ] Apply lazy loading to movie posters on the Films page to improve initial load times.
+- [x] **Implement Lazy Loading for Films Page**:
+    - [x] Apply lazy loading to movie posters on the Films page to improve initial load times.
 
 ## Implementation Plan
 

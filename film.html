@@ -50,11 +50,14 @@
             <img id="main-image" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Main film still" class="img-fluid main-image-placeholder">
             <div id="main-palette-container" class="row no-gutters"></div>
         </div>
-		<p>Click one of the thumbnails below to select a main image.
-		Click the main image to make it bigger.</p>
+		
+			<p>Click one of the thumbnails below to select a main image.
+			Click the main image to make it bigger.</p>
+		
         <!-- Thumbnail Grid -->
-        <div class="row thumbnail-grid" id="thumbnail-grid">
-            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
+		<div class="thumbnail-grid-wrapper">
+			<div class="row thumbnail-grid" id="thumbnail-grid">
+				<div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
             <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
             <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
             <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
@@ -63,6 +66,11 @@
             <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
             <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
         </div>
+		</div>
+		<div class="slider-controls">
+			<div class="slider-indicators" id="slider-indicators"></div>
+			<span class="slider-hint">Click a side to switch images.</span>
+		</div>
     </div>
         <footer class="wrapper">
                 <hr>
@@ -73,6 +81,8 @@
                 <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" class="modal-content" id="modal-image">
         </div>
     <script src="js/color-palette.js"></script>
+    <script src="js/lazy-load.js"></script>
+    <script src="js/thumbnail-slider.js"></script>
     <script src="utils/utils-http.js"></script>
     <script src="utils/utils-csv.js"></script>
     <script src="js/load-csv.js"></script>
@@ -172,9 +182,14 @@
                     const wrap = document.createElement('div');
                     wrap.className = 'thumbnail-wrapper';
                     const img = document.createElement('img');
-                    img.src = compressedStills[index] || still; // Use compressed still if available, otherwise full still
+                    
+                    // Use placeholder initially, store actual src in data attribute for lazy loading
+                    img.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
                     img.className = 'thumbnail-image';
+                    img.dataset.lazySrc = compressedStills[index] || still; // Use compressed still if available
                     img.dataset.fullSrc = still; // Store full resolution image URL
+                    img.alt = 'Thumbnail film still';
+                    
                     wrap.appendChild(img);
                     col.appendChild(wrap);
                     grid.appendChild(col);
@@ -185,6 +200,16 @@
                     document.querySelectorAll('.thumbnail-image').forEach(img => {
                         img.style.aspectRatio = aspectRatio;
                     });
+                }
+
+                // Initialize slider if needed (more than 16 images)
+                if (window.SZ?.thumbnailSlider?.initializeSlider) {
+                    window.SZ.thumbnailSlider.initializeSlider(localStills.length);
+                }
+
+                // Setup lazy loading for thumbnails
+                if (window.SZ?.lazyLoad?.setupThumbnails) {
+                    window.SZ.lazyLoad.setupThumbnails(localStills.length);
                 }
 
                 // Initialize color palette after images are set
