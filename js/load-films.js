@@ -246,6 +246,8 @@
                             el.style.display = 'flex';  // Restore flex display for thumbnail grid
                         } else if (el.classList.contains('row')) {
                             el.style.display = 'flex';  // Restore flex display for Bootstrap rows
+                        } else if (el.classList.contains('slider-controls')) {
+                            el.style.display = 'flex';  // Restore flex display for slider controls
                         } else {
                             el.style.display = 'block';
                         }
