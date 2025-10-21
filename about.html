@@ -7,6 +7,14 @@
     <title>Contact Scene Still</title>
 	<link href="css/bootstrap-4.4.1.css" rel="stylesheet">
 	<link href="css/style.css" rel="stylesheet">
+	<style>
+		.about{
+			font-size: 1.1rem;;
+			width: 70%;
+			font-weight: 400;
+			line-height: 2rem;
+		}
+	</style>
 </head>
 <body>
 	<div class="wrapper">
@@ -14,15 +22,20 @@
 			<ul class="nav-list">
 			  <li><a href="index.html">Films</a></li>
 			  <li><a href="cast_crew.html">Cast &amp; Crew</a></li>
-			  <li><a href="contact.html">Contact</a></li>
+			  <li><a href="about.html" aria-current="page">About</a></li>
 			</ul>
 			<form class="search-form" action="#" method="get">
                 <input type="text" placeholder="Search by film or person..." name="search" class="search-input" id="search-input">
             </form>
 		</nav>
-		<h1>Contact Me</h1>
-		<h4>If you have any feedback or requests feel free to fill the form below<br>
- 		or email me at yuri@dandashi.de</h4>
+		<h1>About the Project</h1>
+		<p class="about">Scene Still is a solo passion project I made as a Cinephile and Web Designer for all Cinephiles to use.<br> <b>The website is free and will always remain so.</b></p>
+		<br>
+		<h3>Contact Me</h3>
+		<p class="about">If you have any feedback, suggestions, or requests feel free to email me at <a href="mailto:yuri@dandashi.de">yuri@dandashi.de</a>
+			<br>(Be sure to include Scene Still in the subject line so I can respond accordingly)<br>or dm me on Twitter <a href="https://twitter.com/YuriDandashi">@YuriDandashi</a>.</p>
+			<br>
+		<p class="about">Additional movie data provided by <a href="https://www.themoviedb.org/">The Movie Database (TMDb)</a>.</p>
 		
 		<h4 class="search-results-header" style="display: none; margin-top: 10px;">Search Results:</h4>
 		<div class="image-container" id="film-cards-container" style="display: none;">
@@ -30,7 +43,7 @@
 	</div>
     <footer>
 		<hr>
-		<p>by Yuri Dandashi | <a href="contact.html" aria-current="page">Contact</a></p>
+		<p>by Yuri Dandashi | <a href="about.html" aria-current="page">About</a></p>
 	</footer>
 
 	<script src="utils/utils-http.js"></script>
