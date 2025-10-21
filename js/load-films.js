@@ -5,8 +5,19 @@
 
     let allFilms = []; // Store all films globally
 
+    // Helper to detect person page
+    const checkIfPersonPage = () => {
+        const path = window.location.pathname;
+        return path.includes('person.html') || path.endsWith('/person') || path.includes('/person?');
+    };
+
     // Load films on the index page immediately
-    if (window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/')) {
+    const isIndexPage = window.location.pathname.endsWith('index.html') || 
+                        window.location.pathname.endsWith('/') || 
+                        window.location.pathname.endsWith('index');
+    const isPersonPage = checkIfPersonPage();
+    
+    if (isIndexPage && !isPersonPage) {
         document.addEventListener('DOMContentLoaded', () => fetchAllFilms());
     }
 
@@ -150,8 +161,8 @@
                 allFilms = processedFilms;
 
                 // Only render if we're on the index page
-                const isPersonPage = window.location.pathname.endsWith('person.html');
-                if (!isPersonPage) {
+                const isPersonPageCheck = checkIfPersonPage();
+                if (!isPersonPageCheck) {
                     const container = document.getElementById('film-cards-container');
                     if (container) {
                         renderFilmCard(film, container, insertIndex);
@@ -163,8 +174,8 @@
             allFilms = processedFilms.sort((a, b) => removeArticles(a.movieName).localeCompare(removeArticles(b.movieName)));
 
             // Only render all films if we're not on the person page
-            const isPersonPage = window.location.pathname.endsWith('person.html');
-            if (!isPersonPage) {
+            const isPersonPageCheck = checkIfPersonPage();
+            if (!isPersonPageCheck) {
                 renderFilmCards(allFilms, 'film-cards-container');
             }
         } catch (error) {
@@ -178,19 +189,24 @@
         if (!searchInput) return;
 
         // Start loading films if not on person page
-        const isPersonPage = window.location.pathname.endsWith('person.html');
+        const isPersonPage = checkIfPersonPage();
+        console.log('Search initialized. Is person page?', isPersonPage, 'Path:', window.location.pathname);
         if (!isPersonPage) {
+            console.log('Loading all films for index page...');
             fetchAllFilms();
+        } else {
+            console.log('Person page detected, using personFilms array');
         }
 
         searchInput.addEventListener('input', (event) => {
             const searchTerm = event.target.value.toLowerCase();
             const isIndexPage = window.location.pathname.endsWith('index.html') || 
-                              window.location.pathname.endsWith('/');
-            const isPersonPage = window.location.pathname.endsWith('person.html');
+                              window.location.pathname.endsWith('/') ||
+                              window.location.pathname.endsWith('index');
+            const isPersonPageInSearch = checkIfPersonPage();
             
             // Use the appropriate films source based on the page
-            const filmsToSearch = isPersonPage ? (window.SZ.personFilms || []) : allFilms;
+            const filmsToSearch = isPersonPageInSearch ? (window.SZ.personFilms || []) : allFilms;
 
             const filmCardsContainer = document.getElementById(config.filmCardsContainerId);
 
@@ -222,7 +238,7 @@
             } else {
                 // Reset to initial state
                 if (filmCardsContainer) {
-                    filmCardsContainer.style.display = (isPersonPage || isIndexPage) ? 'flex' : 'none';
+                    filmCardsContainer.style.display = (isPersonPageInSearch || isIndexPage) ? 'flex' : 'none';
                 }
                 
                 // Reset headers based on page type
@@ -256,7 +272,7 @@
                 }
                 
                 // On person page with empty search, restore the person's films
-                if (isPersonPage) {
+                if (isPersonPageInSearch) {
                     renderFilmCards(filmsToSearch, config.filmCardsContainerId, true);
                     return;
                 }

@@ -27,9 +27,9 @@ This document outlines the tasks for enhancing the Scene Still website with new 
 
 ## Future Tasks
 
-- [ ] **Create User Image Color Palette Extraction Page**:
-    - [ ] Design a page for users to upload images.
-    - [ ] Implement JavaScript to extract a color palette from uploaded images, reusing existing `color-palette.js` functionality.
+- [x] **Create User Image Color Palette Extraction Page**:
+    - [x] Design a page for users to upload images.
+    - [x] Implement JavaScript to extract a color palette from uploaded images, reusing existing `color-palette.js` functionality.
 - [x] **Implement Lazy Loading for Films Page**:
     - [x] Apply lazy loading to movie posters on the Films page to improve initial load times.
 

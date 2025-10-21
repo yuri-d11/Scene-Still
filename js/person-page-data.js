@@ -3,6 +3,7 @@ window.SZ = window.SZ || {};
 window.SZ.personFilms = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log('Person page data loading...');
     const urlParams = new URLSearchParams(window.location.search);
     const personName = urlParams.get('name');
     const personRole = urlParams.get('role');
@@ -11,6 +12,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Person name or role not found in URL parameters.');
         return;
     }
+    
+    console.log(`Loading films for ${personName} (${personRole})...`);
 
     document.querySelector('h1').textContent = personName;
     document.getElementById('page-title').textContent = personName + ' | Scene Still';
@@ -42,6 +45,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     document.querySelector('.section_start').textContent = roleText;
     const filmCardsContainer = document.getElementById('film-cards-container');
+    
+    // Clear the container first
+    filmCardsContainer.innerHTML = '';
 
     try {
         const response = await fetch('Scene still DB - Sheet1.csv');
@@ -93,7 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
 
                 const filmCard = `
-                    <div class="image-card">
+                    <div class="image-card" data-movie-id="${movieId}">
                         <a href="film.html?id=${movieId}">
                             <img src="${poster}" alt="${movieName}">
                             <h4>${movieName} (${movieYear})</h4>
@@ -103,6 +109,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 filmCardsContainer.innerHTML += filmCard;
             }
         }
+        
+        console.log(`Loaded ${window.SZ.personFilms.length} films for ${personName}`);
     } catch (error) {
         console.error('Error loading or parsing data:', error);
     }
