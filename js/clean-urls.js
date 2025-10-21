@@ -1,5 +1,5 @@
 /**
- * Clean URLs - Remove .html from URL bar on GitHub Pages
+ * Clean URLs - Remove .html and index from URL bar on GitHub Pages
  * Automatically redirects from .html URLs to clean URLs
  */
 (function() {
@@ -8,14 +8,29 @@
         return;
     }
 
-    const currentUrl = window.location.href;
+    let currentUrl = window.location.href;
+    let needsUpdate = false;
     
-    // Check if URL contains .html
+    // Remove index.html from the URL
+    if (currentUrl.includes('index.html')) {
+        currentUrl = currentUrl.replace('index.html', '');
+        needsUpdate = true;
+    }
+    
+    // Remove /index from the URL (but not if it's part of a query string)
+    if (currentUrl.match(/\/index(?:\?|$)/)) {
+        currentUrl = currentUrl.replace(/\/index(\?|$)/, '/$1');
+        needsUpdate = true;
+    }
+    
+    // Remove .html from the URL
     if (currentUrl.includes('.html')) {
-        // Remove .html from the URL
-        const cleanUrl = currentUrl.replace('.html', '');
-        
-        // Use replaceState to change URL without reloading the page
-        window.history.replaceState({}, document.title, cleanUrl);
+        currentUrl = currentUrl.replace('.html', '');
+        needsUpdate = true;
+    }
+    
+    // Update the URL if changes were made
+    if (needsUpdate) {
+        window.history.replaceState({}, document.title, currentUrl);
     }
 })();
