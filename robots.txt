@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://scenestill.com/sitemap.xml
+Sitemap: https://www.scenestill.com/sitemap.xml
 
 # Disallow certain file types
 Disallow: /js/

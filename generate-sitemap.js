@@ -12,7 +12,7 @@ const path = require('path');
 // Configuration
 const CSV_FILE = 'Scene still DB - Sheet1.csv';
 const SITEMAP_FILE = 'sitemap.xml';
-const BASE_URL = 'https://scenestill.com';
+const BASE_URL = 'https://www.scenestill.com';
 const TODAY = new Date().toISOString().split('T')[0];
 
 /**

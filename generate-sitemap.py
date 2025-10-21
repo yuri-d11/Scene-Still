@@ -24,7 +24,7 @@ except ImportError:
 # Configuration
 CSV_FILE = 'Scene still DB - Sheet1.csv'
 SITEMAP_FILE = 'sitemap.xml'
-BASE_URL = 'https://scenestill.com'
+BASE_URL = 'https://www.scenestill.com'
 TODAY = datetime.now().strftime('%Y-%m-%d')
 
 # TMDB API Configuration
