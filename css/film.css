@@ -112,9 +112,7 @@
 		
 		.thumbnail-grid-wrapper {
 			position: relative;
-			overflow: visible;
-			padding: 6px;
-			margin: -6px;
+			overflow: hidden;
 		}
 		.thumbnail-header {
 			display: flex;
@@ -239,6 +237,9 @@
 			max-width: 100%;
 			flex-shrink: 0;
 			flex-grow: 0;
+			overflow: hidden;
+			padding: 0 6px;
+			box-sizing: border-box;
 		}
 		
 		.thumbnail-slide .row {
