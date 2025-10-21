@@ -187,9 +187,10 @@
             const searchTerm = event.target.value.toLowerCase();
             const isIndexPage = window.location.pathname.endsWith('index.html') || 
                               window.location.pathname.endsWith('/');
+            const isPersonPage = window.location.pathname.endsWith('person.html');
             
             // Use the appropriate films source based on the page
-            const filmsToSearch = isPersonPage ? window.SZ.personFilms : allFilms;
+            const filmsToSearch = isPersonPage ? (window.SZ.personFilms || []) : allFilms;
 
             const filmCardsContainer = document.getElementById(config.filmCardsContainerId);
 
@@ -252,6 +253,12 @@
                             el.style.display = 'block';
                         }
                     });
+                }
+                
+                // On person page with empty search, restore the person's films
+                if (isPersonPage) {
+                    renderFilmCards(filmsToSearch, config.filmCardsContainerId, true);
+                    return;
                 }
             }
 
