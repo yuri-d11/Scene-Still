@@ -14,8 +14,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.querySelector('h1').textContent = personName;
     document.getElementById('page-title').textContent = personName + ' | Scene Still';
-    document.getElementById('meta-description').content = personName + ' – handpicked high quality film screencaptures';
+    document.getElementById('meta-description').content = `Explore ${personName}'s filmography with handpicked high quality film screencaptures from their ${personRole.toLowerCase()} work.`;
     document.querySelector('h4').textContent = personRole;
+    
+    // Update Open Graph tags
+    const currentUrl = window.location.href;
+    const ogTitle = `${personName} - ${personRole} | Scene Still`;
+    const ogDescription = `Explore ${personName}'s filmography with handpicked high quality film screencaptures from their ${personRole.toLowerCase()} work.`;
+    
+    document.getElementById('og-type').setAttribute('content', 'profile');
+    document.getElementById('og-url').setAttribute('content', currentUrl);
+    document.getElementById('og-title').setAttribute('content', ogTitle);
+    document.getElementById('og-description').setAttribute('content', ogDescription);
+    
+    document.getElementById('twitter-card').setAttribute('content', 'summary');
+    document.getElementById('twitter-url').setAttribute('content', currentUrl);
+    document.getElementById('twitter-title').setAttribute('content', ogTitle);
+    document.getElementById('twitter-description').setAttribute('content', ogDescription);
+    
     let roleText = `${personRole} Films:`;
     if (personRole === 'Director') {
         roleText = 'Directed Films:';

@@ -4,7 +4,28 @@
     <meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Films</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
+    <title>Scene Still - Curated High Quality Film Screencaptures</title>
+	<meta name="description" content="Explore handpicked high quality film screencaptures from cinema's greatest movies. Discover the visual language of cinema through composition, light, and color.">
+	<meta name="keywords" content="film stills, movie screencaptures, cinema photography, cinematography, film frames, movie screenshots, high quality stills">
+	<link rel="canonical" href="https://scenestill.com/index.html">
+	
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://scenestill.com/">
+	<meta property="og:title" content="Scene Still - Curated High Quality Film Screencaptures">
+	<meta property="og:description" content="Explore handpicked high quality film screencaptures from cinema's greatest movies. Discover the visual language of cinema through composition, light, and color.">
+	<meta property="og:image" content="https://scenestill.com/img/scene-still-graph.jpg">
+	<meta property="og:site_name" content="Scene Still">
+	
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image">
+	<meta property="twitter:url" content="https://scenestill.com/">
+	<meta property="twitter:title" content="Scene Still - Curated High Quality Film Screencaptures">
+	<meta property="twitter:description" content="Explore handpicked high quality film screencaptures from cinema's greatest movies.">
+	<meta property="twitter:image" content="https://scenestill.com/img/scene-still-graph.jpg">
+	<meta property="twitter:creator" content="@YuriDandashi">
+	
 	<link href="css/bootstrap-4.4.1.css" rel="stylesheet">
 	<link href="css/style.css" rel="stylesheet">
 	<style>
@@ -16,11 +37,33 @@
 	</style>
   </head>
   <body>
+	<!-- JSON-LD Structured Data -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "WebSite",
+		"name": "Scene Still",
+		"description": "A handpicked gallery of high quality film screencaptures that highlight the visual language of cinema",
+		"url": "https://scenestill.com",
+		"author": {
+			"@type": "Person",
+			"name": "Yuri Dandashi",
+			"url": "https://twitter.com/YuriDandashi"
+		},
+		"potentialAction": {
+			"@type": "SearchAction",
+			"target": "https://scenestill.com/?search={search_term_string}",
+			"query-input": "required name=search_term_string"
+		}
+	}
+	</script>
+	
 	<div class="wrapper">
 		<nav>
 			<ul class="nav-list">
 			  <li><a href="index.html" aria-current="page">Films</a></li>
 			  <li><a href="cast_crew.html">Cast &amp; Crew</a></li>
+			  <li><a href="color_extractor.html">Color Extractor</a></li>
 			  <li><a href="about.html">About</a></li>
 			</ul>
 			<form class="search-form" action="#" method="get">

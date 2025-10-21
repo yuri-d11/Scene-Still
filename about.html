@@ -4,7 +4,28 @@
     <meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Contact Scene Still</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
+    <title>About Scene Still - Curated Film Screencaptures Gallery</title>
+	<meta name="description" content="Learn about Scene Still, a passion project dedicated to showcasing high quality film screencaptures. Contact us for feedback, suggestions, or requests.">
+	<meta name="keywords" content="about scene still, film stills gallery, cinema photography, contact, yuri dandashi">
+	<link rel="canonical" href="https://scenestill.com/about.html">
+	
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://scenestill.com/about.html">
+	<meta property="og:title" content="About Scene Still - Curated Film Screencaptures Gallery">
+	<meta property="og:description" content="Learn about Scene Still, a passion project dedicated to showcasing high quality film screencaptures.">
+	<meta property="og:site_name" content="Scene Still">
+	<meta property="og:image" content="https://scenestill.com/img/scene-still-graph.jpg">
+	
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image">
+	<meta property="twitter:url" content="https://scenestill.com/about.html">
+	<meta property="twitter:title" content="About Scene Still">
+	<meta property="twitter:description" content="Learn about Scene Still, a passion project dedicated to showcasing high quality film screencaptures.">
+	<meta property="twitter:creator" content="@YuriDandashi">
+	<meta property="twitter:image" content="https://scenestill.com/img/scene-still-graph.jpg">
+	
 	<link href="css/bootstrap-4.4.1.css" rel="stylesheet">
 	<link href="css/style.css" rel="stylesheet">
 	<style>
@@ -17,11 +38,34 @@
 	</style>
 </head>
 <body>
+	<!-- JSON-LD Structured Data -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "AboutPage",
+		"name": "About Scene Still",
+		"description": "Scene Still is a passion project showcasing handpicked high quality film screencaptures",
+		"url": "https://scenestill.com/about.html",
+		"mainEntity": {
+			"@type": "WebSite",
+			"name": "Scene Still",
+			"url": "https://scenestill.com",
+			"author": {
+				"@type": "Person",
+				"name": "Yuri Dandashi",
+				"email": "yuri@dandashi.de",
+				"sameAs": "https://twitter.com/YuriDandashi"
+			}
+		}
+	}
+	</script>
+	
 	<div class="wrapper">
 		<nav>
 			<ul class="nav-list">
 			  <li><a href="index.html">Films</a></li>
 			  <li><a href="cast_crew.html">Cast &amp; Crew</a></li>
+			  <li><a href="color_extractor.html">Color Extractor</a></li>
 			  <li><a href="about.html" aria-current="page">About</a></li>
 			</ul>
 			<form class="search-form" action="#" method="get">
@@ -36,6 +80,7 @@
 			<br>(Be sure to include Scene Still in the subject line so I can respond accordingly)<br>or dm me on Twitter <a href="https://twitter.com/YuriDandashi">@YuriDandashi</a>.</p>
 			<br>
 		<p class="about">Additional movie data provided by <a href="https://www.themoviedb.org/">The Movie Database (TMDb)</a>.</p>
+		<p class="about">Movie posters provided by <a href="http://www.impawards.com">IMP Awards</a>.</p>
 		
 		<h4 class="search-results-header" style="display: none; margin-top: 10px;">Search Results:</h4>
 		<div class="image-container" id="film-cards-container" style="display: none;">
@@ -56,7 +101,7 @@
 			window.SZ.searchManager.initializeSearch({
 				searchInputId: 'search-input',
 				filmCardsContainerId: 'film-cards-container',
-				mainContentSelector: '.wrapper > h1, .wrapper > h4:not(.search-results-header)'
+				mainContentSelector: '.wrapper > h1, .wrapper > h3, .wrapper > h4:not(.search-results-header), .wrapper > p.about, .wrapper > br'
 			});
 		});
 	</script>

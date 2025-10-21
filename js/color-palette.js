@@ -163,6 +163,14 @@
         mainPaletteContainer.innerHTML = '';
         mainPaletteContainer.classList.remove('loaded');
 
+        // Update alt text from clicked thumbnail
+        if (clickedThumbnailWrapper) {
+            const thumbnailImage = clickedThumbnailWrapper.querySelector('.thumbnail-image');
+            if (thumbnailImage && thumbnailImage.alt) {
+                mainImage.alt = thumbnailImage.alt;
+            }
+        }
+
         // Update active thumbnail border
         if (activeThumbnailWrapper) {
             activeThumbnailWrapper.classList.remove('active');
@@ -214,6 +222,7 @@
             mainImage.addEventListener('click', () => {
                 imageModal.classList.add('visible'); 
                 modalImage.src = mainImage.src;
+                modalImage.alt = mainImage.alt; // Copy alt text from main image
             });
         }
 

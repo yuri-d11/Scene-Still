@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
+    <title>Color Extractor - Extract Color Palettes from Images | Scene Still</title>
+    <meta name="description" content="Free online color extractor tool. Upload any image to extract dominant color palettes. Perfect for designers, filmmakers, and cinematography enthusiasts. Get hex codes instantly.">
+    <meta name="keywords" content="color extractor, color palette generator, image color picker, hex color picker, dominant colors, color analysis, cinematography colors, film color palette">
+    <link rel="canonical" href="https://scenestill.com/color_extractor.html">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://scenestill.com/color_extractor.html">
+    <meta property="og:title" content="Color Extractor - Extract Color Palettes from Images">
+    <meta property="og:description" content="Free online tool to extract dominant color palettes from any image. Upload and discover the colors that define your visuals.">
+    <meta property="og:site_name" content="Scene Still">
+    <meta property="og:image" content="https://scenestill.com/img/scene-still-graph.jpg">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://scenestill.com/color_extractor.html">
+    <meta property="twitter:title" content="Color Extractor - Extract Color Palettes from Images">
+    <meta property="twitter:description" content="Free online tool to extract dominant color palettes from any image. Upload and get hex codes instantly.">
+    <meta property="twitter:creator" content="@YuriDandashi">
+    <meta property="twitter:image" content="https://scenestill.com/img/scene-still-graph.jpg">
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/film.css">
+    <style>
+        .upload-container {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .upload-area {
+            border: 2px dashed #4B4B4B;
+            border-radius: 4px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: rgba(51, 51, 51, 0.3);
+        }
+
+        .upload-area:hover {
+            border-color: #B3B3B3;
+            background-color: rgba(51, 51, 51, 0.5);
+        }
+
+        .upload-area.dragover {
+            border-color: #FAFAFA;
+            background-color: rgba(51, 51, 51, 0.7);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #B3B3B3;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 1.25rem;
+            color: #FAFAFA;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            font-size: 1rem;
+            color: #B3B3B3;
+            font-weight: 300;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        #imagePreviewContainer {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #uploadedImage {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            height: auto;
+            object-fit: contain;
+            border-radius: 2px;
+            box-shadow: 4px 5px 4px 0 rgba(0, 0, 0, 0.2);
+            background-color: #222;
+            margin-bottom: 15px;
+        }
+
+        #extractedPaletteContainer {
+            height: 40px;
+            margin-top: 15px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #extractedPaletteContainer.loaded {
+            opacity: 1;
+        }
+
+        .reset-button-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .reset-button {
+            background-color: #333;
+            color: #FAFAFA;
+            border: 1px solid #4B4B4B;
+            border-radius: 3px;
+            padding: 10px 30px;
+            font-size: 16px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 4px 5px 4px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .reset-button:hover {
+            background-color: #444;
+            border-color: #B3B3B3;
+        }
+
+        .instructions {
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .instructions h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .instructions p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 15px;
+        }
+
+        .feature-list li {
+            color: #FAFAFA;
+            font-size: 1rem;
+            font-weight: 300;
+            margin-bottom: 8px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #B3B3B3;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .upload-area {
+                padding: 40px 15px;
+            }
+
+            .upload-icon {
+                font-size: 36px;
+            }
+
+            .upload-text {
+                font-size: 1.1rem;
+            }
+
+            .upload-subtext {
+                font-size: 0.9rem;
+            }
+
+            #uploadedImage {
+                aspect-ratio: 4 / 3;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Color Extractor",
+        "description": "Free online tool to extract dominant color palettes from images. Upload any image and discover its colors.",
+        "url": "https://scenestill.com/color_extractor.html",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Extract up to 5 dominant colors from any image",
+            "Support for JPG, PNG, GIF, and WebP formats",
+            "Get hex color codes instantly",
+            "Copy colors with one click",
+            "Free to use, no registration required"
+        ],
+        "author": {
+            "@type": "Person",
+            "name": "Yuri Dandashi",
+            "url": "https://twitter.com/YuriDandashi"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "Scene Still",
+            "url": "https://scenestill.com"
+        }
+    }
+    </script>
+    
+    <div class="wrapper">
+        <nav>
+            <ul class="nav-list">
+                <li><a href="index.html">Films</a></li>
+                <li><a href="cast_crew.html">Cast &amp; Crew</a></li>
+                <li><a href="color_extractor.html" aria-current="page">Color Extractor</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+            <form class="search-form" action="#" method="get">
+                <input type="text" placeholder="Search by film or person..." name="search" class="search-input" id="search-input">
+            </form>
+        </nav>
+        
+        <h1>Color Extractor Tool</h1>
+        <h2 style="font-size: 1.25rem; font-weight: 400; margin-bottom: 30px;">Upload your own image and extract a color palette.*</h2>
+
+        <!-- Upload Area -->
+        <div class="upload-container">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">⬆</div>
+                <div class="upload-text">Click to upload or drag and drop</div>
+                <div class="upload-subtext">Supports JPG, PNG, GIF, WebP</div>
+            </div>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+
+        <!-- Image Preview and Palette -->
+        <div id="imagePreviewContainer">
+            <img id="uploadedImage" src="" alt="Uploaded image">
+            <div id="extractedPaletteContainer" class="row no-gutters"></div>
+            <div class="reset-button-container">
+                <button class="reset-button" id="resetButton">Upload New Image</button>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>How It Works</h3>
+            <p>The color extraction algorithm analyzes the image to identify the most dominant and visually significant colors. The process:</p>
+            <ul class="feature-list">
+                <li>Extracts up to 5 distinct colors from the image</li>
+                <li>Filters out very dark colors and similar shades (to avoid using the black bars from letterbox formats)</li>
+                <li>Prioritizes colors by their frequency in the image</li>
+                <li>Click any color swatch to copy its hex code</li>
+            </ul>
+            <p style="margin-top: 20px;">This tool uses the same color palette extraction tool that powers the film still galleries on this site.</p>
+        </div>
+
+        <!-- FAQ Section with Schema -->
+        <div class="instructions" style="margin-top: 50px;">
+            <h3>Frequently Asked Questions</h3>
+            <div itemscope itemtype="https://schema.org/FAQPage">
+                <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <h4 itemprop="name" style="font-size: 1.1rem; margin-top: 20px; margin-bottom: 10px;">What image formats are supported?</h4>
+                    <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <p itemprop="text">The color extractor supports JPG, PNG, GIF, and WebP image formats. Simply upload any image in these formats to extract its color palette.</p>
+                    </div>
+                </div>
+                
+                <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <h4 itemprop="name" style="font-size: 1.1rem; margin-top: 20px; margin-bottom: 10px;">Is this tool free to use?</h4>
+                    <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <p itemprop="text">Yes! The color extractor is completely free to use. No registration or account required. Just upload an image and extract colors instantly. (Your images will never be saved or used anywhere by the website)</p>
+                    </div>
+                </div>
+                
+                <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <h4 itemprop="name" style="font-size: 1.1rem; margin-top: 20px; margin-bottom: 10px;">How do I copy the hex color codes?</h4>
+                    <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <p itemprop="text">After extracting colors, simply click on any color swatch in the palette. The hex code will be automatically copied to your clipboard, and you'll see a "Copied!" confirmation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p style="margin-top: 70px;">*The tool is not perfect yet but I am still working on it.</p>
+        <!-- Search Results Section (hidden by default) -->
+        <h4 class="search-results-header" style="display: none; margin-top: 10px;">Search Results:</h4>
+        <div class="image-container" id="film-cards-container" style="display: none;">
+        </div>
+    </div>
+
+    <footer>
+        <hr>
+        <p>by Yuri Dandashi | <a href="about.html">About</a></p>
+    </footer>
+
+    <!-- Modal for full-size image view -->
+    <div id="image-modal" class="modal-overlay">
+        <span class="close-modal">&times;</span>
+        <img src="" alt="Full size image" class="modal-content" id="modal-image">
+    </div>
+
+    <script src="js/color-palette.js"></script>
+    <script src="utils/utils-http.js"></script>
+    <script src="utils/utils-csv.js"></script>
+    <script src="js/load-csv.js"></script>
+    <script src="utils/utils-cache.js"></script>
+    <script src="utils/utils-tmdb.js"></script>
+    <script src="js/load-films.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            const uploadedImage = document.getElementById('uploadedImage');
+            const extractedPaletteContainer = document.getElementById('extractedPaletteContainer');
+            const resetButton = document.getElementById('resetButton');
+            const imageModal = document.getElementById('image-modal');
+            const modalImage = document.getElementById('modal-image');
+            const closeModal = document.querySelector('.close-modal');
+
+            // Track whether an image has been uploaded
+            let imageUploaded = false;
+
+            // Initialize search functionality
+            if (window.SZ && window.SZ.searchManager) {
+                window.SZ.searchManager.initializeSearch({
+                    searchInputId: 'search-input',
+                    filmCardsContainerId: 'film-cards-container',
+                    mainContentSelector: '.wrapper > h1, .wrapper > h2, .wrapper > h4:not(.search-results-header), .upload-container, .instructions, .wrapper > p, footer'
+                });
+            }
+
+            // Add custom search behavior to hide/show image preview
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', (event) => {
+                    const searchTerm = event.target.value.toLowerCase();
+                    
+                    if (searchTerm.length > 0) {
+                        // Hide image preview when searching
+                        if (imageUploaded && imagePreviewContainer.style.display === 'block') {
+                            imagePreviewContainer.style.display = 'none';
+                        }
+                    } else {
+                        // Show image preview again if an image was uploaded
+                        if (imageUploaded) {
+                            imagePreviewContainer.style.display = 'block';
+                        }
+                    }
+                });
+            }
+
+            // Handle click on upload area
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // Handle file selection
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    handleImageUpload(file);
+                }
+            });
+
+            // Handle drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    handleImageUpload(file);
+                }
+            });
+
+            // Handle reset button
+            resetButton.addEventListener('click', () => {
+                imagePreviewContainer.style.display = 'none';
+                uploadArea.style.display = 'block';
+                uploadedImage.src = '';
+                extractedPaletteContainer.innerHTML = '';
+                extractedPaletteContainer.classList.remove('loaded');
+                fileInput.value = '';
+                imageUploaded = false; // Reset the upload state
+            });
+
+            // Modal functionality
+            uploadedImage.addEventListener('click', () => {
+                modalImage.src = uploadedImage.src;
+                modalImage.alt = uploadedImage.alt;
+                imageModal.classList.add('visible');
+            });
+
+            closeModal.addEventListener('click', () => {
+                imageModal.classList.remove('visible');
+            });
+
+            imageModal.addEventListener('click', (e) => {
+                if (e.target === imageModal) {
+                    imageModal.classList.remove('visible');
+                }
+            });
+
+            function handleImageUpload(file) {
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    const imageUrl = e.target.result;
+                    uploadedImage.src = imageUrl;
+                    uploadedImage.alt = file.name;
+                    
+                    // Hide upload area and show preview
+                    uploadArea.style.display = 'none';
+                    imagePreviewContainer.style.display = 'block';
+                    imageUploaded = true; // Mark that an image has been uploaded
+                    
+                    // Clear previous palette
+                    extractedPaletteContainer.innerHTML = '';
+                    extractedPaletteContainer.classList.remove('loaded');
+                    
+                    // Wait for image to load before extracting colors
+                    const img = new Image();
+                    img.onload = () => {
+                        extractColors(img);
+                    };
+                    img.src = imageUrl;
+                };
+                
+                reader.readAsDataURL(file);
+            }
+
+            function extractColors(imgElement) {
+                if (!window.SZ || !window.SZ.colorPalette) {
+                    console.error('Color palette utility not loaded');
+                    return;
+                }
+
+                // Use the same color extraction function from color-palette.js
+                const colors = getPureJSPalette(imgElement, 5);
+                displayPalette(colors, extractedPaletteContainer);
+            }
+
+            // Color extraction function (from color-palette.js)
+            function getPureJSPalette(imgElement, numColors) {
+                const colorMap = new Map();
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                const QUANTIZATION_FACTOR = 32;
+                const ANALYSIS_SIZE = 150;
+                const ratio = Math.min(1, ANALYSIS_SIZE / imgElement.naturalWidth, ANALYSIS_SIZE / imgElement.naturalHeight);
+                canvas.width = imgElement.naturalWidth * ratio;
+                canvas.height = imgElement.naturalHeight * ratio;
+
+                try {
+                    ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                    const totalPixels = canvas.width * canvas.height;
+                    const MAX_SAMPLES = 5000;
+                    const sampleStep = Math.max(1, Math.floor(totalPixels / MAX_SAMPLES));
+
+                    for (let i = 0; i < totalPixels * 4; i += sampleStep * 4) {
+                        const [r, g, b, a] = [imageData[i], imageData[i + 1], imageData[i + 2], imageData[i + 3]];
+                        if (a < 128) continue;
+                        const BLACK_THRESHOLD = 15;
+                        if (r < BLACK_THRESHOLD && g < BLACK_THRESHOLD && b < BLACK_THRESHOLD) continue;
+                        const qR = Math.floor(r / QUANTIZATION_FACTOR) * QUANTIZATION_FACTOR;
+                        const qG = Math.floor(g / QUANTIZATION_FACTOR) * QUANTIZATION_FACTOR;
+                        const qB = Math.floor(b / QUANTIZATION_FACTOR) * QUANTIZATION_FACTOR;
+                        const key = `${qR},${qG},${qB}`;
+                        colorMap.set(key, (colorMap.get(key) || 0) + 1);
+                    }
+                } catch (e) {
+                    console.error("Canvas Pixel Reading Failed:", e);
+                    return [];
+                }
+
+                const sortedColors = Array.from(colorMap.entries())
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([key]) => {
+                        const [r, g, b] = key.split(',').map(Number);
+                        const halfQuant = QUANTIZATION_FACTOR / 2;
+                        return [r + halfQuant, g + halfQuant, b + halfQuant];
+                    });
+
+                if (sortedColors.length === 0) return [];
+                
+                const finalPalette = [];
+                const colorDistance = (c1, c2) => Math.sqrt(Math.pow(c1[0] - c2[0], 2) + Math.pow(c1[1] - c2[1], 2) + Math.pow(c1[2] - c2[2], 2));
+                const SIMILARITY_THRESHOLD = 50;
+                finalPalette.push(sortedColors[0]);
+
+                for (const color of sortedColors) {
+                    if (finalPalette.length >= numColors) break;
+                    const isSimilar = finalPalette.some(finalColor => colorDistance(color, finalColor) < SIMILARITY_THRESHOLD);
+                    if (!isSimilar) {
+                        finalPalette.push(color);
+                    }
+                }
+                return finalPalette;
+            }
+
+            // Display palette function (from color-palette.js)
+            function displayPalette(colors, container) {
+                container.innerHTML = '';
+                container.classList.remove('loaded');
+                if (!colors || colors.length === 0) return;
+
+                colors.forEach(color => {
+                    const [r, g, b] = color.map(Math.round);
+                    const hexValue = rgbToHex(r, g, b);
+                    const swatchContainer = document.createElement('div');
+                    swatchContainer.className = 'col';
+                    
+                    const swatchDiv = document.createElement('div');
+                    const isLight = (r * 0.299 + g * 0.587 + b * 0.114) > 160;
+                    const textColorClass = isLight ? 'text-dark' : 'text-white';
+                    
+                    swatchDiv.className = `palette-swatch ${textColorClass}`;
+                    swatchDiv.style.backgroundColor = hexValue;
+                    swatchDiv.title = `Click to copy ${hexValue}`;
+
+                    const hexCodeSpan = document.createElement('span');
+                    hexCodeSpan.className = 'hex-code';
+                    hexCodeSpan.textContent = hexValue;
+
+                    const copyPromptSpan = document.createElement('span');
+                    copyPromptSpan.className = 'copy-prompt';
+                    copyPromptSpan.textContent = 'Copy';
+                    
+                    swatchDiv.appendChild(hexCodeSpan);
+                    swatchDiv.appendChild(copyPromptSpan);
+
+                    swatchDiv.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (copyToClipboard(hexValue)) {
+                            copyPromptSpan.textContent = 'Copied!';
+                            setTimeout(() => {
+                                copyPromptSpan.textContent = 'Copy';
+                            }, 1500);
+                        }
+                    });
+                    swatchContainer.appendChild(swatchDiv);
+                    container.appendChild(swatchContainer);
+                });
+                
+                setTimeout(() => container.classList.add('loaded'), 50);
+            }
+
+            // Helper functions
+            function rgbToHex(r, g, b) {
+                const toHex = c => ('0' + Math.max(0, Math.min(255, c)).toString(16)).slice(-2);
+                return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
+            }
+
+            function copyToClipboard(text) {
+                const el = document.createElement('textarea');
+                el.value = text;
+                el.style.position = 'absolute';
+                el.style.left = '-9999px';
+                document.body.appendChild(el);
+                el.select();
+                try {
+                    document.execCommand('copy');
+                    return true;
+                } catch (err) {
+                    console.error('Fallback: Unable to copy', err);
+                    return false;
+                } finally {
+                    document.body.removeChild(el);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
