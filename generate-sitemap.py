@@ -150,7 +150,7 @@ def generate_sitemap(movies, people):
         
         xml_lines.extend([
             '    <url>',
-            f'        <loc>{BASE_URL}/film.html?id={movie_id}</loc>',
+            f'        <loc>{BASE_URL}/film?id={movie_id}</loc>',
             f'        <lastmod>{TODAY}</lastmod>',
             '        <changefreq>monthly</changefreq>',
             '        <priority>0.9</priority>',
@@ -167,7 +167,7 @@ def generate_sitemap(movies, people):
         
         xml_lines.extend([
             '    <url>',
-            f'        <loc>{BASE_URL}/person.html?name={encoded_name}&amp;role={encoded_role}</loc>',
+            f'        <loc>{BASE_URL}/person?name={encoded_name}&amp;role={encoded_role}</loc>',
             f'        <lastmod>{TODAY}</lastmod>',
             '        <changefreq>monthly</changefreq>',
             '        <priority>0.7</priority>',

@@ -95,19 +95,17 @@
 				const sanitizeNameForUrl = (personName) => {
 					return personName
 						.toLowerCase()
-						.replace(/[äöü]/g, (c) => ({'ä': 'a', 'ö': 'o', 'ü': 'u'}[c])) // Replace German umlauts
-						.replace(/[éáíóú]/g, (c) => ({'é': 'e', 'á': 'a', 'í': 'i', 'ó': 'o', 'ú': 'u'}[c])) // Replace acute accents
-						.replace(/ō/g, 'o') // Replace romaji 'ō'
-						.replace(/[^a-z0-9]+/g, '_') // Replace non-alphanumeric with underscore
-						.replace(/^_+|_+$/g, ''); // Trim leading/trailing underscores
-				};
-				a.href = `person.html?name=${encodeURIComponent(name)}&role=${encodeURIComponent(role)}`;
-				a.textContent = name;
-				li.appendChild(a);
-				return li;
+					.replace(/[äöü]/g, (c) => ({'ä': 'a', 'ö': 'o', 'ü': 'u'}[c])) // Replace German umlauts
+					.replace(/[éáíóú]/g, (c) => ({'é': 'e', 'á': 'a', 'í': 'i', 'ó': 'o', 'ú': 'u'}[c])) // Replace acute accents
+					.replace(/ō/g, 'o') // Replace romaji 'ō'
+					.replace(/[^a-z0-9]+/g, '_') // Replace non-alphanumeric with underscore
+					.replace(/^_+|_+$/g, ''); // Trim leading/trailing underscores
 			};
-
-			const directorsList = document.getElementById('directors-list');
+			a.href = `person.html?name=${encodeURIComponent(name)}&role=${encodeURIComponent(role)}`;
+			a.textContent = name;
+			li.appendChild(a);
+			return li;
+		};			const directorsList = document.getElementById('directors-list');
 			const cinematographersList = document.getElementById('cinematographers-list');
 			const castList = document.getElementById('cast-list');
 

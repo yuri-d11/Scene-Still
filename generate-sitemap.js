@@ -122,7 +122,7 @@ function generateSitemap(movies, people) {
         if (!movie.movieId) return;
         
         xml += `    <url>\n`;
-        xml += `        <loc>${BASE_URL}/film.html?id=${movie.movieId}</loc>\n`;
+        xml += `        <loc>${BASE_URL}/film?id=${movie.movieId}</loc>\n`;
         xml += `        <lastmod>${TODAY}</lastmod>\n`;
         xml += `        <changefreq>monthly</changefreq>\n`;
         xml += `        <priority>0.9</priority>\n`;
@@ -137,7 +137,7 @@ function generateSitemap(movies, people) {
         const encodedRole = encodeURIComponent(person.role);
         
         xml += `    <url>\n`;
-        xml += `        <loc>${BASE_URL}/person.html?name=${encodedName}&amp;role=${encodedRole}</loc>\n`;
+        xml += `        <loc>${BASE_URL}/person?name=${encodedName}&amp;role=${encodedRole}</loc>\n`;
         xml += `        <lastmod>${TODAY}</lastmod>\n`;
         xml += `        <changefreq>monthly</changefreq>\n`;
         xml += `        <priority>0.7</priority>\n`;
