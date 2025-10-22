@@ -2,6 +2,19 @@
 window.SZ = window.SZ || {};
 window.SZ.personFilms = [];
 
+// Update page title immediately (before DOMContentLoaded) for better Google indexing
+(function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const personName = urlParams.get('name');
+    const personRole = urlParams.get('role');
+    if (personName && personRole) {
+        // Update as soon as script loads
+        if (document.getElementById('page-title')) {
+            document.getElementById('page-title').textContent = `${personName} - ${personRole} | Scene Still`;
+        }
+    }
+})();
+
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('Person page data loading...');
     const urlParams = new URLSearchParams(window.location.search);

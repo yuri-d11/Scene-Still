@@ -4,25 +4,27 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
     <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
-    <title id="page-title">Loading Movie...</title>
-    <meta name="description" id="meta-description" content="Loading movie details...">
+    <title id="page-title">Film Gallery | Scene Still</title>
+    <meta name="description" id="meta-description" content="Handpicked high quality film screencaptures. Explore the visual language of cinema through composition, light, and color.">
     <meta name="keywords" content="film stills, movie screencaptures, cinematography, high quality stills, movie screenshots">
     <link rel="canonical" href="" id="canonical-url">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" id="og-type">
     <meta property="og:url" content="" id="og-url">
-    <meta property="og:title" content="Loading Movie..." id="og-title">
-    <meta property="og:description" content="Loading movie details..." id="og-description">
+    <meta property="og:title" content="Film Gallery | Scene Still" id="og-title">
+    <meta property="og:description" content="Handpicked high quality film screencaptures. Explore the visual language of cinema through composition, light, and color." id="og-description">
     <meta property="og:image" content="" id="og-image">
     <meta property="og:site_name" content="Scene Still">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" id="twitter-card">
     <meta property="twitter:url" content="" id="twitter-url">
-    <meta property="twitter:title" content="Loading Movie..." id="twitter-title">
-    <meta property="twitter:description" content="Loading movie details..." id="twitter-description">
+    <meta property="twitter:title" content="Film Gallery | Scene Still" id="twitter-title">
+    <meta property="twitter:description" content="Handpicked high quality film screencaptures. Explore the visual language of cinema through composition, light, and color." id="twitter-description">
     <meta property="twitter:image" content="" id="twitter-image">
     <meta property="twitter:creator" content="@YuriDandashi">
     
@@ -111,6 +113,16 @@
     <script src="utils/utils-tmdb.js"></script>
     <script src="js/load-films.js"></script>
         <script>
+        // Update page title immediately with movie ID (before async operations)
+        // This helps Google index the correct content
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const movieId = urlParams.get('id');
+            if (movieId) {
+                document.getElementById('page-title').textContent = `Film ${movieId} | Scene Still`;
+            }
+        })();
+        
         async function populateMoviePage() {
             const urlParams = new URLSearchParams(window.location.search);
             const TMDB_MOVIE_ID = urlParams.get('id');
