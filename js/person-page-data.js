@@ -16,21 +16,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log(`Loading films for ${personName} (${personRole})...`);
 
     document.querySelector('h1').textContent = personName;
-    document.getElementById('page-title').textContent = personName + ' | Scene Still';
+    document.getElementById('page-title').textContent = `${personName} - ${personRole} | Scene Still`;
     document.getElementById('meta-description').content = `Explore ${personName}'s filmography with handpicked high quality film screencaptures from their ${personRole.toLowerCase()} work.`;
     document.querySelector('h4').textContent = personRole;
     
     // Update Open Graph tags
     const currentUrl = window.location.href;
-    const ogTitle = `${personName} - ${personRole} | Scene Still`;
+    const ogTitle = `${personName} - ${personRole}`;
     const ogDescription = `Explore ${personName}'s filmography with handpicked high quality film screencaptures from their ${personRole.toLowerCase()} work.`;
+    
+    // Set canonical URL
+    document.getElementById('canonical-url').setAttribute('href', currentUrl);
     
     document.getElementById('og-type').setAttribute('content', 'profile');
     document.getElementById('og-url').setAttribute('content', currentUrl);
     document.getElementById('og-title').setAttribute('content', ogTitle);
     document.getElementById('og-description').setAttribute('content', ogDescription);
     
-    document.getElementById('twitter-card').setAttribute('content', 'summary');
+    document.getElementById('twitter-card').setAttribute('content', 'summary_large_image');
     document.getElementById('twitter-url').setAttribute('content', currentUrl);
     document.getElementById('twitter-title').setAttribute('content', ogTitle);
     document.getElementById('twitter-description').setAttribute('content', ogDescription);
@@ -53,6 +56,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const response = await fetch('Scene still DB - Sheet1.csv');
         const csvText = await response.text();
         const rows = window.SZ.csv.parseCSVToObjects(csvText);
+
+        let firstPosterSet = false; // Track if we've set the OG image yet
 
         for (const row of rows) {
             const movieId = row['Movie ID'];
@@ -89,6 +94,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (isRelated) {
+                // Set the first film's poster as the Open Graph image
+                if (!firstPosterSet && poster) {
+                    document.getElementById('og-image').setAttribute('content', poster);
+                    document.getElementById('twitter-image').setAttribute('content', poster);
+                    firstPosterSet = true;
+                }
+
                 // Add to person films array for search functionality
                 window.SZ.personFilms.push({
                     movieId,
