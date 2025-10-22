@@ -34,6 +34,11 @@
         if (src && !img.src.includes(src)) {
             img.src = src;
             img.classList.add('loaded');
+            
+            // Remove srcset after loading to prevent browser from loading higher resolution
+            // The compressed image is already loaded via src
+            img.removeAttribute('srcset');
+            img.removeAttribute('sizes');
         }
     };
 

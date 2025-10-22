@@ -238,10 +238,10 @@
                     img.dataset.fullSrc = still; // Store full resolution image URL
                     img.alt = `${movieDetails.title} ${index + 1}`;
                     
-                    // SEO: Add srcset to reference full resolution image for search engines
-                    // This tells Google Images about the high-res version
+                    // SEO: Add srcset to tell search engines about full resolution version
+                    // This will be removed after lazy loading to prevent loading high-res on devices
                     if (compressedStills[index]) {
-                        img.setAttribute('srcset', `${compressedStills[index]} 1x, ${still} 2x`);
+                        img.setAttribute('srcset', `${compressedStills[index]} 800w, ${still} 1920w`);
                     }
                     
                     // SEO: Add itemprop for schema.org ImageObject
