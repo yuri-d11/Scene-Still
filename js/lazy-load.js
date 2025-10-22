@@ -51,9 +51,22 @@
         }
 
         const thumbnails = document.querySelectorAll('.thumbnail-image[data-lazy-src]');
+        const isMobile = window.innerWidth < 768; // Bootstrap md breakpoint
         
-        if (isSliderMode) {
-            // In slider mode: Load first slide immediately, lazy load others
+        if (isMobile) {
+            // Mobile: Load first thumbnail immediately (matches main image), lazy load rest
+            if (thumbnails.length > 0) {
+                loadImage(thumbnails[0]);
+            }
+            
+            // Lazy load remaining thumbnails from top to bottom
+            thumbnails.forEach((img, index) => {
+                if (index > 0 && observer) {
+                    observer.observe(img);
+                }
+            });
+        } else if (isSliderMode) {
+            // Desktop slider mode: Load first slide immediately, lazy load others
             loadSlideImages(0);
             
             // Observe remaining images for lazy loading
@@ -64,7 +77,7 @@
                 }
             });
         } else {
-            // In grid mode: Load visible images, lazy load below fold
+            // Desktop grid mode: Load visible images, lazy load below fold
             thumbnails.forEach((img, index) => {
                 if (index < MIN_IMAGES_FOR_SLIDER) {
                     // Load first 16 images immediately (first 4 rows)

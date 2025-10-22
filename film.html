@@ -213,7 +213,8 @@
 
                 if (localStills.length > 0) {
                     const mainImage = document.getElementById('main-image');
-                    mainImage.src = localStills[0]; // Always load full resolution for main image
+                    // Always load full resolution for main image (loads first, before thumbnails)
+                    mainImage.src = localStills[0];
                     mainImage.alt = `${movieDetails.title} 1`;
                     // SEO: Add structured data attributes to main image
                     mainImage.setAttribute('itemprop', 'image');

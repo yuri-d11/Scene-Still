@@ -107,12 +107,14 @@
             const csvText = await response.text();
             const rows = window.SZ.csv.parseCSVToObjects(csvText);
 
-            // Clear loading message but keep container empty for incremental loading
+            const isMobile = window.innerWidth < 768; // Bootstrap md breakpoint
+
+            // Clear loading message
             if (container) {
                 container.innerHTML = '';
             }
 
-            // Process films one by one
+            // Process films
             let processedFilms = [];
             for (const row of rows) {
                 const movieId = row['Movie ID'];
@@ -160,9 +162,9 @@
                 
                 allFilms = processedFilms;
 
-                // Only render if we're on the index page
+                // Only render incrementally on desktop, not on mobile or person page
                 const isPersonPageCheck = checkIfPersonPage();
-                if (!isPersonPageCheck) {
+                if (!isPersonPageCheck && !isMobile) {
                     const container = document.getElementById('film-cards-container');
                     if (container) {
                         renderFilmCard(film, container, insertIndex);
@@ -173,10 +175,14 @@
             // Sort films alphabetically by movieName, ignoring leading articles
             allFilms = processedFilms.sort((a, b) => removeArticles(a.movieName).localeCompare(removeArticles(b.movieName)));
 
-            // Only render all films if we're not on the person page
+            // Render all films at once on mobile or person page
             const isPersonPageCheck = checkIfPersonPage();
             if (!isPersonPageCheck) {
-                renderFilmCards(allFilms, 'film-cards-container');
+                if (isMobile) {
+                    // On mobile, render all at once after loading is complete
+                    renderFilmCards(allFilms, 'film-cards-container');
+                }
+                // On desktop, films are already rendered incrementally above
             }
         } catch (error) {
             console.error('Error loading or parsing data:', error);
