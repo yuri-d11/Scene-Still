@@ -107,8 +107,6 @@
             const csvText = await response.text();
             const rows = window.SZ.csv.parseCSVToObjects(csvText);
 
-            const isMobile = window.innerWidth < 768; // Bootstrap md breakpoint
-
             // Process films in parallel batches for faster loading
             const BATCH_SIZE = 5; // Fetch 5 movies at a time
             let processedFilms = [];
