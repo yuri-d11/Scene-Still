@@ -109,14 +109,12 @@
 
             const isMobile = window.innerWidth < 768; // Bootstrap md breakpoint
 
-            // Clear loading message
-            if (container) {
-                container.innerHTML = '';
-            }
-
-            // Process films
+            // Process films in parallel batches for faster loading
+            const BATCH_SIZE = 5; // Fetch 5 movies at a time
             let processedFilms = [];
-            for (const row of rows) {
+            
+            // Helper function to process a single row
+            const processRow = async (row) => {
                 const movieId = row['Movie ID'];
                 let movieName = row['Movie Name'];
                 let movieYear = row['Movie Year'];
@@ -146,43 +144,34 @@
                     }
                 }
 
-                const film = { movieId, movieName, movieYear, poster, castAndCrewNames };
-                
-                // Find the correct position to insert the new film
-                const insertIndex = processedFilms.findIndex(existing => 
-                    removeArticles(existing.movieName).localeCompare(removeArticles(film.movieName)) > 0
-                );
-                
-                // Add to processed films array at the correct position
-                if (insertIndex === -1) {
-                    processedFilms.push(film);
-                } else {
-                    processedFilms.splice(insertIndex, 0, film);
-                }
-                
-                allFilms = processedFilms;
+                return { movieId, movieName, movieYear, poster, castAndCrewNames };
+            };
 
-                // Only render incrementally on desktop, not on mobile or person page
-                const isPersonPageCheck = checkIfPersonPage();
-                if (!isPersonPageCheck && !isMobile) {
-                    const container = document.getElementById('film-cards-container');
-                    if (container) {
-                        renderFilmCard(film, container, insertIndex);
-                    }
+            // Process rows in batches
+            for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+                const batch = rows.slice(i, i + BATCH_SIZE);
+                const batchResults = await Promise.all(batch.map(processRow));
+                processedFilms.push(...batchResults);
+                
+                // Update loading message with progress
+                if (container) {
+                    const progress = Math.round((processedFilms.length / rows.length) * 100);
+                    container.innerHTML = `<h4 class="loading">Loading films... ${progress}%</h4>`;
                 }
             }
 
             // Sort films alphabetically by movieName, ignoring leading articles
             allFilms = processedFilms.sort((a, b) => removeArticles(a.movieName).localeCompare(removeArticles(b.movieName)));
 
-            // Render all films at once on mobile or person page
+            // Clear loading message
+            if (container) {
+                container.innerHTML = '';
+            }
+
+            // Render all films at once after sorting (both desktop and mobile)
             const isPersonPageCheck = checkIfPersonPage();
             if (!isPersonPageCheck) {
-                if (isMobile) {
-                    // On mobile, render all at once after loading is complete
-                    renderFilmCards(allFilms, 'film-cards-container');
-                }
-                // On desktop, films are already rendered incrementally above
+                renderFilmCards(allFilms, 'film-cards-container');
             }
         } catch (error) {
             console.error('Error loading or parsing data:', error);
