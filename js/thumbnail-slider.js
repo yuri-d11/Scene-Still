@@ -3,7 +3,7 @@
 
     const IMAGES_PER_ROW = 4;
     const ROWS_THRESHOLD = 4;
-    const MIN_IMAGES_FOR_SLIDER = IMAGES_PER_ROW * ROWS_THRESHOLD; // 16 images
+    const MIN_IMAGES_FOR_SLIDER = IMAGES_PER_ROW * ROWS_THRESHOLD;
 
     let currentSlideIndex = 0;
     let totalSlides = 0;
@@ -30,14 +30,12 @@
         sliderEnabled = true;
         if (sliderControls) sliderControls.classList.add('active');
         
-        // Remove the 'row' class when converting to slider
         thumbnailGrid.classList.remove('row');
 
         // Calculate how many rows per slide to distribute evenly
         const totalRows = Math.ceil(thumbnailCount / IMAGES_PER_ROW);
         const imagesPerSlide = calculateImagesPerSlide(totalRows, thumbnailCount);
         
-        // Group thumbnails into slides
         const thumbnails = Array.from(thumbnailGrid.children);
         const slides = [];
         
@@ -119,11 +117,9 @@
         
         currentSlideIndex = index;
         
-        // Move slider
         const offset = -index * 100;
         thumbnailGrid.style.transform = `translateX(${offset}%)`;
         
-        // Update indicators
         indicators.forEach((indicator, i) => {
             if (i === index) {
                 indicator.classList.add('active');
@@ -132,7 +128,6 @@
             }
         });
         
-        // Notify lazy loader about slide change
         if (window.SZ?.lazyLoad?.onSlideChange) {
             window.SZ.lazyLoad.onSlideChange(index);
         }
@@ -150,7 +145,6 @@
         goToSlide(prevIndex);
     };
 
-    // Expose public API
     window.SZ.thumbnailSlider = {
         initializeSlider,
         goToSlide,

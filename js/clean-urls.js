@@ -1,7 +1,4 @@
-/**
- * Clean URLs - Remove .html and index from URL bar on GitHub Pages
- * Automatically redirects from .html URLs to clean URLs
- */
+
 (function() {
     // Only run on production (not localhost)
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
@@ -11,7 +8,6 @@
     let currentUrl = window.location.href;
     let needsUpdate = false;
     
-    // Remove index.html from the URL
     if (currentUrl.includes('index.html')) {
         currentUrl = currentUrl.replace('index.html', '');
         needsUpdate = true;
