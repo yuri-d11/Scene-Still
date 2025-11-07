@@ -37,6 +37,25 @@
             color: #FAFAFA;
         }
 		
+		/* Film Description Styles */
+		.film-description {
+			margin: 0px 0;
+			line-height: 1.45;
+			color: #FAFAFA;
+            width: 64%;
+		}
+		
+		.film-description p {
+			font-size: 1rem;
+			font-weight: 300;
+			margin-bottom: 5px;
+            margin-top: 0px;
+		}
+		
+        .mt-3, .my-3 {
+        margin-top: 0 !important;
+        }
+
         #main-image {
             width: 100%;
             aspect-ratio: 1280 / 494; 
@@ -48,7 +67,7 @@
             box-shadow: 4px 5px 4px 0 rgba(0, 0, 0, 0.2);
             background-color: #222;
             cursor: pointer;
-			margin-top: 8px;
+			margin-top: 6px;
         }
 
         .main-image-placeholder {

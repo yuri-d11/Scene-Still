@@ -12,6 +12,10 @@
     <meta name="keywords" content="film stills, movie screencaptures, cinematography, high quality stills, movie screenshots">
     <link rel="canonical" href="" id="canonical-url">
     
+    <!-- Prerendering hints for crawlers -->
+    <meta name="fragment" content="!">
+    <script type="application/ld+json" id="initial-structured-data"></script>
+    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" id="og-type">
     <meta property="og:url" content="" id="og-url">
@@ -48,19 +52,28 @@
             </form>
 		</nav>
         
-        <h1 id="movie-title">&emsp;</h1>
+        <h1 id="movie-title">Loading Film Gallery...</h1>
+        <noscript>
+            <p>This page requires JavaScript to display film content. Please enable JavaScript in your browser.</p>
+        </noscript>
+        
+        <!-- Film description - provides text content for crawlers -->
+        <div id="film-description" class="film-description">
+            <p>Explore this curated collection of high-quality film screencaptures showcasing the artistry of cinema through composition, lighting, and color. Each still captures a moment of visual storytelling from this acclaimed motion picture.</p>
+        </div>
+        
         <div class="credits-container">
             <div class="credit-line">
                 <span class="credit-title">Director:</span>
-                <span class="credit-name" id="director"></span>
+                <span class="credit-name" id="director">Loading...</span>
             </div>
             <div class="credit-line">
                 <span class="credit-title">Cinematographer:</span>
-                <span class="credit-name" id="cinematographer"></span>
+                <span class="credit-name" id="cinematographer">Loading...</span>
             </div>
 			<div class="credit-line">
                 <span class="credit-title">Cast:</span>
-                <span class="credit-name" id="cast"></span>
+                <span class="credit-name" id="cast">Loading...</span>
             </div>
         </div>
         <!-- Search Results Section -->
@@ -79,14 +92,7 @@
         <!-- Thumbnail Grid -->
 		<div class="thumbnail-grid-wrapper">
 			<div class="row thumbnail-grid" id="thumbnail-grid">
-				<div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
-            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
-            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
-            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
-            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
-            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
-            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
-            <div class="col-lg-3 col-md-6 mb-4"><div class="thumbnail-wrapper"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Thumbnail film still" class="thumbnail-image"></div></div>
+				<!-- Film stills will load here -->
         </div>
 		</div>
 		<div class="slider-controls">
@@ -94,10 +100,10 @@
 			<span class="slider-hint">Click a side to show more images.</span>
 		</div>
     </div>
-        <footer class="wrapper">
-                <hr>
-                <p>by Yuri Dandashi | <a href="about.html">About</a></p>
-        </footer>
+    <footer>
+        <hr>
+        <p>by Yuri Dandashi | <a href="about.html">About</a></p>
+    </footer>
 	<div id="image-modal" class="modal-overlay">
                 <span class="close-modal">&times;</span>
                 <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Loading film still" class="modal-content" id="modal-image">
@@ -113,14 +119,57 @@
     <script src="utils/utils-tmdb.js"></script>
     <script src="js/load-films.js"></script>
         <script>
-        // Update page title immediately with movie ID (before async operations)
-        // This helps Google index the correct content
+        // CRITICAL: Update page metadata IMMEDIATELY on load (synchronous, before any async operations)
+        // This ensures Google sees unique content for each film page
         (function() {
             const urlParams = new URLSearchParams(window.location.search);
             const movieId = urlParams.get('id');
-            if (movieId) {
-                document.getElementById('page-title').textContent = `Film ${movieId} | Scene Still`;
+            
+            if (!movieId) {
+                // No movie ID - show error immediately
+                document.getElementById('page-title').textContent = 'Error: No Film Specified | Scene Still';
+                document.getElementById('meta-description').content = 'Film not found. Please select a film from the gallery.';
+                document.getElementById('movie-title').textContent = 'Error: No film ID provided in URL';
+                
+                // Add basic structured data to prevent soft 404
+                const errorData = {
+                    "@context": "https://schema.org",
+                    "@type": "WebPage",
+                    "name": "Film Not Found",
+                    "description": "The requested film page could not be loaded."
+                };
+                document.getElementById('initial-structured-data').textContent = JSON.stringify(errorData);
+                return;
             }
+            
+            // Update title immediately with movie ID to make each page unique
+            document.getElementById('page-title').textContent = `Film ${movieId} Gallery | Scene Still`;
+            document.getElementById('meta-description').content = `High quality film screencaptures from this cinema masterpiece. View stunning stills, cinematography, and visual artistry.`;
+            document.getElementById('movie-title').textContent = `Loading Film ${movieId}...`;
+            
+            // Set canonical URL immediately
+            const canonicalUrl = `https://www.scenestill.com/film?id=${movieId}`;
+            document.getElementById('canonical-url').setAttribute('href', canonicalUrl);
+            
+            // Add basic structured data immediately - will be replaced with full data when loaded
+            const basicStructuredData = {
+                "@context": "https://schema.org",
+                "@type": "ImageGallery",
+                "name": `Film Gallery - Movie ${movieId}`,
+                "description": `High quality screencaptures and film stills from movie ${movieId}`,
+                "url": canonicalUrl,
+                "mainEntity": {
+                    "@type": "Movie",
+                    "identifier": movieId
+                }
+            };
+            document.getElementById('initial-structured-data').textContent = JSON.stringify(basicStructuredData);
+            
+            // Update Open Graph tags immediately
+            document.getElementById('og-url').setAttribute('content', canonicalUrl);
+            document.getElementById('og-title').setAttribute('content', `Film ${movieId} Gallery | Scene Still`);
+            document.getElementById('twitter-url').setAttribute('content', canonicalUrl);
+            document.getElementById('twitter-title').setAttribute('content', `Film ${movieId} Gallery | Scene Still`);
         })();
         
         async function populateMoviePage() {
@@ -128,7 +177,7 @@
             const TMDB_MOVIE_ID = urlParams.get('id');
 
             if (!TMDB_MOVIE_ID) {
-                document.getElementById('movie-title').textContent = 'Error: Movie ID not provided in URL';
+                // Error already handled in synchronous block above
                 return;
             }
 
@@ -141,12 +190,22 @@
                 const movieDetails = await window.SZ.tmdb.getMovieDetails(TMDB_MOVIE_ID);
                 if (!movieDetails) {
                     document.getElementById('movie-title').textContent = 'Movie not found on TMDb';
+                    document.getElementById('page-title').textContent = 'Film Not Found | Scene Still';
+                    document.getElementById('meta-description').content = 'The requested film could not be found in our database.';
                     return;
                 }
 
                 document.getElementById('page-title').textContent = movieDetails.title + ' | Scene Still';
                 document.getElementById('meta-description').content = movieDetails.title + ' – handpicked high quality film screencaptures';
                 document.getElementById('movie-title').textContent = `${movieDetails.title} (${new Date(movieDetails.release_date).getFullYear()})`;
+                
+                // Update film description with specific content
+                const descriptionEl = document.getElementById('film-description');
+                if (descriptionEl && movieDetails.overview) {
+                    descriptionEl.innerHTML = `<p>${movieDetails.overview}</p>`;
+                } else if (descriptionEl) {
+                    descriptionEl.innerHTML = `<p>Handpicked high-quality screencaptures from ${movieDetails.title}, showcasing the film's visual artistry and cinematography.</p>`;
+                }
 
                 // Load stills from CSV first to get the first image for Open Graph
                 const csvData = await window.SZ.utils.loadCsv('Scene still DB - Sheet1.csv');
@@ -183,7 +242,7 @@
                 window.SZ.searchManager.initializeSearch({
                     searchInputId: 'search-input',
                     filmCardsContainerId: 'film-cards-container',
-                    mainContentSelector: '#main-content, #thumbnail-grid, .credits-container, .wrapper > h1, #thumbnail-instructions, .slider-controls'
+                    mainContentSelector: '#main-content, #thumbnail-grid, .credits-container, .wrapper > h1, #thumbnail-instructions, .slider-controls, #film-description'
                 });
 
                 // Director (assuming director is in crew)
@@ -315,10 +374,12 @@
                     "@type": "ImageGallery",
                     "name": `${movieDetails.title} (${new Date(movieDetails.release_date).getFullYear()}) - Film Stills`,
                     "description": `High quality screencaptures from ${movieDetails.title}`,
+                    "url": currentUrl,
                     "about": {
                         "@type": "Movie",
                         "name": movieDetails.title,
-                        "datePublished": movieDetails.release_date
+                        "datePublished": movieDetails.release_date,
+                        "identifier": TMDB_MOVIE_ID
                     },
                     "image": localStills.map((still, index) => ({
                         "@type": "ImageObject",
@@ -329,14 +390,12 @@
                     }))
                 };
                 
-                // Inject structured data into page
-                const script = document.createElement('script');
-                script.type = 'application/ld+json';
-                script.textContent = JSON.stringify(structuredData);
-                document.head.appendChild(script);
+                // Replace initial structured data with full data
+                document.getElementById('initial-structured-data').textContent = JSON.stringify(structuredData);
 
             } catch (err) {
                 document.getElementById('movie-title').textContent = 'Error loading movie data from TMDb';
+                document.getElementById('page-title').textContent = 'Error Loading Film | Scene Still';
                 console.error(err);
             }
         }
