@@ -59,8 +59,6 @@
         #main-image {
             width: 100%;
             aspect-ratio: 1280 / 494; 
-            min-height: 400px;
-            min-width: 100%; /* Add a minimum height to prevent layout shift */
             height: auto;
             object-fit: cover;
             border-radius: 2px;
@@ -100,7 +98,6 @@
         .thumbnail-image {
             width: 100%;
             aspect-ratio: 1280 / 494; 
-            min-height: 100px;
             height: auto;
             object-fit: cover;
             border-radius: 2px;
@@ -109,6 +106,7 @@
             box-shadow: 4px 5px 4px 0 rgba(0, 0, 0, 0.2);
             background: #333; /* Darker background for placeholder */
             opacity: 0.6;
+            display: block; /* Ensure no inline spacing issues */
         }
         
         .thumbnail-image.loaded {
@@ -417,10 +415,6 @@
 				font-size: 1.1rem;
 			}
 			
-			#main-image {
-				min-height: 150px;
-			}
-			
 			.palette-swatch {
 				font-size: 12px;
 			}
@@ -441,10 +435,6 @@
 		
 		/* Extra adjustments for very small screens */
 		@media (max-width: 480px) {
-			#main-image {
-				min-height: 120px;
-			}
-			
 			.palette-swatch {
 				font-size: 10px;
 			}
