@@ -154,7 +154,7 @@
         }
     };
 
-    const updateMainImageAndPalette = (imageUrl, clickedThumbnailWrapper) => {
+    const updateMainImageAndPalette = (imageUrl, clickedThumbnailWrapper, shouldScroll = false) => {
         const mainImage = document.getElementById('main-image');
         const mainPaletteContainer = document.getElementById('main-palette-container');
 
@@ -180,8 +180,10 @@
             activeThumbnailWrapper = clickedThumbnailWrapper;
         }
 
-        // Scroll to main image on mobile
-        scrollToMainImageOnMobile();
+        // Scroll to main image on mobile only if explicitly requested
+        if (shouldScroll) {
+            scrollToMainImageOnMobile();
+        }
 
         const analysisImg = new Image();
         analysisImg.crossOrigin = "Anonymous"; // Keep for potential future TMDb images or other origins
@@ -213,7 +215,7 @@
                 const thumbnailImage = e.target.closest('.thumbnail-image');
                 if (thumbnailImage) {
                     const thumbnailWrapper = thumbnailImage.closest('.thumbnail-wrapper');
-                    window.SZ.colorPalette.updateMainImageAndPalette(thumbnailImage.dataset.fullSrc, thumbnailWrapper);
+                    window.SZ.colorPalette.updateMainImageAndPalette(thumbnailImage.dataset.fullSrc, thumbnailWrapper, true);
                 }
             });
         }
