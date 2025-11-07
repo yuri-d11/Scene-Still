@@ -329,16 +329,28 @@ footer p a:hover{
 
 /* Mobile Styles - ALL mobile screens (≤767px) - 2 per row */
 @media (max-width: 767px) {
-    /* Show hamburger menu */
-    .hamburger-menu {
-        display: flex;
-    }
-    
-    /* Mobile nav layout: hamburger + search bar */
+    /* Wrapper container for positioning */
     nav {
         flex-wrap: nowrap;
         gap: 10px;
+        position: relative;
     }
+    
+    /* Show hamburger menu */
+    .hamburger-menu {
+        display: flex;
+        flex-shrink: 0; /* Prevent shrinking */
+    }
+    
+    /* Fix hamburger button position when menu is active */
+    .hamburger-menu.active {
+        position: fixed;
+        top: calc(0.5rem + 10px); /* Match nav padding + wrapper padding */
+        left: 15px; /* Align with menu padding */
+        margin: 0;
+    }
+    
+    /* Mobile nav layout: hamburger + search bar */
     
     /* Hide nav list by default on mobile */
     .nav-list {
@@ -349,7 +361,7 @@ footer p a:hover{
         height: 100vh;
         background-color: #1A1A1A;
         flex-direction: column;
-        padding: 60px 20px 20px;
+        padding: 60px 20px 20px 15px;
         margin: 0;
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
         transition: left 0.3s ease;
