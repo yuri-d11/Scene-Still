@@ -256,6 +256,13 @@
                             el.style.display = 'flex';  // Restore flex display for thumbnail grid
                         } else if (el.classList.contains('row')) {
                             el.style.display = 'flex';  // Restore flex display for Bootstrap rows
+                        } else if (el.classList.contains('slider-controls-top')) {
+                            // For top slider controls, only show if active AND on mobile (<=768px)
+                            const isMobile = window.innerWidth <= 768;
+                            el.style.display = (el.classList.contains('active') && isMobile) ? 'flex' : 'none';
+                        } else if (el.classList.contains('slider-controls-bottom')) {
+                            // For bottom slider controls, restore flex if active
+                            el.style.display = el.classList.contains('active') ? 'flex' : 'none';
                         } else if (el.classList.contains('slider-controls')) {
                             el.style.display = 'flex';  // Restore flex display for slider controls
                         } else {

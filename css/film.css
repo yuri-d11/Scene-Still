@@ -157,6 +157,16 @@
 			display: flex;
 		}
 		
+		/* Top slider controls - hidden by default, shown on mobile */
+		.slider-controls-top {
+			margin-top: 0;
+			margin-bottom: 10px;
+		}
+		
+		.slider-controls-top.active {
+			display: none; /* Hidden by default */
+		}
+		
 		.slider-indicators {
 			display: flex;
 			gap: 8px;
@@ -394,6 +404,19 @@
 		
 		/* Responsive adjustments for slider */
 		@media (max-width: 768px) {
+			/* Top slider controls are shown on mobile via JavaScript based on screen size */
+			
+			/* Full width film description on smaller screens */
+			.film-description {
+				width: 100%;
+			}
+			
+			/* Smaller text for credits on mobile */
+			.credit-title,
+			.credit-name {
+				font-size: 1.1rem;
+			}
+			
 			#main-image {
 				min-height: 150px;
 			}
@@ -407,14 +430,12 @@
 			}
 			
 			.slider-controls {
-				flex-wrap: wrap;
+				flex-wrap: wrap; /* Allow wrapping when truly needed */
 				gap: 8px;
 			}
 			
 			.slider-hint {
-				width: 100%;
-				text-align: left;
-				font-size: 13px;
+				font-size: 13px; /* Removed width: 100% so it only wraps when necessary */
 			}
 		}
 		

@@ -41,6 +41,11 @@
 <body>
     <div class="wrapper">
         <nav>
+			<button class="hamburger-menu" aria-label="Toggle navigation menu">
+				<span></span>
+				<span></span>
+				<span></span>
+			</button>
 			<ul class="nav-list">
 			  <li><a href="index.html">Films</a></li>
 			  <li><a href="cast_crew.html">Cast &amp; Crew</a></li>
@@ -89,14 +94,22 @@
 		
 		<p id="thumbnail-instructions">Click one of the thumbnails below to select a main image.</p>
 		
+		<!-- Top Slider Controls (for mobile) -->
+		<div class="slider-controls slider-controls-top">
+			<div class="slider-indicators" id="slider-indicators-top"></div>
+			<span class="slider-hint">Click a side to show more images.</span>
+		</div>
+		
         <!-- Thumbnail Grid -->
 		<div class="thumbnail-grid-wrapper">
 			<div class="row thumbnail-grid" id="thumbnail-grid">
 				<!-- Film stills will load here -->
         </div>
 		</div>
-		<div class="slider-controls">
-			<div class="slider-indicators" id="slider-indicators"></div>
+		
+		<!-- Bottom Slider Controls -->
+		<div class="slider-controls slider-controls-bottom">
+			<div class="slider-indicators" id="slider-indicators-bottom"></div>
 			<span class="slider-hint">Click a side to show more images.</span>
 		</div>
     </div>
@@ -108,6 +121,7 @@
                 <span class="close-modal">&times;</span>
                 <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Loading film still" class="modal-content" id="modal-image">
         </div>
+    <script src="js/hamburger-menu.js"></script>
     <script src="js/clean-urls.js"></script>
     <script src="js/color-palette.js"></script>
     <script src="js/lazy-load.js"></script>
@@ -238,7 +252,7 @@
                 window.SZ.searchManager.initializeSearch({
                     searchInputId: 'search-input',
                     filmCardsContainerId: 'film-cards-container',
-                    mainContentSelector: '#main-content, #thumbnail-grid, .credits-container, .wrapper > h1, #thumbnail-instructions, .slider-controls, #film-description'
+                    mainContentSelector: '#main-content, #thumbnail-grid, .credits-container, .wrapper > h1, #thumbnail-instructions, .slider-controls-top, .slider-controls-bottom, #film-description'
                 });
 
                 // Director (assuming director is in crew)
@@ -294,7 +308,7 @@
                 grid.innerHTML = '';
                 localStills.forEach((still, index) => {
                     const col = document.createElement('div');
-                    col.className = 'col-lg-3 col-md-6 mb-4'; // Changed to col-lg-3 for 4 columns per row
+                    col.className = 'col-lg-3 col-md-4 col-6 mb-4'; // lg-3: 4 cols on desktop, md-4: 3 cols on tablets, col-6: 2 cols on mobile
                     const wrap = document.createElement('div');
                     wrap.className = 'thumbnail-wrapper';
                     const img = document.createElement('img');

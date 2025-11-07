@@ -11,16 +11,19 @@
 
     const initializeSlider = (thumbnailCount) => {
         const thumbnailGrid = document.getElementById('thumbnail-grid');
-        const indicatorsContainer = document.getElementById('slider-indicators');
-        const sliderControls = indicatorsContainer?.parentElement;
+        const indicatorsContainerTop = document.getElementById('slider-indicators-top');
+        const indicatorsContainerBottom = document.getElementById('slider-indicators-bottom');
+        const sliderControlsTop = indicatorsContainerTop?.parentElement;
+        const sliderControlsBottom = indicatorsContainerBottom?.parentElement;
         
-        if (!thumbnailGrid || !indicatorsContainer) return;
+        if (!thumbnailGrid || !indicatorsContainerTop || !indicatorsContainerBottom) return;
 
         // Check if we need a slider (more than 16 images)
         if (thumbnailCount <= MIN_IMAGES_FOR_SLIDER) {
             // Keep regular grid layout
             sliderEnabled = false;
-            if (sliderControls) sliderControls.classList.remove('active');
+            if (sliderControlsTop) sliderControlsTop.classList.remove('active');
+            if (sliderControlsBottom) sliderControlsBottom.classList.remove('active');
             thumbnailGrid.classList.remove('thumbnail-slider');
             thumbnailGrid.classList.add('row');
             thumbnailGrid.style.transform = '';
@@ -28,7 +31,21 @@
         }
 
         sliderEnabled = true;
-        if (sliderControls) sliderControls.classList.add('active');
+        
+        // Add active class and set display based on screen size
+        const isMobile = window.innerWidth <= 768;
+        
+        if (sliderControlsTop) {
+            sliderControlsTop.classList.add('active');
+            // Top controls only shown on mobile
+            sliderControlsTop.style.display = isMobile ? 'flex' : 'none';
+        }
+        
+        if (sliderControlsBottom) {
+            sliderControlsBottom.classList.add('active');
+            // Bottom controls shown on all screen sizes
+            sliderControlsBottom.style.display = 'flex';
+        }
         
         thumbnailGrid.classList.remove('row');
 
@@ -64,8 +81,9 @@
             thumbnailGrid.appendChild(slideDiv);
         });
 
-        // Create indicators with letters
-        createIndicators(totalSlides, indicatorsContainer);
+        // Create indicators with letters for both top and bottom
+        createIndicators(totalSlides, indicatorsContainerTop);
+        createIndicators(totalSlides, indicatorsContainerBottom);
         
         // Set initial slide
         goToSlide(0);
@@ -120,8 +138,10 @@
         const offset = -index * 100;
         thumbnailGrid.style.transform = `translateX(${offset}%)`;
         
-        indicators.forEach((indicator, i) => {
-            if (i === index) {
+        // Update all indicators (both top and bottom) based on their data-slide attribute
+        indicators.forEach((indicator) => {
+            const slideNum = parseInt(indicator.getAttribute('data-slide'));
+            if (slideNum === index) {
                 indicator.classList.add('active');
             } else {
                 indicator.classList.remove('active');
@@ -144,6 +164,18 @@
         const prevIndex = (currentSlideIndex - 1 + totalSlides) % totalSlides;
         goToSlide(prevIndex);
     };
+
+    // Update top controls visibility based on screen size
+    const updateTopControlsVisibility = () => {
+        const sliderControlsTop = document.querySelector('.slider-controls-top');
+        if (!sliderControlsTop || !sliderControlsTop.classList.contains('active')) return;
+        
+        const isMobile = window.innerWidth <= 768;
+        sliderControlsTop.style.display = isMobile ? 'flex' : 'none';
+    };
+
+    // Add resize listener to handle responsive visibility
+    window.addEventListener('resize', updateTopControlsVisibility);
 
     window.SZ.thumbnailSlider = {
         initializeSlider,

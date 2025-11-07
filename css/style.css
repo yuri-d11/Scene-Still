@@ -34,6 +34,39 @@ nav {
     background-color: transparent;
     padding: 0.5rem 0; 
 	flex-wrap: wrap;
+	position: relative;
+}
+
+/* Hamburger menu button - hidden by default */
+.hamburger-menu {
+	display: none;
+	flex-direction: column;
+	gap: 5px;
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 5px;
+	z-index: 1001;
+}
+
+.hamburger-menu span {
+	width: 25px;
+	height: 2px;
+	background-color: #FAFAFA;
+	transition: all 0.3s ease;
+	display: block;
+}
+
+.hamburger-menu.active span:nth-child(1) {
+	transform: rotate(45deg) translate(7px, 7px);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+	opacity: 0;
+}
+
+.hamburger-menu.active span:nth-child(3) {
+	transform: rotate(-45deg) translate(7px, -7px);
 }
 
 .nav-list {
@@ -149,10 +182,15 @@ a:hover{
     flex-wrap: wrap;
     margin: 0px;
     margin-bottom: 50px;
-}.image-card {
+}
+.image-card {
 	text-align: center;
 	transition: transform 0.2s;
 	flex-shrink: 0;
+	flex-grow: 0;
+	/* Default: 4 cards per row on desktop */
+	width: calc((100% - (30px * 3)) / 4);
+	box-sizing: border-box;
 }
 
 .image-card a {
@@ -163,8 +201,9 @@ a:hover{
 }
 
 .image-card img {
-	width: 272.5px;
-	height: 350px;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 272.5 / 350;
 	object-fit: cover;
 	border-radius: 2px;
 	display: block;
@@ -288,42 +327,58 @@ footer p a:hover{
 
 /* --- Responsive CSS --- */
 
-/* Tablet Styles */
-@media (max-width: 1024px) {
-    .wrapper, footer {
-        padding: 10px 30px;
+/* Mobile Styles - ALL mobile screens (≤767px) - 2 per row */
+@media (max-width: 767px) {
+    /* Show hamburger menu */
+    .hamburger-menu {
+        display: flex;
     }
-
-    h4 {
-        width: 80%;
-    }
-
-    .image-container {
-        justify-content: center; /* Center images when they wrap */
-        gap: 30px;
-    }
-
-    .image-card img {
-        width: 300px; /* Adjust image size for tablets */
-        height: 375px;
-    }
-}
-
-/* Mobile Styles - Large */
-@media (max-width: 768px) {
+    
+    /* Mobile nav layout: hamburger + search bar */
     nav {
+        flex-wrap: nowrap;
+        gap: 10px;
+    }
+    
+    /* Hide nav list by default on mobile */
+    .nav-list {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 250px;
+        height: 100vh;
+        background-color: #1A1A1A;
         flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
+        padding: 60px 20px 20px;
+        margin: 0;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+        transition: left 0.3s ease;
+        z-index: 1000;
+        overflow-y: auto;
+    }
+    
+    .nav-list.active {
+        left: 0;
+    }
+    
+    .nav-list li {
+        margin-right: 0;
+        margin-bottom: 15px;
+        width: 100%;
+    }
+    
+    .nav-list li a {
+        font-size: 18px;
+        padding: 8px 0;
     }
 
     .search-form {
-        width: 100%;
+        flex: 1;
     }
 
     .search-input {
         width: 100%;
-        box-sizing: border-box; /* Include padding in the width */
+        box-sizing: border-box;
     }
 
     h1 {
@@ -335,26 +390,31 @@ footer p a:hover{
         width: 100%;
     }
 
+    .section_start {
+        margin-top: 25px;
+    }
+
+    .image-container {
+        gap: 15px;
+    }
+
+    /* 2 cards per row for ALL mobile */
+    .image-card {
+        width: calc((100% - (15px * 1)) / 2);
+        box-sizing: border-box;
+    }
+
     .image-card img {
-        width: 250px;
-        height: 312px;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 272.5 / 350;
     }
 }
 
-/* Mobile Styles - Small */
+/* Extra small mobile - additional adjustments */
 @media (max-width: 480px) {
     .wrapper, footer {
         padding: 10px 15px;
-    }
-
-    .nav-list {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .nav-list li {
-        margin-right: 0;
-        margin-bottom: 5px;
     }
 
     h1 {
@@ -365,19 +425,16 @@ footer p a:hover{
         font-size: 1rem;
     }
 
+    .section_start {
+        margin-top: 20px;
+    }
+
     .image-container {
-        flex-direction: column;
-        align-items: center; /* Stack images vertically */
-        gap: 30px;
+        gap: 10px;
     }
 
     .image-card {
-        width: 100%;
-    }
-
-    .image-card img {
-        width: 100%; /* Make images full-width */
-        height: auto; /* Maintain aspect ratio */
+        width: calc((100% - (10px * 1)) / 2);
     }
 
     footer {
@@ -385,6 +442,38 @@ footer p a:hover{
     }
 
     hr {
-        width: 100%; /* Make footer line full-width */
+        width: 100%;
+    }
+}
+
+/* Tablet Styles - 3 per row (768px to 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .wrapper, footer {
+        padding: 10px 30px;
+    }
+
+    h4 {
+        width: 80%;
+    }
+
+    .section_start {
+        margin-top: 30px;
+    }
+
+    .image-container {
+        justify-content: left;
+        gap: 20px;
+    }
+
+    .image-card {
+        /* 3 cards per row: (100% - 2 gaps) / 3 */
+        width: calc((100% - (20px * 2)) / 3);
+        box-sizing: border-box;
+    }
+
+    .image-card img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 272.5 / 350;
     }
 }
