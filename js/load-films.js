@@ -44,10 +44,11 @@
         const filmCard = document.createElement('div');
         filmCard.className = 'image-card';
         filmCard.setAttribute('data-movie-id', film.movieId);
+        const fullTitle = `${film.movieName} (${film.movieYear})`;
         filmCard.innerHTML = `
             <a href="film.html?id=${film.movieId}">
                 <img src="${film.poster}" alt="${film.movieName} Poster">
-                <h4>${film.movieName} (${film.movieYear})</h4>
+                <h4 title="${fullTitle}">${film.movieName} (${film.movieYear})</h4>
             </a>
         `;
 
@@ -74,11 +75,12 @@
             container.innerHTML = '';
             let htmlContent = '';
             filmsToRender.forEach(film => {
+                const fullTitle = `${film.movieName} (${film.movieYear})`;
                 htmlContent += `
                     <div class="image-card" data-movie-id="${film.movieId}">
                         <a href="film.html?id=${film.movieId}">
                             <img src="${film.poster}" alt="${film.movieName} Poster">
-                            <h4>${film.movieName} (${film.movieYear})</h4>
+                            <h4 title="${fullTitle}">${film.movieName} (${film.movieYear})</h4>
                         </a>
                     </div>
                 `;
