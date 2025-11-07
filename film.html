@@ -157,11 +157,7 @@
                 "@type": "ImageGallery",
                 "name": `Film Gallery - Movie ${movieId}`,
                 "description": `High quality screencaptures and film stills from movie ${movieId}`,
-                "url": canonicalUrl,
-                "mainEntity": {
-                    "@type": "Movie",
-                    "identifier": movieId
-                }
+                "url": canonicalUrl
             };
             document.getElementById('initial-structured-data').textContent = JSON.stringify(basicStructuredData);
             
