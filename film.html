@@ -340,6 +340,12 @@
                     col.className = 'col-lg-3 col-md-4 col-6 mb-4'; // lg-3: 4 cols on desktop, md-4: 3 cols on tablets, col-6: 2 cols on mobile
                     const wrap = document.createElement('div');
                     wrap.className = 'thumbnail-wrapper';
+                    
+                    // Set aspect ratio on wrapper to reserve space and prevent layout shift
+                    if (aspectRatio) {
+                        wrap.style.aspectRatio = aspectRatio;
+                    }
+                    
                     const img = document.createElement('img');
                     
                     // PRIORITY 2: Use placeholder for all thumbnails, lazy load compressed versions
@@ -349,6 +355,11 @@
                     img.dataset.fullSrc = still; // Full resolution for later upgrade
                     img.alt = `${movieDetails.title} ${index + 1}`;
                     img.loading = 'lazy'; // Browser-level lazy loading hint
+                    
+                    // Set aspect ratio on image as well
+                    if (aspectRatio) {
+                        img.style.aspectRatio = aspectRatio;
+                    }
                     
                     // Don't add srcset - we'll handle loading manually through lazy-load.js
                     
@@ -360,12 +371,13 @@
                     grid.appendChild(col);
                 });
 
-                // Apply aspect ratio to thumbnails after they are created
-                if (aspectRatio) {
-                    document.querySelectorAll('.thumbnail-image').forEach(img => {
-                        img.style.aspectRatio = aspectRatio;
-                    });
-                }
+                // Apply aspect ratio to thumbnails after they are created (fallback - now redundant)
+                // Keeping this commented out as aspect ratio is now set during creation
+                // if (aspectRatio) {
+                //     document.querySelectorAll('.thumbnail-image').forEach(img => {
+                //         img.style.aspectRatio = aspectRatio;
+                //     });
+                // }
 
                 // Initialize slider if needed (more than 16 images)
                 if (window.SZ?.thumbnailSlider?.initializeSlider) {

@@ -245,6 +245,8 @@
             border: 2px solid transparent; /* Default transparent border */
             border-radius: 4px; /* Slightly more than image border-radius */
             transition: border-color 0.3s ease;
+            /* Aspect ratio will be set dynamically via JavaScript inline style */
+            overflow: hidden; /* Ensure content doesn't overflow */
         }
 
         .thumbnail-wrapper.active {
@@ -253,7 +255,6 @@
 
         .thumbnail-image {
             width: 100%;
-            aspect-ratio: 1280 / 494; 
             height: auto;
             object-fit: cover;
             border-radius: 2px;
@@ -263,9 +264,19 @@
             background: #333; /* Darker background for placeholder */
             opacity: 0.6;
             display: block; /* Ensure no inline spacing issues */
+            /* Image positioned absolutely to fit wrapper */
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            /* Aspect ratio will be set dynamically via JavaScript inline style */
         }
         
-        .thumbnail-image.loaded {
+        .thumbnail-image.thumbnail-loaded {
+            opacity: 0.8;
+        }
+        
+        .thumbnail-image.full-loaded {
             opacity: 1;
         }
         
