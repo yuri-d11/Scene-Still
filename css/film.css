@@ -56,6 +56,12 @@
         margin-top: 0 !important;
         }
 
+        .main-image-container {
+            position: relative;
+            width: 100%;
+            margin-top: 6px;
+        }
+
         #main-image {
             width: 100%;
             aspect-ratio: 1280 / 494; 
@@ -65,7 +71,157 @@
             box-shadow: 4px 5px 4px 0 rgba(0, 0, 0, 0.2);
             background-color: #222;
             cursor: pointer;
-			margin-top: 6px;
+            user-select: none;
+            -webkit-user-drag: none;
+            display: block;
+        }
+
+        .image-click-indicators {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .main-image-container:hover .image-click-indicators {
+            opacity: 1;
+        }
+
+        .image-click-indicators.clicked {
+            opacity: 0 !important;
+        }
+
+        .click-indicator {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.3);
+            transition: background-color 0.2s ease;
+            gap: 8px;
+        }
+
+        .click-indicator:hover {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .middle-indicator {
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .indicator-icon {
+            font-size: 48px;
+            color: #FAFAFA;
+            font-weight: 300;
+            line-height: 1;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .indicator-text {
+            font-size: 16px;
+            color: #FAFAFA;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Hide indicators on mobile/touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            .image-click-indicators {
+                display: none;
+            }
+        }
+
+        /* Swipe Tutorial for Mobile */
+        .swipe-tutorial {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 2px;
+            pointer-events: none;
+            z-index: 10;
+            animation: tutorialFadeOut 4s ease-in-out forwards;
+        }
+
+        .swipe-tutorial.active {
+            display: flex;
+        }
+
+        .swipe-hand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: swipeAnimation 2s ease-in-out infinite;
+        }
+
+        .hand-icon {
+            width: 48px;
+            height: 48px;
+            color: #FAFAFA;
+            transform: rotate(-90deg);
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+        }
+
+        .swipe-arrow {
+            font-size: 40px;
+            color: #FAFAFA;
+            font-weight: 300;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .swipe-instruction {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #FAFAFA;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes swipeAnimation {
+            0%, 100% {
+                transform: translateX(-30px);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translateX(30px);
+                opacity: 1;
+            }
+        }
+
+        @keyframes tutorialFadeOut {
+            0%, 70% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        /* Show tutorial only on touch devices */
+        @media (hover: hover) and (pointer: fine) {
+            .swipe-tutorial {
+                display: none !important;
+            }
         }
 
         .main-image-placeholder {
@@ -332,7 +488,9 @@
             opacity: 1;
             transform: translate(-50%, -50%); /* Move into view */
         }
-		.modal-overlay {
+		
+		/* Zoom Overlay Styles */
+		.zoom-overlay {
             position: fixed !important;
             z-index: 1050;
             left: 0 !important;
@@ -341,63 +499,62 @@
             bottom: 0 !important;
             width: 100% !important;
             height: 100% !important;
-            background-color: rgba(0,0,0,0.9);
+            background-color: rgba(0,0,0,0.95);
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
-            flex-direction: row;
             padding: 20px;
             box-sizing: border-box;
             margin: 0 !important;
             overflow: hidden;
-            /* Added for transition */
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-        .modal-overlay.visible {
+        .zoom-overlay.visible {
             opacity: 1;
             visibility: visible;
             pointer-events: auto;
         }
 
-        .modal-content {
+        .zoomed-image {
             display: block !important;
             width: auto !important;
             height: auto !important;
-            max-width: 85% !important;
-            max-height: 85vh !important;
-            border-radius: 4px;
+            max-width: 95% !important;
+            max-height: 95vh !important;
+            border-radius: 2px;
             object-fit: contain;
             margin: 0 !important;
             padding: 0 !important;
-            position: relative;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
             transform: scale(0.95);
-            transition: transform 0.4s ease;
+            transition: transform 0.3s ease;
         }
 
-        .modal-overlay.visible .modal-content {
+        .zoom-overlay.visible .zoomed-image {
             transform: scale(1);
         }
 
-        .close-modal {
+        .close-zoom {
             position: absolute;
-            top: 15px;
-            right: 35px;
+            top: 20px;
+            right: 40px;
             color: #f1f1f1;
-            font-size: 40px;
+            font-size: 45px;
             font-weight: bold;
-            transition: 0.3s;
+            transition: color 0.3s;
             cursor: pointer;
+            z-index: 1051;
+            line-height: 1;
         }
 
-        .close-modal:hover,
-        .close-modal:focus {
+        .close-zoom:hover,
+        .close-zoom:focus {
             color: #bbb;
             text-decoration: none;
-            cursor: pointer;
         }
 		
 		/* Responsive adjustments for slider */

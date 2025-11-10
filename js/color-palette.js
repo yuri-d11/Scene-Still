@@ -178,6 +178,18 @@
         if (clickedThumbnailWrapper) {
             clickedThumbnailWrapper.classList.add('active');
             activeThumbnailWrapper = clickedThumbnailWrapper;
+            
+            // Update current image index for swipe handler
+            if (window.SZ?.swipeHandler?.setCurrentImageIndex) {
+                const thumbnailGrid = document.getElementById('thumbnail-grid');
+                if (thumbnailGrid) {
+                    const allThumbnails = Array.from(thumbnailGrid.querySelectorAll('.thumbnail-wrapper'));
+                    const currentIndex = allThumbnails.indexOf(clickedThumbnailWrapper);
+                    if (currentIndex !== -1) {
+                        window.SZ.swipeHandler.setCurrentImageIndex(currentIndex);
+                    }
+                }
+            }
         }
 
         // Scroll to main image on mobile only if explicitly requested
@@ -203,10 +215,6 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         const thumbnailGrid = document.querySelector('.thumbnail-grid');
-        const mainImage = document.getElementById('main-image');
-        const imageModal = document.getElementById('image-modal');
-        const modalImage = document.getElementById('modal-image');
-        const closeModal = document.querySelector('.close-modal');
 
         // --- Event Listeners ---
         if (thumbnailGrid) {
@@ -216,28 +224,6 @@
                 if (thumbnailImage) {
                     const thumbnailWrapper = thumbnailImage.closest('.thumbnail-wrapper');
                     window.SZ.colorPalette.updateMainImageAndPalette(thumbnailImage.dataset.fullSrc, thumbnailWrapper, true);
-                }
-            });
-        }
-
-        if (mainImage) {
-            mainImage.addEventListener('click', () => {
-                imageModal.classList.add('visible'); 
-                modalImage.src = mainImage.src;
-                modalImage.alt = mainImage.alt; // Copy alt text from main image
-            });
-        }
-
-        if (closeModal) {
-            closeModal.addEventListener('click', () => {
-                imageModal.classList.remove('visible'); 
-            });
-        }
-
-        if (imageModal) {
-            imageModal.addEventListener('click', (e) => {
-                if (e.target === imageModal) {
-                     imageModal.classList.remove('visible'); 
                 }
             });
         }
