@@ -89,7 +89,7 @@
         <!-- Main Image -->
         <div class="mt-3" id="main-content">
             <div class="main-image-container">
-                <img id="main-image" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Loading film still" class="img-fluid main-image-placeholder">
+                <img id="main-image" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Loading film still" class="img-fluid main-image-placeholder" loading="eager" fetchpriority="high">
                 <div class="image-click-indicators">
                     <div class="click-indicator left-indicator">
                         <span class="indicator-icon">‹</span>
@@ -323,7 +323,7 @@
 
                 if (localStills.length > 0) {
                     const mainImage = document.getElementById('main-image');
-                    // Always load full resolution for main image (loads first, before thumbnails)
+                    // PRIORITY 1: Load main image at full resolution immediately
                     mainImage.src = localStills[0];
                     mainImage.alt = `${movieDetails.title} 1`;
                     // SEO: Add structured data attributes to main image
@@ -342,18 +342,15 @@
                     wrap.className = 'thumbnail-wrapper';
                     const img = document.createElement('img');
                     
-                    // Use placeholder initially, store actual src in data attribute for lazy loading
+                    // PRIORITY 2: Use placeholder for all thumbnails, lazy load compressed versions
                     img.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
                     img.className = 'thumbnail-image';
-                    img.dataset.lazySrc = compressedStills[index] || still; // Use compressed still if available
-                    img.dataset.fullSrc = still; // Store full resolution image URL
+                    img.dataset.lazySrc = compressedStills[index] || still; // Compressed version for initial load
+                    img.dataset.fullSrc = still; // Full resolution for later upgrade
                     img.alt = `${movieDetails.title} ${index + 1}`;
+                    img.loading = 'lazy'; // Browser-level lazy loading hint
                     
-                    // SEO: Add srcset to tell search engines about full resolution version
-                    // This will be removed after lazy loading to prevent loading high-res on devices
-                    if (compressedStills[index]) {
-                        img.setAttribute('srcset', `${compressedStills[index]} 800w, ${still} 1920w`);
-                    }
+                    // Don't add srcset - we'll handle loading manually through lazy-load.js
                     
                     // SEO: Add itemprop for schema.org ImageObject
                     img.setAttribute('itemprop', 'image');

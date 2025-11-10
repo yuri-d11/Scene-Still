@@ -223,7 +223,15 @@
                 const thumbnailImage = e.target.closest('.thumbnail-image');
                 if (thumbnailImage) {
                     const thumbnailWrapper = thumbnailImage.closest('.thumbnail-wrapper');
-                    window.SZ.colorPalette.updateMainImageAndPalette(thumbnailImage.dataset.fullSrc, thumbnailWrapper, true);
+                    const fullSrc = thumbnailImage.dataset.fullSrc;
+                    
+                    // Queue full resolution loading for this thumbnail if not already loaded
+                    if (window.SZ?.lazyLoad?.queueFullResolution && !thumbnailImage.classList.contains('full-loaded')) {
+                        window.SZ.lazyLoad.queueFullResolution(thumbnailImage);
+                    }
+                    
+                    // Update main image with full resolution
+                    window.SZ.colorPalette.updateMainImageAndPalette(fullSrc, thumbnailWrapper, true);
                 }
             });
         }

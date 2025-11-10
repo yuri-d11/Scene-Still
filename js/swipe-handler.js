@@ -199,6 +199,12 @@
         
         if (!targetThumbnail) return;
         
+        // Queue full resolution loading for the thumbnail if not already loaded
+        const thumbnailImage = targetThumbnail.querySelector('.thumbnail-image');
+        if (thumbnailImage && window.SZ?.lazyLoad?.queueFullResolution && !thumbnailImage.classList.contains('full-loaded')) {
+            window.SZ.lazyLoad.queueFullResolution(thumbnailImage);
+        }
+        
         // Update main image and palette using existing function
         if (window.SZ?.colorPalette?.updateMainImageAndPalette) {
             window.SZ.colorPalette.updateMainImageAndPalette(imageUrl, targetThumbnail, false);
