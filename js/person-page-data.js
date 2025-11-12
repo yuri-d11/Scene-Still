@@ -2,15 +2,32 @@
 window.SZ = window.SZ || {};
 window.SZ.personFilms = [];
 
-// Update page title immediately (before DOMContentLoaded) for better Google indexing
+// Update page title and canonical URL immediately (before DOMContentLoaded) for better Google indexing
 (function() {
     const urlParams = new URLSearchParams(window.location.search);
     const personName = urlParams.get('name');
     const personRole = urlParams.get('role');
     if (personName && personRole) {
-        // Update as soon as script loads
+        // Update title as soon as script loads
         if (document.getElementById('page-title')) {
             document.getElementById('page-title').textContent = `${personName} - ${personRole} | Scene Still`;
+        }
+        
+        // Set canonical URL using clean URL format (no .html, proper encoding)
+        const cleanUrl = `https://www.scenestill.com/person?name=${encodeURIComponent(personName)}&role=${encodeURIComponent(personRole)}`;
+        const canonicalTag = document.getElementById('canonical-url');
+        if (canonicalTag) {
+            canonicalTag.setAttribute('href', cleanUrl);
+        }
+        
+        // Also update og:url and twitter:url immediately for consistency
+        const ogUrlTag = document.getElementById('og-url');
+        if (ogUrlTag) {
+            ogUrlTag.setAttribute('content', cleanUrl);
+        }
+        const twitterUrlTag = document.getElementById('twitter-url');
+        if (twitterUrlTag) {
+            twitterUrlTag.setAttribute('content', cleanUrl);
         }
     }
 })();
@@ -34,20 +51,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('h4').textContent = personRole;
     
     // Update Open Graph tags
-    const currentUrl = window.location.href;
     const ogTitle = `${personName} - ${personRole}`;
     const ogDescription = `Explore ${personName}'s filmography with handpicked high quality film screencaptures from their ${personRole.toLowerCase()} work.`;
     
-    // Set canonical URL
-    document.getElementById('canonical-url').setAttribute('href', currentUrl);
+    // Canonical URL and social URLs are already set in the synchronous IIFE above
     
     document.getElementById('og-type').setAttribute('content', 'profile');
-    document.getElementById('og-url').setAttribute('content', currentUrl);
     document.getElementById('og-title').setAttribute('content', ogTitle);
     document.getElementById('og-description').setAttribute('content', ogDescription);
     
     document.getElementById('twitter-card').setAttribute('content', 'summary_large_image');
-    document.getElementById('twitter-url').setAttribute('content', currentUrl);
     document.getElementById('twitter-title').setAttribute('content', ogTitle);
     document.getElementById('twitter-description').setAttribute('content', ogDescription);
     
