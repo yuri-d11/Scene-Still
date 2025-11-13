@@ -149,6 +149,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         
         console.log(`Loaded ${window.SZ.personFilms.length} films for ${personName}`);
+        
+        // Initialize search after films are loaded
+        if (window.SZ && window.SZ.searchManager && window.SZ.searchManager.initializeSearch) {
+            window.SZ.searchManager.initializeSearch({
+                searchInputId: 'search-input',
+                filmCardsContainerId: 'film-cards-container',
+                mainContentSelector: '.wrapper > h1, .wrapper > h4',
+                keepContentVisible: true
+            });
+        }
     } catch (error) {
         console.error('Error loading or parsing data:', error);
     }
