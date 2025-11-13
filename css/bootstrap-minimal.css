@@ -1,0 +1,138 @@
+/* Minimal Bootstrap CSS - Only used classes (26KB → ~2KB) */
+
+/* Box Sizing - Bootstrap default */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Heading resets - Bootstrap defaults */
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+/* Grid System */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.no-gutters > .col,
+.no-gutters > [class*="col-"] {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.col {
+    flex-basis: 0;
+    flex-grow: 1;
+    max-width: 100%;
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+/* Mobile first - col-6 = 50% width */
+.col-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+/* Tablets - md breakpoint (768px) */
+@media (min-width: 768px) {
+    .col-md-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+}
+
+/* Desktop - lg breakpoint (992px) */
+@media (min-width: 992px) {
+    .col-lg-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+}
+
+/* Spacing Utilities - exact Bootstrap values */
+.mb-4 {
+    margin-bottom: 1.5rem !important; /* 24px */
+}
+
+.mt-3 {
+    margin-top: 1rem !important; /* 16px */
+}
+
+/* Responsive Images */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Text Color Utilities */
+.text-dark {
+    color: #343a40 !important;
+}
+
+.text-white {
+    color: #fff !important;
+}
+
+/* Form Controls - Bootstrap defaults for consistent font rendering */
+input,
+button,
+select,
+optgroup,
+textarea {
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+button,
+input {
+    overflow: visible;
+}
+
+button,
+select {
+    text-transform: none;
+}
+
+/* Heading sizes (Bootstrap-like defaults) */
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+/* Ensure form inputs inherit the site's variable font and expected sizes */
+input,
+textarea,
+select {
+    font-family: 'Jost', sans-serif;
+}
+
+/* Specific small utility for the search input to preserve original styling */
+.search-input {
+    font-size: 14px;
+    font-family: 'Jost', sans-serif;
+}
