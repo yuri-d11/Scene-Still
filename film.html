@@ -341,11 +341,6 @@
                     const wrap = document.createElement('div');
                     wrap.className = 'thumbnail-wrapper';
                     
-                    // Set aspect ratio on wrapper to reserve space and prevent layout shift
-                    if (aspectRatio) {
-                        wrap.style.aspectRatio = aspectRatio;
-                    }
-                    
                     const img = document.createElement('img');
                     
                     // PRIORITY 2: Use placeholder for all thumbnails, lazy load compressed versions
@@ -356,7 +351,7 @@
                     img.alt = `${movieDetails.title} ${index + 1}`;
                     img.loading = 'lazy'; // Browser-level lazy loading hint
                     
-                    // Set aspect ratio on image as well
+                    // Set aspect ratio on image to match main image approach
                     if (aspectRatio) {
                         img.style.aspectRatio = aspectRatio;
                     }
@@ -370,14 +365,6 @@
                     col.appendChild(wrap);
                     grid.appendChild(col);
                 });
-
-                // Apply aspect ratio to thumbnails after they are created (fallback - now redundant)
-                // Keeping this commented out as aspect ratio is now set during creation
-                // if (aspectRatio) {
-                //     document.querySelectorAll('.thumbnail-image').forEach(img => {
-                //         img.style.aspectRatio = aspectRatio;
-                //     });
-                // }
 
                 // Initialize slider if needed (more than 16 images)
                 if (window.SZ?.thumbnailSlider?.initializeSlider) {
