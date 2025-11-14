@@ -9,7 +9,7 @@
     let totalSlides = 0;
     let sliderEnabled = false;
 
-    const initializeSlider = (thumbnailCount) => {
+    const initializeSlider = (thumbnailCount, customRowsPerSlide) => {
         const thumbnailGrid = document.getElementById('thumbnail-grid');
         const indicatorsContainerTop = document.getElementById('slider-indicators-top');
         const indicatorsContainerBottom = document.getElementById('slider-indicators-bottom');
@@ -51,7 +51,9 @@
 
         // Calculate how many rows per slide to distribute evenly
         const totalRows = Math.ceil(thumbnailCount / IMAGES_PER_ROW);
-        const imagesPerSlide = calculateImagesPerSlide(totalRows, thumbnailCount);
+        const imagesPerSlide = customRowsPerSlide 
+            ? customRowsPerSlide * IMAGES_PER_ROW 
+            : calculateImagesPerSlide(totalRows, thumbnailCount);
         
         const thumbnails = Array.from(thumbnailGrid.children);
         const slides = [];

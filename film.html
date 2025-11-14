@@ -390,9 +390,18 @@
                     grid.appendChild(col);
                 });
 
+                // Get custom slider rows configuration from CSV if specified
+                let customSliderRows = null;
+                if (movieEntry && movieEntry['Slider rows']) {
+                    const parsedRows = parseInt(movieEntry['Slider rows'], 10);
+                    if (!isNaN(parsedRows) && parsedRows > 0) {
+                        customSliderRows = parsedRows;
+                    }
+                }
+
                 // Initialize slider if needed (more than 16 images)
                 if (window.SZ?.thumbnailSlider?.initializeSlider) {
-                    window.SZ.thumbnailSlider.initializeSlider(localStills.length);
+                    window.SZ.thumbnailSlider.initializeSlider(localStills.length, customSliderRows);
                 }
 
                 // Setup lazy loading for thumbnails
