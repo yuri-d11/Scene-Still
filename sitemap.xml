@@ -28,7 +28,7 @@
         <priority>0.7</priority>
     </url>
     
-    <!-- Film Pages (35 total) -->
+    <!-- Film Pages (36 total) -->
     <url>
         <loc>https://www.scenestill.com/film?id=3175</loc>
         <lastmod>2025-11-25</lastmod>
@@ -239,8 +239,14 @@
         <changefreq>monthly</changefreq>
         <priority>0.9</priority>
     </url>
+    <url>
+        <loc>https://www.scenestill.com/film?id=345</loc>
+        <lastmod>2025-11-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
     
-    <!-- People Pages (393 total) -->
+    <!-- People Pages (404 total) -->
     <url>
         <loc>https://www.scenestill.com/person?name=Stanley%20Kubrick&amp;role=Director</loc>
         <lastmod>2025-11-25</lastmod>
@@ -1106,13 +1112,13 @@
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://www.scenestill.com/person?name=Milo%C5%A1%20Forman&amp;role=Director</loc>
+        <loc>https://www.scenestill.com/person?name=Miroslav%20Ond%C5%99%C3%AD%C4%8Dek&amp;role=Cinematographer</loc>
         <lastmod>2025-11-25</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://www.scenestill.com/person?name=Miroslav%20Ond%C5%99%C3%AD%C4%8Dek&amp;role=Cinematographer</loc>
+        <loc>https://www.scenestill.com/person?name=Milo%C5%A1%20Forman&amp;role=Director</loc>
         <lastmod>2025-11-25</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
@@ -1442,13 +1448,13 @@
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://www.scenestill.com/person?name=Michael%20Mann&amp;role=Director</loc>
+        <loc>https://www.scenestill.com/person?name=Dante%20Spinotti&amp;role=Cinematographer</loc>
         <lastmod>2025-11-25</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://www.scenestill.com/person?name=Dante%20Spinotti&amp;role=Cinematographer</loc>
+        <loc>https://www.scenestill.com/person?name=Michael%20Mann&amp;role=Director</loc>
         <lastmod>2025-11-25</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
@@ -2528,25 +2534,25 @@
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://www.scenestill.com/person?name=Akira%20Kurosawa&amp;role=Director</loc>
-        <lastmod>2025-11-25</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
         <loc>https://www.scenestill.com/person?name=Asakazu%20Nakai&amp;role=Cinematographer</loc>
         <lastmod>2025-11-25</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://www.scenestill.com/person?name=Takao%20Sait%C5%8D&amp;role=Cinematographer</loc>
+        <loc>https://www.scenestill.com/person?name=Akira%20Kurosawa&amp;role=Director</loc>
         <lastmod>2025-11-25</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://www.scenestill.com/person?name=Sh%C3%B4ji%20Ueda&amp;role=Cinematographer</loc>
+        <lastmod>2025-11-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Takao%20Sait%C5%8D&amp;role=Cinematographer</loc>
         <lastmod>2025-11-25</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
@@ -2595,6 +2601,72 @@
     </url>
     <url>
         <loc>https://www.scenestill.com/person?name=Masayuki%20Yui&amp;role=Actor</loc>
+        <lastmod>2025-11-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Larry%20Smith&amp;role=Cinematographer</loc>
+        <lastmod>2025-11-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Tom%20Cruise&amp;role=Actor</loc>
+        <lastmod>2025-11-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Nicole%20Kidman&amp;role=Actor</loc>
+        <lastmod>2025-11-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Sydney%20Pollack&amp;role=Actor</loc>
+        <lastmod>2025-11-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Marie%20Richardson&amp;role=Actor</loc>
+        <lastmod>2025-11-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Rade%20%C5%A0erbed%C5%BEija&amp;role=Actor</loc>
+        <lastmod>2025-11-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Todd%20Field&amp;role=Actor</loc>
+        <lastmod>2025-11-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Vinessa%20Shaw&amp;role=Actor</loc>
+        <lastmod>2025-11-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Alan%20Cumming&amp;role=Actor</loc>
+        <lastmod>2025-11-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Sky%20du%20Mont&amp;role=Actor</loc>
+        <lastmod>2025-11-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Fay%20Masterson&amp;role=Actor</loc>
         <lastmod>2025-11-25</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
