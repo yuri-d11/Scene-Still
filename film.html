@@ -52,6 +52,12 @@
         .credit-line{margin-bottom:4px}
         .credit-title,.credit-name{font-size:1.25rem;font-weight:400;color:#FAFAFA}
         .credit-name{color:#B3B3B3}
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
     </style>
     
     <!-- Minimal Bootstrap CSS - only used classes -->
@@ -107,6 +113,18 @@
         </div>
         <!-- Search Results Section -->
         <h4 class="search-results-header" style="display: none; margin-top: 10px;">Search Results:</h4>
+        <div class="section-header" id="search-results-section" style="display: none;">
+            <h4 class="search-results-header">Search Results:</h4>
+            <div class="view-options">
+                <div class="histogram-container">
+                    <button class="histogram-bar" data-value="2" aria-label="2 items per row"></button>
+                    <button class="histogram-bar" data-value="3" aria-label="3 items per row"></button>
+                    <button class="histogram-bar" data-value="4" aria-label="4 items per row"></button>
+                    <button class="histogram-bar" data-value="5" aria-label="5 items per row"></button>
+                    <button class="histogram-bar" data-value="6" aria-label="6 items per row"></button>
+                </div>
+            </div>
+        </div>
         <div class="image-container" id="film-cards-container" style="display: none;">
         </div>
 

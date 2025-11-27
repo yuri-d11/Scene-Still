@@ -44,6 +44,21 @@
 		.nav-list li{margin-right:30px}
 		.nav-list li a{font-weight:400;font-size:16px;color:#FAFAFA;text-decoration:none;margin:8px 0;display:block}
 		h1,h4{color:#FAFAFA}
+		.section_start{
+	margin-top: 69px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+@media (min-width: 1024px) {
+    .section-header .section_start {
+        margin-top: 0;
+    }
+}
 	</style>
 	
 	<!-- Minimal Bootstrap CSS - only used classes -->
@@ -76,7 +91,18 @@
 		</nav>
 		<h1></h1>
 		<h4></h4>
-		<h4 class="section_start"> Films:</h4>
+		<div class="section-header">
+			<h4 class="section_start"> Films:</h4>
+			<div class="view-options">
+				<div class="histogram-container">
+					<button class="histogram-bar" data-value="2" aria-label="2 items per row"></button>
+					<button class="histogram-bar" data-value="3" aria-label="3 items per row"></button>
+					<button class="histogram-bar" data-value="4" aria-label="4 items per row"></button>
+					<button class="histogram-bar" data-value="5" aria-label="5 items per row"></button>
+					<button class="histogram-bar" data-value="6" aria-label="6 items per row"></button>
+				</div>
+			</div>
+		</div>
 		<div class="image-container" id="film-cards-container">
 			<!-- FILM_CARDS_PLACEHOLDER -->
 	  	</div>

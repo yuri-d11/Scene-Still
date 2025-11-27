@@ -186,6 +186,13 @@
             font-weight: bold;
         }
 
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
         @media (max-width: 768px) {
             .upload-area {
                 padding: 40px 15px;
@@ -328,6 +335,18 @@
         <p style="margin-top: 70px;">*The tool is not perfect yet but I am still working on it.</p>
         <!-- Search Results Section (hidden by default) -->
         <h4 class="search-results-header" style="display: none; margin-top: 10px;">Search Results:</h4>
+        <div class="section-header" id="search-results-section" style="display: none;">
+            <h4 class="search-results-header">Search Results:</h4>
+            <div class="view-options">
+                <div class="histogram-container">
+                    <button class="histogram-bar" data-value="2" aria-label="2 items per row"></button>
+                    <button class="histogram-bar" data-value="3" aria-label="3 items per row"></button>
+                    <button class="histogram-bar" data-value="4" aria-label="4 items per row"></button>
+                    <button class="histogram-bar" data-value="5" aria-label="5 items per row"></button>
+                    <button class="histogram-bar" data-value="6" aria-label="6 items per row"></button>
+                </div>
+            </div>
+        </div>
         <div class="image-container" id="film-cards-container" style="display: none;">
         </div>
     </div>

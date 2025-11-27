@@ -95,6 +95,20 @@
         }
     };
 
+    // Function to update grid columns
+    const updateGridColumns = (itemsPerRow) => {
+        const container = document.getElementById('film-cards-container');
+        if (!container) return;
+
+        // Remove existing column classes
+        for (let i = 2; i <= 6; i++) {
+            container.classList.remove(`columns-${i}`);
+        }
+
+        // Add the new column class
+        container.classList.add(`columns-${itemsPerRow}`);
+    };
+
     // Function to fetch and process all film data
     const fetchAllFilms = async () => {
         try {
@@ -178,7 +192,104 @@
         }
     };
 
-    // Initialize search functionality
+    // Event listener for the histogram buttons
+    document.addEventListener('DOMContentLoaded', () => {
+        const histogramContainer = document.querySelector('.histogram-container');
+        const histogramBars = document.querySelectorAll('.histogram-bar');
+        const filmCardsContainer = document.getElementById('film-cards-container');
+        const defaultValue = 4;
+        const LS_KEY = 'sceneStillGridColumns';
+
+        // If the necessary elements don't exist, do nothing.
+        if (!histogramContainer || !histogramBars.length || !filmCardsContainer) {
+            return;
+        }
+
+        let isMouseDown = false;
+
+        const debounce = (func, delay = 250) => {
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    func.apply(this, args);
+                }, delay);
+            };
+        };
+
+        // Save preference to localStorage
+        const savePreference = (value) => {
+            try {
+                localStorage.setItem(LS_KEY, value);
+            } catch (e) {}
+        };
+
+        // Get preference from localStorage
+        const getPreference = () => {
+            try {
+                const val = localStorage.getItem(LS_KEY);
+                const num = parseInt(val, 10);
+                if (num >= 2 && num <= 6) return num;
+            } catch (e) {}
+            return null;
+        };
+
+        const updateSelection = (selectedValue, save = true) => {
+            // Only update the grid classes if on desktop
+            if (window.innerWidth >= 1024) {
+                updateGridColumns(selectedValue);
+                if (save) savePreference(selectedValue);
+            }
+            // Update the visual state of the bars
+            histogramBars.forEach(bar => {
+                const barValue = parseInt(bar.dataset.value, 10);
+                bar.classList.toggle('active', barValue <= selectedValue);
+            });
+        };
+
+        const handleScreenState = () => {
+            if (window.innerWidth < 1024) {
+                // On small screens, remove any desktop-specific grid classes
+                for (let i = 2; i <= 6; i++) {
+                    filmCardsContainer.classList.remove(`columns-${i}`);
+                }
+            } else {
+                // On large screens, restore preference or default
+                const hasColumnClass = Array.from(filmCardsContainer.classList).some(c => c.startsWith('columns-'));
+                const pref = getPreference();
+                if (pref) {
+                    updateSelection(pref, false);
+                } else if (!hasColumnClass) {
+                    updateSelection(defaultValue, false);
+                }
+            }
+        };
+
+        // --- Event Listeners ---
+        histogramContainer.addEventListener('mousedown', (e) => {
+            isMouseDown = true;
+            e.preventDefault();
+        });
+
+        document.addEventListener('mouseup', () => {
+            isMouseDown = false;
+        });
+
+        histogramBars.forEach(bar => {
+            const value = parseInt(bar.dataset.value, 10);
+            bar.addEventListener('click', () => updateSelection(value));
+            bar.addEventListener('mouseover', () => {
+                if (isMouseDown) {
+                    updateSelection(value);
+                }
+            });
+        });
+
+        window.addEventListener('resize', debounce(handleScreenState));
+
+        // Set the initial state when the page loads
+        handleScreenState();
+    });    // Initialize search functionality
     window.SZ.searchManager.initializeSearch = function(config) {
         const searchInput = document.getElementById(config.searchInputId);
         if (!searchInput) return;
@@ -218,9 +329,9 @@
                         sectionHeader.textContent = 'Search Results:';
                     }
                 } else {
-                    const searchResultsHeader = document.querySelector('h4.search-results-header');
+                    const searchResultsHeader = document.getElementById('search-results-section');
                     if (searchResultsHeader) {
-                        searchResultsHeader.style.display = 'block';
+                        searchResultsHeader.style.display = 'flex';
                     }
                 }
                 
@@ -243,7 +354,7 @@
                         sectionHeader.textContent = 'All Films:';
                     }
                 } else {
-                    const searchResultsHeader = document.querySelector('h4.search-results-header');
+                    const searchResultsHeader = document.getElementById('search-results-section');
                     if (searchResultsHeader) {
                         searchResultsHeader.style.display = 'none';
                     }
