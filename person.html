@@ -12,6 +12,15 @@
 	<meta name="keywords" content="film stills, movie screencaptures, cinematography, director, actor">
 	<link rel="canonical" href="" id="canonical-url">
 	
+	 <!-- Google tag (gtag.js) -->
+	 <script async src="https://www.googletagmanager.com/gtag/js?id=G-QXMX7DRYJH"></script>
+	 <script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-QXMX7DRYJH');
+	 </script>
 	<!-- Resource Hints -->
 	<link rel="preconnect" href="https://api.themoviedb.org">
 	<link rel="preconnect" href="https://image.tmdb.org">
@@ -73,39 +82,39 @@
   </head>
   <body>
 	<div class="wrapper">
-		<nav>
-			<button class="hamburger-menu" aria-label="Toggle navigation menu">
-				<span></span>
-				<span></span>
-				<span></span>
-			</button>
-			<ul class="nav-list">
-			  <li><a href="index.html">Films</a></li>
-			  <li><a href="cast_crew.html">Cast &amp; Crew</a></li>
-			  <li><a href="color_extractor.html">Color Extractor</a></li>
-			  <li><a href="about.html">About</a></li>
-			</ul>
-			<form class="search-form" action="#" method="get">
-                <input type="text" placeholder="Search by film or person..." name="search" class="search-input" id="search-input">
-            </form>
-		</nav>
-		<h1></h1>
-		<h4></h4>
-		<div class="section-header">
-			<h4 class="section_start"> Films:</h4>
-			<div class="view-options">
-				<div class="histogram-container">
-					<button class="histogram-bar" data-value="2" aria-label="2 items per row"></button>
-					<button class="histogram-bar" data-value="3" aria-label="3 items per row"></button>
-					<button class="histogram-bar" data-value="4" aria-label="4 items per row"></button>
-					<button class="histogram-bar" data-value="5" aria-label="5 items per row"></button>
-					<button class="histogram-bar" data-value="6" aria-label="6 items per row"></button>
-				</div>
-			</div>
-		</div>
-		<div class="image-container" id="film-cards-container">
-			<!-- FILM_CARDS_PLACEHOLDER -->
-	  	</div>
+	   <nav>
+		   <button class="hamburger-menu" aria-label="Toggle navigation menu">
+			   <span></span>
+			   <span></span>
+			   <span></span>
+		   </button>
+		   <ul class="nav-list">
+			 <li><a href="index.html">Films</a></li>
+			 <li><a href="cast_crew.html">Cast &amp; Crew</a></li>
+			 <li><a href="color_extractor.html">Color Extractor</a></li>
+			 <li><a href="about.html">About</a></li>
+		   </ul>
+		   <form class="search-form" action="#" method="get">
+				<input type="text" placeholder="Search by film or person..." name="search" class="search-input" id="search-input">
+			</form>
+	   </nav>
+	   <h1></h1>
+	   <h4></h4>
+	   <div class="section-header">
+		   <h4 class="section_start"> Films:</h4>
+		   <div class="view-options">
+			   <div class="histogram-container">
+				   <button class="histogram-bar" data-value="2" aria-label="2 items per row"></button>
+				   <button class="histogram-bar" data-value="3" aria-label="3 items per row"></button>
+				   <button class="histogram-bar" data-value="4" aria-label="4 items per row"></button>
+				   <button class="histogram-bar" data-value="5" aria-label="5 items per row"></button>
+				   <button class="histogram-bar" data-value="6" aria-label="6 items per row"></button>
+			   </div>
+		   </div>
+	   </div>
+	   <div class="image-container" id="film-cards-container">
+		   <!-- FILM_CARDS_PLACEHOLDER -->
+		 </div>
 	</div>
     <footer>
 		<hr>
