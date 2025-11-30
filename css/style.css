@@ -465,8 +465,14 @@ footer p a:hover{
     .section_start {
         margin-top: 25px;
     }
+    .section-header {
+    margin-top: 15px;
+    }
     .image-container {
         gap: 15px;
+    }
+    .image-card h4 {
+    padding-top: 8px;
     }
     /* 2 cards per row for ALL mobile */
     .image-card {
@@ -500,6 +506,9 @@ footer p a:hover{
     .image-card {
         width: calc((100% - (10px * 1)) / 2);
     }
+    .image-card h4 {
+    padding-top: 6px;
+    }
     footer {
         text-align: center;
     }
@@ -521,6 +530,9 @@ footer p a:hover{
     }
     .section_start {
         margin-top: 30px;
+    }
+    .section-header {
+    margin-top: 25px;
     }
     .image-container {
         justify-content: left;
