@@ -54,6 +54,14 @@
         const imagesPerSlide = customRowsPerSlide 
             ? customRowsPerSlide * IMAGES_PER_ROW 
             : calculateImagesPerSlide(totalRows, thumbnailCount);
+
+        // Expose the custom rows value on the DOM so other modules (lazy loader, swipe handler)
+        // can compute images-per-slide consistently. Remove attribute if not provided.
+        if (customRowsPerSlide && Number.isInteger(customRowsPerSlide) && customRowsPerSlide > 0) {
+            thumbnailGrid.setAttribute('data-rows-per-slide', String(customRowsPerSlide));
+        } else {
+            thumbnailGrid.removeAttribute('data-rows-per-slide');
+        }
         
         const thumbnails = Array.from(thumbnailGrid.children);
         const slides = [];

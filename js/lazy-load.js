@@ -5,6 +5,16 @@
     const ROWS_THRESHOLD = 4;
     const MIN_IMAGES_FOR_SLIDER = IMAGES_PER_ROW * ROWS_THRESHOLD; // 16 images
 
+    // Helper to read rows-per-slide override from DOM (set by thumbnail-slider)
+    const getRowsPerSlide = () => {
+        const grid = document.getElementById('thumbnail-grid');
+        const rowsAttr = grid?.getAttribute('data-rows-per-slide');
+        const parsed = rowsAttr ? parseInt(rowsAttr, 10) : NaN;
+        return (!isNaN(parsed) && parsed > 0) ? parsed : ROWS_THRESHOLD;
+    };
+
+    const getImagesPerSlide = () => getRowsPerSlide() * IMAGES_PER_ROW;
+
     let observer = null;
     let currentSlideIndex = 0;
     let isSliderMode = false;
@@ -118,15 +128,15 @@
                 }
             });
         } else if (isSliderMode) {
-            // Desktop slider mode: Load first slide thumbnails (compressed)
-            const imagesPerSlide = ROWS_THRESHOLD * IMAGES_PER_ROW;
-            thumbnails.forEach((img, index) => {
-                const slideIndex = Math.floor(index / imagesPerSlide);
-                if (slideIndex === 0) {
-                    loadThumbnail(img);
-                }
-                // Don't observe slider images yet - they'll load on slide change
-            });
+                // Desktop slider mode: Load first slide thumbnails (compressed)
+                const imagesPerSlide = getImagesPerSlide();
+                thumbnails.forEach((img, index) => {
+                    const slideIndex = Math.floor(index / imagesPerSlide);
+                    if (slideIndex === 0) {
+                        loadThumbnail(img);
+                    }
+                    // Don't observe slider images yet - they'll load on slide change
+                });
         } else {
             // Desktop grid mode: Load all visible thumbnails (compressed)
             thumbnails.forEach((img, index) => {
@@ -161,7 +171,7 @@
             });
         } else if (isSliderMode) {
             // Desktop slider mode: Load full-res only for first slide
-            const imagesPerSlide = ROWS_THRESHOLD * IMAGES_PER_ROW;
+            const imagesPerSlide = getImagesPerSlide();
             thumbnails.forEach((img, index) => {
                 const slideIndex = Math.floor(index / imagesPerSlide);
                 if (slideIndex === 0) {
@@ -180,7 +190,7 @@
 
     // Load images in a specific slide (thumbnails + full-res)
     const loadSlideImages = (slideIndex) => {
-        const imagesPerSlide = ROWS_THRESHOLD * IMAGES_PER_ROW;
+        const imagesPerSlide = getImagesPerSlide();
         const startIndex = slideIndex * imagesPerSlide;
         const endIndex = startIndex + imagesPerSlide;
         
@@ -209,7 +219,7 @@
         
         // Optionally preload adjacent slides (thumbnails only, no full-res yet)
         setTimeout(() => {
-            const imagesPerSlide = ROWS_THRESHOLD * IMAGES_PER_ROW;
+            const imagesPerSlide = getImagesPerSlide();
             const thumbnails = document.querySelectorAll('.thumbnail-image[data-lazy-src]');
             
             // Preload next slide thumbnails

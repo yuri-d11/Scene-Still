@@ -1,5 +1,6 @@
 (function () {
     window.SZ = window.SZ || {};
+    let sliderCustomRows = null;
 
     let touchStartX = 0;
     let touchEndX = 0;
@@ -13,8 +14,10 @@
     let indicatorsClicked = false; // Track if user has clicked the indicators
     let mouseLeftImage = false; // Track if mouse has left the image
 
-    const initializeSwipe = (images) => {
+    const initializeSwipe = (images, customRowsPerSlide) => {
         allImages = images;
+        // Store optional CSV override for rows per slide so other functions can use it
+        sliderCustomRows = (typeof customRowsPerSlide === 'number' && customRowsPerSlide > 0) ? customRowsPerSlide : null;
         const mainImage = document.getElementById('main-image');
         const mainImageContainer = document.querySelector('.main-image-container');
         const clickIndicators = document.querySelector('.image-click-indicators');
@@ -226,8 +229,9 @@
         
         // Calculate images per slide (matching thumbnail-slider.js logic)
         const totalRows = Math.ceil(totalImages / IMAGES_PER_ROW);
-        const targetRowsPerSlide = Math.ceil(totalRows / Math.ceil(totalRows / ROWS_THRESHOLD));
-        const imagesPerSlide = Math.min(targetRowsPerSlide * IMAGES_PER_ROW, totalImages);
+        const imagesPerSlide = sliderCustomRows 
+            ? sliderCustomRows * IMAGES_PER_ROW 
+            : Math.min(Math.ceil(totalRows / Math.ceil(totalRows / ROWS_THRESHOLD)) * IMAGES_PER_ROW, totalImages);
         
         // Calculate which slide this image is on
         const targetSlide = Math.floor(imageIndex / imagesPerSlide);
