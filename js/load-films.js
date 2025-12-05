@@ -142,7 +142,7 @@
 
             // Adaptive batch size: faster for desktop, safer for mobile
             const isMobile = /Mobile|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
-            const BATCH_SIZE = isMobile ? 3 : 5; // 3 for mobile, 5 for desktop
+            const BATCH_SIZE = isMobile ? 4 : 5; // 4 for mobile, 5 for desktop
             let processedFilms = [];
             
             // Helper function to process a single row with timeout
