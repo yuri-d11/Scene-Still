@@ -24,9 +24,11 @@
 
 		let lastError;
 		for (let attempt = 1; attempt <= retries; attempt++) {
+			let timeoutId;
 			try {
 				const controller = new AbortController();
-				const id = setTimeout(() => controller.abort(), timeoutMs);
+				timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+				
 				const response = await fetch(url, {
 					method,
 					headers: { 'Accept': acceptTypes, 'Cache-Control': 'no-cache', ...headers },
@@ -34,7 +36,7 @@
 					redirect: 'follow',
 					signal: controller.signal
 				});
-				clearTimeout(id);
+				clearTimeout(timeoutId);
 
 				const text = await response.text();
 				if (!response.ok) {
@@ -48,9 +50,16 @@
 
 				return { ok: true, status: response.status, text };
 			} catch (error) {
+				if (timeoutId) clearTimeout(timeoutId);
 				lastError = error;
+				
+				// Log attempt for debugging
+				console.debug(`Fetch attempt ${attempt}/${retries} failed for ${url}:`, error.message);
+				
 				if (attempt < retries) {
-					await sleep(backoffMs * Math.pow(factor, attempt - 1));
+					const waitTime = backoffMs * Math.pow(factor, attempt - 1);
+					console.debug(`Retrying in ${waitTime}ms...`);
+					await sleep(waitTime);
 					continue;
 				}
 			}

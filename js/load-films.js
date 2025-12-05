@@ -111,37 +111,58 @@
 
     // Function to fetch and process all film data
     const fetchAllFilms = async () => {
+        const container = document.getElementById('film-cards-container');
+        
         try {
             // Show loading indicator in the container
-            const container = document.getElementById('film-cards-container');
             if (container) {
                 container.innerHTML = '<h4 class="loading">Loading films...</h4>';
             }
 
-            // Fetch CSV data
-            const response = await fetch('Scene still DB - Sheet1.csv');
-            const csvText = await response.text();
+            // Fetch CSV data with timeout
+            const csvTimeout = new AbortController();
+            const csvTimeoutId = setTimeout(() => csvTimeout.abort(), 15000);
+            
+            let csvText;
+            try {
+                const response = await fetch('Scene still DB - Sheet1.csv', { signal: csvTimeout.signal });
+                csvText = await response.text();
+            } finally {
+                clearTimeout(csvTimeoutId);
+            }
+
             const rows = window.SZ.csv.parseCSVToObjects(csvText);
 
-            // Process films in parallel batches for faster loading
-            const BATCH_SIZE = 5; // Fetch 5 movies at a time
+            if (!rows || rows.length === 0) {
+                if (container) {
+                    container.innerHTML = '<p>No films found.</p>';
+                }
+                return;
+            }
+
+            // Adaptive batch size: faster for desktop, safer for mobile
+            const isMobile = /Mobile|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+            const BATCH_SIZE = isMobile ? 3 : 5; // 3 for mobile, 5 for desktop
             let processedFilms = [];
             
-            // Helper function to process a single row
+            // Helper function to process a single row with timeout
             const processRow = async (row) => {
                 const movieId = row['Movie ID'];
-                let movieName = row['Movie Name'];
-                let movieYear = row['Movie Year'];
-                let poster = row['Poster'];
+                let movieName = row['Movie Name'] || '';
+                let movieYear = row['Movie Year'] || '';
+                let poster = row['Poster'] || '';
                 let castAndCrewNames = [];
 
-                if (movieId) {
+                if (movieId && window.SZ.tmdb) {
                     try {
                         const tmdbDetails = await window.SZ.tmdb.getMovieDetails(movieId);
                         if (tmdbDetails) {
-                            movieName = tmdbDetails.title;
-                            movieYear = new Date(tmdbDetails.release_date).getFullYear();
-                            if (!row['Poster']) {
+                            movieName = tmdbDetails.title || movieName;
+                            const releaseDate = tmdbDetails.release_date;
+                            if (releaseDate) {
+                                movieYear = new Date(releaseDate).getFullYear() || movieYear;
+                            }
+                            if (!row['Poster'] && tmdbDetails.poster_path) {
                                 poster = `https://image.tmdb.org/t/p/w500${tmdbDetails.poster_path}`;
                             }
 
@@ -155,23 +176,43 @@
                         }
                     } catch (error) {
                         console.warn(`Failed to fetch TMDB details for movie ${movieId}:`, error);
+                        // Continue with CSV data if TMDB fails
                     }
                 }
 
                 return { movieId, movieName, movieYear, poster, castAndCrewNames };
             };
 
-            // Process rows in batches
-            for (let i = 0; i < rows.length; i += BATCH_SIZE) {
-                const batch = rows.slice(i, i + BATCH_SIZE);
-                const batchResults = await Promise.all(batch.map(processRow));
-                processedFilms.push(...batchResults);
-                
-                // Update loading message with progress
-                if (container) {
-                    const progress = Math.round((processedFilms.length / rows.length) * 100);
-                    container.innerHTML = `<h4 class="loading">Loading films... ${progress}%</h4>`;
+            // Process rows in batches with error handling
+            try {
+                for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+                    const batch = rows.slice(i, i + BATCH_SIZE);
+                    const batchResults = await Promise.allSettled(batch.map(processRow));
+                    
+                    // Only add successful results
+                    batchResults.forEach(result => {
+                        if (result.status === 'fulfilled' && result.value) {
+                            processedFilms.push(result.value);
+                        }
+                    });
+                    
+                    // Update loading message with progress
+                    if (container) {
+                        const progress = Math.round((processedFilms.length / rows.length) * 100);
+                        container.innerHTML = `<h4 class="loading">Loading films... ${progress}%</h4>`;
+                    }
                 }
+            } catch (batchError) {
+                console.error('Error processing batch:', batchError);
+                // Continue with whatever films were processed successfully
+            }
+
+            if (processedFilms.length === 0) {
+                console.warn('No films were successfully processed');
+                if (container) {
+                    container.innerHTML = '<p>Error loading films. Please refresh the page.</p>';
+                }
+                return;
             }
 
             // Sort films alphabetically by movieName, ignoring leading articles
@@ -189,6 +230,9 @@
             }
         } catch (error) {
             console.error('Error loading or parsing data:', error);
+            if (container) {
+                container.innerHTML = '<p>Error loading films. Please refresh the page.</p>';
+            }
         }
     };
 
