@@ -19,10 +19,15 @@
         needsUpdate = true;
     }
     
-    // Remove .html from the URL
+    // Remove .html from the URL (preserve query parameters and hash)
     if (currentUrl.includes('.html')) {
-        currentUrl = currentUrl.replace('.html', '');
-        needsUpdate = true;
+        // Split URL into path and query/hash parts
+        const urlObj = new URL(currentUrl);
+        if (urlObj.pathname.includes('.html')) {
+            urlObj.pathname = urlObj.pathname.replace('.html', '');
+            currentUrl = urlObj.toString();
+            needsUpdate = true;
+        }
     }
     
     // Update the URL if changes were made
