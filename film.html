@@ -141,14 +141,17 @@
         <div class="mt-3" id="main-content">
             <div class="main-image-container">
                 <img id="main-image" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Loading film still" class="img-fluid main-image-placeholder" loading="eager" fetchpriority="high">
+                <div id="main-loading" class="main-loading" aria-hidden="true">
+                    <div class="main-spinner" role="status" aria-label="Loading image"></div>
+                </div>
                 <div class="image-click-indicators">
                     <div class="click-indicator left-indicator">
                         <span class="indicator-icon">‹</span>
                         <span class="indicator-text">Previous</span>
                     </div>
                     <div class="click-indicator middle-indicator">
-                        <span class="indicator-icon">+</span>
-                        <span class="indicator-text">Zoom</span>
+                        <span class="indicator-icon">⤢</span>
+                        <span class="indicator-text">View Full Size</span>
                     </div>
                     <div class="click-indicator right-indicator">
                         <span class="indicator-icon">›</span>
@@ -171,7 +174,7 @@
             <div id="main-palette-container" class="row no-gutters"></div>
         </div>
 		
-		<p id="thumbnail-instructions">Click one of the thumbnails below to select a main image.</p>
+		<p id="thumbnail-instructions">Click one of the thumbnails below to select a main image. Click the main image to view and download full resolution.</p>
 		
 		<!-- Top Slider Controls (for mobile) -->
 		<div class="slider-controls slider-controls-top">
@@ -198,7 +201,17 @@
     </footer>
     <div id="zoom-overlay" class="zoom-overlay">
         <span class="close-zoom">&times;</span>
+        <button class="zoom-nav-btn zoom-nav-prev" id="zoom-nav-prev" aria-label="Previous image">
+            <span class="zoom-nav-arrow">‹</span>
+        </button>
         <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Loading film still" class="zoomed-image" id="zoomed-image">
+        <button class="zoom-nav-btn zoom-nav-next" id="zoom-nav-next" aria-label="Next image">
+            <span class="zoom-nav-arrow">›</span>
+        </button>
+        <div id="zoom-loading" class="zoom-loading" aria-hidden="true">
+            <div class="zoom-spinner" role="status" aria-label="Loading full size image"></div>
+            <div class="zoom-loading-text">Loading full size…</div>
+        </div>
     </div>
     <script src="js/hamburger-menu.js"></script>
     <script src="js/clean-urls.js"></script>
@@ -303,7 +316,13 @@
 
                 let localStills = [];
                 if (movieEntry && movieEntry.Stills) {
-                    localStills = movieEntry.Stills.split('|');
+                    localStills = movieEntry.Stills.split('|').map(s => s.trim()).filter(Boolean);
+                }
+
+                // New intermediate webp versions (slightly compressed, used after thumbnails)
+                let webpStills = [];
+                if (movieEntry && movieEntry['Stills webp']) {
+                    webpStills = movieEntry['Stills webp'].split('|').map(s => s.trim()).filter(Boolean);
                 }
 
                 // Update Open Graph tags
@@ -369,16 +388,25 @@
 
                 let compressedStills = [];
                 if (movieEntry && movieEntry['Stills compressed']) {
-                    compressedStills = movieEntry['Stills compressed'].split('|');
+                    compressedStills = movieEntry['Stills compressed'].split('|').map(s => s.trim()).filter(Boolean);
                 }
 
                 if (localStills.length > 0) {
                     const mainImage = document.getElementById('main-image');
-                    // PRIORITY 1: Load main image at full resolution immediately
-                    mainImage.src = localStills[0];
+                    // PRIORITY: If intermediate webp stills exist, use them (or compressed fallback).
+                    // If NO intermediate webp is available for this movie, load the full-resolution
+                    // still as the main image so the page shows the full-quality image by default.
+                    const hasWebpAvailable = webpStills && webpStills.length > 0;
+                    if (hasWebpAvailable) {
+                        mainImage.src = webpStills[0] || compressedStills[0] || localStills[0];
+                    } else {
+                        // No webp intermediates: show the full-resolution still immediately
+                        mainImage.src = localStills[0];
+                    }
                     mainImage.alt = `${movieDetails.title} 1`;
-                    // SEO: Add structured data attributes to main image
                     mainImage.setAttribute('itemprop', 'image');
+                    // Keep main image's full-src available via dataset for zoom handler to load on demand
+                    mainImage.dataset.fullSrc = localStills[0] || '';
                 } else {
                     document.getElementById('main-image').src = ''; // Placeholder or error image
                 }
@@ -386,6 +414,8 @@
                 // Thumbnails
                 const grid = document.getElementById('thumbnail-grid');
                 grid.innerHTML = '';
+                // Indicate whether this movie has intermediate webp stills (only true if non-empty URLs exist)
+                grid.dataset.hasWebp = (Array.isArray(webpStills) && webpStills.length > 0) ? '1' : '0';
                 localStills.forEach((still, index) => {
                     const col = document.createElement('div');
                     col.className = 'col-lg-3 col-md-4 col-6 mb-4'; // lg-3: 4 cols on desktop, md-4: 3 cols on tablets, col-6: 2 cols on mobile
@@ -397,8 +427,14 @@
                     // PRIORITY 2: Use placeholder for all thumbnails, lazy load compressed versions
                     img.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
                     img.className = 'thumbnail-image';
-                    img.dataset.lazySrc = compressedStills[index] || still; // Compressed version for initial load
-                    img.dataset.fullSrc = still; // Full resolution for later upgrade
+                    // Compressed (thumbnail) is used initially
+                    img.dataset.lazySrc = compressedStills[index] || webpStills[index] || still;
+                    // Keep a reference to the intermediate webp (if available)
+                    if (webpStills[index]) {
+                        img.dataset.webpSrc = webpStills[index];
+                    }
+                    // Full resolution kept for explicit load on zoom
+                    img.dataset.fullSrc = still;
                     img.alt = `${movieDetails.title} ${index + 1}`;
                     img.loading = 'lazy'; // Browser-level lazy loading hint
                     
@@ -466,7 +502,7 @@
                         "contentUrl": still,
                         "name": `${movieDetails.title} ${index + 1}`,
                         "description": `Scene still ${index + 1} from ${movieDetails.title}`,
-                        "thumbnail": compressedStills[index] || still
+                        "thumbnail": compressedStills[index] || webpStills[index] || still
                     }))
                 };
                 

@@ -150,45 +150,129 @@
             });
         }
 
-        // PRIORITY 3: After thumbnails load, start loading full-resolution versions
+        // PRIORITY 3: After thumbnails load, start loading intermediate webp versions
         // Wait a bit to ensure thumbnails are rendered first
         setTimeout(() => {
-            loadFullResolutionImages(thumbnailCount, isMobile);
+                // If the CSV indicates this movie has webp intermediates, upgrade to webp.
+                // Otherwise (no webp available), upgrade visible thumbnails directly to full-resolution
+                // so the final images shown are the full stills for those movies.
+                try {
+                    const grid = document.getElementById('thumbnail-grid');
+                    const hasWebp = grid?.dataset?.hasWebp === '1';
+                    if (hasWebp) {
+                        loadWebpImages(thumbnailCount, isMobile);
+                    } else {
+                        upgradeToFullResolution(thumbnailCount, isMobile);
+                    }
+                } catch (e) {
+                    // Fallback to attempting webp upgrade if anything goes wrong
+                    loadWebpImages(thumbnailCount, isMobile);
+                }
         }, 500);
     };
 
-    // Load full resolution images in priority order
-    const loadFullResolutionImages = (thumbnailCount, isMobile) => {
+    // Load intermediate webp images (slightly compressed) in priority order
+    const loadWebpImages = (thumbnailCount, isMobile) => {
         const thumbnails = document.querySelectorAll('.thumbnail-image[data-lazy-src]');
-        
+
+        const loadWebpForIndex = (img) => {
+            const webpSrc = img.dataset.webpSrc;
+            if (!webpSrc) return;
+            // Only replace if different from current
+            if (img.src && img.src.includes(webpSrc)) return;
+
+            const tmp = new Image();
+            tmp.onload = () => {
+                img.src = webpSrc;
+                img.classList.add('webp-loaded');
+                tmp.onload = null;
+                tmp.onerror = null;
+            };
+            tmp.onerror = () => {
+                // silently ignore and keep thumbnail
+                tmp.onload = null;
+                tmp.onerror = null;
+            };
+            tmp.src = webpSrc;
+        };
+
         if (isMobile) {
-            // Mobile: Load full-res for visible images only (first ~6)
-            const visibleCount = Math.min(6, thumbnailCount);
+            // Mobile: Upgrade visible thumbnails to webp only (first ~4-6)
+            const visibleCount = Math.min(4, thumbnailCount);
             thumbnails.forEach((img, index) => {
                 if (index < visibleCount) {
-                    queueFullResolution(img);
+                    setTimeout(() => loadWebpForIndex(img), index * 150);
                 }
             });
         } else if (isSliderMode) {
-            // Desktop slider mode: Load full-res only for first slide
+            // Desktop slider mode: ONLY upgrade first slide thumbnails (visible on screen)
             const imagesPerSlide = getImagesPerSlide();
+            let loadedCount = 0;
             thumbnails.forEach((img, index) => {
                 const slideIndex = Math.floor(index / imagesPerSlide);
                 if (slideIndex === 0) {
-                    queueFullResolution(img);
+                    setTimeout(() => loadWebpForIndex(img), loadedCount * 100);
+                    loadedCount++;
                 }
             });
         } else {
-            // Desktop grid mode: Load full-res for all visible images
+            // Desktop grid mode: Upgrade first visible thumbnails only
+            const loadCount = Math.min(12, thumbnailCount);
             thumbnails.forEach((img, index) => {
-                if (index < MIN_IMAGES_FOR_SLIDER) {
-                    queueFullResolution(img);
+                if (index < loadCount) {
+                    setTimeout(() => loadWebpForIndex(img), index * 80);
                 }
             });
         }
     };
 
-    // Load images in a specific slide (thumbnails + full-res)
+    // If no intermediate webp images are available for this movie, upgrade visible
+    // thumbnails to the full-resolution stills so the final image shown is the full still.
+    const upgradeToFullResolution = (thumbnailCount, isMobile) => {
+        const thumbnails = document.querySelectorAll('.thumbnail-image[data-lazy-src]');
+
+        const upgradeImg = (img) => {
+            const fullSrc = img.dataset.fullSrc;
+            if (!fullSrc) return;
+            // Skip if already showing the full src
+            if (img.src && img.src === fullSrc) return;
+
+            const tmp = new Image();
+            tmp.onload = () => {
+                img.src = fullSrc;
+                img.classList.add('full-loaded');
+            };
+            tmp.onerror = () => {
+                // keep the thumbnail if full resolution fails
+            };
+            tmp.src = fullSrc;
+        };
+
+        if (isMobile) {
+            const visibleCount = Math.min(6, thumbnailCount);
+            thumbnails.forEach((img, index) => {
+                if (index < visibleCount) {
+                    upgradeImg(img);
+                }
+            });
+        } else if (isSliderMode) {
+            const imagesPerSlide = getImagesPerSlide();
+            thumbnails.forEach((img, index) => {
+                const slideIndex = Math.floor(index / imagesPerSlide);
+                if (slideIndex === 0) {
+                    upgradeImg(img);
+                }
+            });
+        } else {
+            thumbnails.forEach((img, index) => {
+                if (index < MIN_IMAGES_FOR_SLIDER) {
+                    upgradeImg(img);
+                }
+            });
+        }
+    };
+
+    // Load images in a specific slide (thumbnails + intermediate webp)
     const loadSlideImages = (slideIndex) => {
         const imagesPerSlide = getImagesPerSlide();
         const startIndex = slideIndex * imagesPerSlide;
@@ -201,10 +285,20 @@
             loadThumbnail(thumbnails[i]);
         }
         
-        // Then queue full-resolution versions
+        // Then upgrade to intermediate webp versions (if available)
         setTimeout(() => {
             for (let i = startIndex; i < Math.min(endIndex, thumbnails.length); i++) {
-                queueFullResolution(thumbnails[i]);
+                const img = thumbnails[i];
+                const webp = img.dataset.webpSrc;
+                if (webp) {
+                    const tmp = new Image();
+                    tmp.onload = () => {
+                        img.src = webp;
+                        img.classList.add('webp-loaded');
+                    };
+                    tmp.onerror = () => {};
+                    tmp.src = webp;
+                }
             }
         }, 300);
     };
@@ -216,6 +310,30 @@
         
         // Load current slide (thumbnails first, then full-res)
         loadSlideImages(newSlideIndex);
+        
+        // If this movie does NOT have webp intermediates, start queuing
+        // full-resolution loads for images in the newly active slide so
+        // the full images begin loading immediately after the slide switch.
+        try {
+            const grid = document.getElementById('thumbnail-grid');
+            const hasWebp = grid?.dataset?.hasWebp === '1';
+            if (!hasWebp) {
+                const imagesPerSlide = getImagesPerSlide();
+                const startIndex = newSlideIndex * imagesPerSlide;
+                const endIndex = startIndex + imagesPerSlide;
+                const thumbnails = document.querySelectorAll('.thumbnail-image[data-lazy-src]');
+                for (let i = startIndex; i < Math.min(endIndex, thumbnails.length); i++) {
+                    const img = thumbnails[i];
+                    // Ensure thumbnail is at least loaded (compressed) before queuing full-res
+                    loadThumbnail(img);
+                    // Queue full resolution swap (will be processed sequentially)
+                    queueFullResolution(img);
+                }
+            }
+        } catch (e) {
+            // Non-fatal - if anything goes wrong, we simply won't queue full-res here
+            console.warn('Error while queuing full-res on slide change', e);
+        }
         
         // Optionally preload adjacent slides (thumbnails only, no full-res yet)
         setTimeout(() => {

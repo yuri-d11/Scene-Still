@@ -160,6 +160,19 @@
 
         if (!imageUrl) return;
         mainImage.src = imageUrl;
+        // Ensure the main image knows the full-resolution URL for zoom/navigation.
+        try {
+            const thumbImg = clickedThumbnailWrapper ? clickedThumbnailWrapper.querySelector('.thumbnail-image') : null;
+            // Prefer the thumbnail's fullSrc if available, otherwise set to the provided imageUrl
+            if (thumbImg && thumbImg.dataset && thumbImg.dataset.fullSrc) {
+                mainImage.dataset.fullSrc = thumbImg.dataset.fullSrc;
+            } else {
+                mainImage.dataset.fullSrc = imageUrl || '';
+            }
+        } catch (e) {
+            mainImage.dataset.fullSrc = imageUrl || '';
+        }
+        // (No background preloads here — avoid bulk full-res downloads when users click many thumbnails)
         mainPaletteContainer.innerHTML = '';
         mainPaletteContainer.classList.remove('loaded');
 
@@ -223,15 +236,68 @@
                 const thumbnailImage = e.target.closest('.thumbnail-image');
                 if (thumbnailImage) {
                     const thumbnailWrapper = thumbnailImage.closest('.thumbnail-wrapper');
-                    const fullSrc = thumbnailImage.dataset.fullSrc;
-                    
-                    // Queue full resolution loading for this thumbnail if not already loaded
-                    if (window.SZ?.lazyLoad?.queueFullResolution && !thumbnailImage.classList.contains('full-loaded')) {
-                        window.SZ.lazyLoad.queueFullResolution(thumbnailImage);
+                    // Decide whether to use full-resolution or preview based on CSV-provided marker
+                    const thumbnailGridEl = document.getElementById('thumbnail-grid');
+                    const hasWebp = thumbnailGridEl?.dataset?.hasWebp === '1';
+                    let previewSrc;
+                    if (!hasWebp) {
+                        // No intermediate webp available for this movie — use full-res for main image
+                        previewSrc = thumbnailImage.dataset.fullSrc || thumbnailImage.dataset.lazySrc || thumbnailImage.src;
+                    } else {
+                        // Prefer webp intermediate, then compressed thumbnail, then full as fallback
+                        previewSrc = thumbnailImage.dataset.webpSrc || thumbnailImage.dataset.lazySrc || thumbnailImage.src || thumbnailImage.dataset.fullSrc;
                     }
-                    
-                    // Update main image with full resolution
-                    window.SZ.colorPalette.updateMainImageAndPalette(fullSrc, thumbnailWrapper, true);
+
+                    // If preview is a webp that isn't already the main image, preload it
+                    // and show a small spinner over the main image while it downloads.
+                    const mainImage = document.getElementById('main-image');
+                    const webpSrc = thumbnailImage.dataset.webpSrc;
+                    const willUseWebp = hasWebp && webpSrc && previewSrc === webpSrc;
+
+                    if (willUseWebp && mainImage && mainImage.src !== webpSrc) {
+                        try {
+                            if (window.SZ?.mainLoader?.show) window.SZ.mainLoader.show();
+                            const tmp = new Image();
+                            tmp.onload = () => {
+                                if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+                                window.SZ.colorPalette.updateMainImageAndPalette(webpSrc, thumbnailWrapper, true);
+                            };
+                            tmp.onerror = () => {
+                                if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+                                // Fallback to whatever previewSrc is available
+                                window.SZ.colorPalette.updateMainImageAndPalette(previewSrc, thumbnailWrapper, true);
+                            };
+                            tmp.src = webpSrc;
+                        } catch (err) {
+                            if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+                            window.SZ.colorPalette.updateMainImageAndPalette(previewSrc, thumbnailWrapper, true);
+                        }
+                    } else if (!hasWebp) {
+                        // For movies without webp, preload the full-res thumbnail (if different)
+                        const fullSrc = thumbnailImage.dataset.fullSrc;
+                        if (fullSrc && mainImage && mainImage.src !== fullSrc) {
+                            try {
+                                if (window.SZ?.mainLoader?.show) window.SZ.mainLoader.show();
+                                const tmpFull = new Image();
+                                tmpFull.onload = () => {
+                                    if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+                                    window.SZ.colorPalette.updateMainImageAndPalette(fullSrc, thumbnailWrapper, true);
+                                };
+                                tmpFull.onerror = () => {
+                                    if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+                                    window.SZ.colorPalette.updateMainImageAndPalette(previewSrc, thumbnailWrapper, true);
+                                };
+                                tmpFull.src = fullSrc;
+                            } catch (err) {
+                                if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+                                window.SZ.colorPalette.updateMainImageAndPalette(previewSrc, thumbnailWrapper, true);
+                            }
+                        } else {
+                            window.SZ.colorPalette.updateMainImageAndPalette(previewSrc, thumbnailWrapper, true);
+                        }
+                    } else {
+                        window.SZ.colorPalette.updateMainImageAndPalette(previewSrc, thumbnailWrapper, true);
+                    }
                 }
             });
         }
