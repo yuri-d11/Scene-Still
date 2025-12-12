@@ -28,7 +28,7 @@
         <priority>0.7</priority>
     </url>
     
-    <!-- Film Pages (50 total) -->
+    <!-- Film Pages (51 total) -->
     <url>
         <loc>https://www.scenestill.com/film?id=3175</loc>
         <lastmod>2025-12-12</lastmod>
@@ -329,8 +329,14 @@
         <changefreq>monthly</changefreq>
         <priority>0.9</priority>
     </url>
+    <url>
+        <loc>https://www.scenestill.com/film?id=375262</loc>
+        <lastmod>2025-12-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
     
-    <!-- People Pages (543 total) -->
+    <!-- People Pages (554 total) -->
     <url>
         <loc>https://www.scenestill.com/person?name=Stanley%20Kubrick&amp;role=Director</loc>
         <lastmod>2025-12-12</lastmod>
@@ -1196,13 +1202,13 @@
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://www.scenestill.com/person?name=Miroslav%20Ond%C5%99%C3%AD%C4%8Dek&amp;role=Cinematographer</loc>
+        <loc>https://www.scenestill.com/person?name=Milo%C5%A1%20Forman&amp;role=Director</loc>
         <lastmod>2025-12-12</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://www.scenestill.com/person?name=Milo%C5%A1%20Forman&amp;role=Director</loc>
+        <loc>https://www.scenestill.com/person?name=Miroslav%20Ond%C5%99%C3%AD%C4%8Dek&amp;role=Cinematographer</loc>
         <lastmod>2025-12-12</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
@@ -3585,6 +3591,72 @@
     </url>
     <url>
         <loc>https://www.scenestill.com/person?name=Hiam%20Abbass&amp;role=Actor</loc>
+        <lastmod>2025-12-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Yorgos%20Lanthimos&amp;role=Director</loc>
+        <lastmod>2025-12-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Robbie%20Ryan&amp;role=Cinematographer</loc>
+        <lastmod>2025-12-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Emma%20Stone&amp;role=Actor</loc>
+        <lastmod>2025-12-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Olivia%20Colman&amp;role=Actor</loc>
+        <lastmod>2025-12-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Rachel%20Weisz&amp;role=Actor</loc>
+        <lastmod>2025-12-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Joe%20Alwyn&amp;role=Actor</loc>
+        <lastmod>2025-12-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Mark%20Gatiss&amp;role=Actor</loc>
+        <lastmod>2025-12-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=James%20Smith&amp;role=Actor</loc>
+        <lastmod>2025-12-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Jenny%20Rainsford&amp;role=Actor</loc>
+        <lastmod>2025-12-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Emma%20Delves&amp;role=Actor</loc>
+        <lastmod>2025-12-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.scenestill.com/person?name=Faye%20Daveney&amp;role=Actor</loc>
         <lastmod>2025-12-12</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
