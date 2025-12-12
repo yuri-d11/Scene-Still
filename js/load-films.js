@@ -4,6 +4,9 @@
     window.SZ.searchManager = window.SZ.searchManager || {};
 
     let allFilms = []; // Store all films globally
+    let currentSortType = 'alphabetical'; // Default sort type
+    let currentSortOrder = 'asc'; // Default sort order (ascending for alphabetical A-Z)
+    let currentFilteredFilms = null; // Track current search results
 
     // Helper to detect person page
     const checkIfPersonPage = () => {
@@ -31,6 +34,45 @@
             }
         }
         return title;
+    };
+
+    // Sorting functions
+    const sortFilms = (films, sortType, sortOrder) => {
+        const sorted = [...films];
+        
+        switch (sortType) {
+            case 'time-added':
+                // Sort by CSV index (order added)
+                sorted.sort((a, b) => {
+                    const indexA = a.csvIndex || 0;
+                    const indexB = b.csvIndex || 0;
+                    return sortOrder === 'asc' ? indexA - indexB : indexB - indexA;
+                });
+                break;
+            
+            case 'year':
+                // Sort by film year
+                sorted.sort((a, b) => {
+                    const yearA = parseInt(a.movieYear) || 0;
+                    const yearB = parseInt(b.movieYear) || 0;
+                    if (yearA === yearB) {
+                        // Secondary sort by name if years are equal
+                        return removeArticles(a.movieName).localeCompare(removeArticles(b.movieName));
+                    }
+                    return sortOrder === 'asc' ? yearA - yearB : yearB - yearA;
+                });
+                break;
+            
+            case 'alphabetical':
+                // Sort alphabetically, ignoring articles
+                sorted.sort((a, b) => {
+                    const comparison = removeArticles(a.movieName).localeCompare(removeArticles(b.movieName));
+                    return sortOrder === 'asc' ? comparison : -comparison;
+                });
+                break;
+        }
+        
+        return sorted;
     };
 
     // Function to render a single film card
@@ -187,7 +229,16 @@
             try {
                 for (let i = 0; i < rows.length; i += BATCH_SIZE) {
                     const batch = rows.slice(i, i + BATCH_SIZE);
-                    const batchResults = await Promise.allSettled(batch.map(processRow));
+                    const batchPromises = batch.map((row, batchIndex) => 
+                        processRow(row).then(result => {
+                            if (result) {
+                                // Store CSV index for time-added sorting
+                                result.csvIndex = i + batchIndex;
+                            }
+                            return result;
+                        })
+                    );
+                    const batchResults = await Promise.allSettled(batchPromises);
                     
                     // Only add successful results
                     batchResults.forEach(result => {
@@ -215,18 +266,21 @@
                 return;
             }
 
-            // Sort films alphabetically by movieName, ignoring leading articles
-            allFilms = processedFilms.sort((a, b) => removeArticles(a.movieName).localeCompare(removeArticles(b.movieName)));
+            // Store all films (unsorted initially)
+            allFilms = processedFilms;
+
+            // Apply initial sorting (time-added, descending by default)
+            const sortedFilms = sortFilms(allFilms, currentSortType, currentSortOrder);
 
             // Clear loading message
             if (container) {
                 container.innerHTML = '';
             }
 
-            // Render all films at once after sorting (both desktop and mobile)
+            // Render sorted films
             const isPersonPageCheck = checkIfPersonPage();
             if (!isPersonPageCheck) {
-                renderFilmCards(allFilms, 'film-cards-container');
+                renderFilmCards(sortedFilms, 'film-cards-container');
             }
         } catch (error) {
             console.error('Error loading or parsing data:', error);
@@ -333,7 +387,97 @@
 
         // Set the initial state when the page loads
         handleScreenState();
-    });    // Initialize search functionality
+    });
+
+    // Event listeners for sort controls
+    document.addEventListener('DOMContentLoaded', () => {
+        const sortSelect = document.getElementById('sort-select');
+        const sortOrderToggle = document.getElementById('sort-order-toggle');
+        const LS_SORT_TYPE_KEY = 'sceneStillSortType';
+        const LS_SORT_ORDER_KEY = 'sceneStillSortOrder';
+
+        if (!sortSelect || !sortOrderToggle) {
+            return; // Exit if sort controls don't exist on this page
+        }
+
+        // Load saved preferences from localStorage
+        const loadSortPreferences = () => {
+            try {
+                const savedType = localStorage.getItem(LS_SORT_TYPE_KEY);
+                const savedOrder = localStorage.getItem(LS_SORT_ORDER_KEY);
+                
+                if (savedType && ['time-added', 'year', 'alphabetical'].includes(savedType)) {
+                    currentSortType = savedType;
+                    sortSelect.value = savedType;
+                }
+                
+                if (savedOrder && ['asc', 'desc'].includes(savedOrder)) {
+                    currentSortOrder = savedOrder;
+                    updateSortOrderButton();
+                }
+            } catch (e) {
+                console.warn('Could not load sort preferences:', e);
+            }
+        };
+
+        // Save sort preferences to localStorage
+        const saveSortPreferences = () => {
+            try {
+                localStorage.setItem(LS_SORT_TYPE_KEY, currentSortType);
+                localStorage.setItem(LS_SORT_ORDER_KEY, currentSortOrder);
+            } catch (e) {
+                console.warn('Could not save sort preferences:', e);
+            }
+        };
+
+        // Update the sort order button appearance
+        const updateSortOrderButton = () => {
+            if (currentSortOrder === 'asc') {
+                sortOrderToggle.classList.add('ascending');
+                sortOrderToggle.setAttribute('title', 'Ascending');
+            } else {
+                sortOrderToggle.classList.remove('ascending');
+                sortOrderToggle.setAttribute('title', 'Descending');
+            }
+        };
+
+        // Apply sorting and re-render films
+        const applySorting = () => {
+            if (allFilms.length === 0) {
+                return; // Wait for films to load
+            }
+
+            // Use filtered films if search is active, otherwise use all films
+            const filmsToSort = currentFilteredFilms || allFilms;
+            const sortedFilms = sortFilms(filmsToSort, currentSortType, currentSortOrder);
+            const container = document.getElementById('film-cards-container');
+            
+            if (container) {
+                // Use isSearch=true if we're sorting filtered results
+                renderFilmCards(sortedFilms, 'film-cards-container', currentFilteredFilms !== null);
+            }
+
+            saveSortPreferences();
+        };
+
+        // Sort type change handler
+        sortSelect.addEventListener('change', (e) => {
+            currentSortType = e.target.value;
+            applySorting();
+        });
+
+        // Sort order toggle handler
+        sortOrderToggle.addEventListener('click', () => {
+            currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+            updateSortOrderButton();
+            applySorting();
+        });
+
+        // Load preferences on page load
+        loadSortPreferences();
+    });
+    
+    // Initialize search functionality
     window.SZ.searchManager.initializeSearch = function(config) {
         const searchInput = document.getElementById(config.searchInputId);
         if (!searchInput) return;
@@ -430,9 +574,13 @@
                 
                 // On person page with empty search, restore the person's films
                 if (isPersonPageInSearch) {
+                    currentFilteredFilms = null; // Clear search state
                     renderFilmCards(filmsToSearch, config.filmCardsContainerId, true);
                     return;
                 }
+                
+                // Clear search state for non-person pages
+                currentFilteredFilms = null;
             }
 
             // Filter and render films
@@ -442,7 +590,14 @@
                     name && name.toLowerCase().includes(searchTerm)
                 ))
             );
-            renderFilmCards(filteredFilms, config.filmCardsContainerId, true);
+            
+            // Apply current sorting to search results
+            const sortedFilteredFilms = sortFilms(filteredFilms, currentSortType, currentSortOrder);
+            
+            // Track filtered films for sorting
+            currentFilteredFilms = filteredFilms;
+            
+            renderFilmCards(sortedFilteredFilms, config.filmCardsContainerId, true);
         });
     };
 })();

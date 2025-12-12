@@ -173,12 +173,17 @@ a:hover{
 .section-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-top: 45px;
+    align-items: flex-end;
+    margin-top: 33px;
+}
+
+.section-header h4 {
+    align-self: flex-end;
 }
 
 .section_start {
     margin-top: 0;
+    margin-bottom: 0.2rem;
 }
 
 .view-options {
@@ -190,39 +195,172 @@ a:hover{
 
 .view-options {
     display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0;
+}
+
+.grid-row {
+    display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+}
+
+.sort-row {
+    align-self: flex-end;
+}
+
+.grid-label {
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    color: #FAFAFA;
+    font-weight: 400;
+    white-space: nowrap;
+    width: 47px;
+}
+
+.sort-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+    min-width: 0;
+}
+
+.sort-label {
+    font-size: 14px;
+    font-weight: 400;
+    color: #FAFAFA;
+    white-space: nowrap;
+    width: 47px;
+}
+
+.sort-select {
+    background-color: #333;
+    color: #FAFAFA;
+    border: 1px solid #4B4B4B;
+    border-radius: 0 0 0 3px;
+    border-right: none;
+    border-top: none;
+    padding: 6px 12px;
+    font-family: Jost, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.3s;
+    box-shadow: 4px 5px 4px 0 rgba(0, 0, 0, 0.2);
+    height: 30px;
+    flex: 1;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    padding-right: 32px;
+}
+
+.sort-select:hover {
+    border-color: #B3B3B3;
+}
+
+.sort-select:focus {
+    border-color: #B3B3B3;
+    border-right: none;
+}
+
+.sort-order-toggle {
+    background-color: #333;
+    color: #FAFAFA;
+    border: 1px solid #4B4B4B;
+    border-radius: 0 0 3px 0;
+    border-left: 1px solid #4B4B4B;
+    border-top: none;
+    padding: 6px 10px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.3s;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    box-shadow: 4px 5px 4px 0 rgba(0, 0, 0, 0.2);
+    height: 30px;
+}
+
+.sort-order-toggle:hover {
+    border-color: #B3B3B3;
+}
+
+.sort-order-toggle:focus {
+    border-color: #B3B3B3;
+}
+
+.sort-order-toggle.ascending .sort-arrow {
+    transform: rotate(180deg);
+}
+
+.sort-arrow {
+    display: inline-block;
+    transition: transform 0.2s;
 }
 
 .histogram-container {
     display: flex;
-    align-items: flex-end;
-    gap: 3px;
-    height: 22.5px;
+    align-items: center;
+    gap: 0;
+    min-width: 0;
 }
 
 .histogram-bar {
-    width: 15px;
-    background-color: #4B4B4B;
-    border: none;
+    flex: 1 1 0;
+    min-width: 0;
+    background-color: #333;
+    color: #FAFAFA;
+    border: 1px solid #4B4B4B;
+    border-right: none;
+    border-bottom: none;
     cursor: pointer;
-    transition: background-color 0.2s;
-    padding: 0;
+    transition: background-color 0.2s, border-color 0.3s;
+    padding: 6px 11px;
+    font-family: Jost, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    height: 30px;
+    box-shadow: 4px 5px 4px 0 rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.histogram-bar:first-child {
+    border-radius: 3px 0 0 0;
+}
+
+.histogram-bar:last-child {
+    border-radius: 0 3px 0 0;
+    border-right: 1px solid #4B4B4B;
 }
 
 .histogram-bar:hover {
-    background-color: #6a6a6a;
+    border-color: #B3B3B3;
+    background-color: #444;
 }
 
 .histogram-bar.active {
-    background-color: #FAFAFA;
+    background-color: #555;
 }
-
-.histogram-bar:nth-child(1) { height: 7.5px; }
-.histogram-bar:nth-child(2) { height: 11.25px; }
-.histogram-bar:nth-child(3) { height: 15px; }
-.histogram-bar:nth-child(4) { height: 18.75px; }
-.histogram-bar:nth-child(5) { height: 22.5px; }
 
 .image-container {
 	display: flex;
@@ -392,8 +530,55 @@ footer p a:hover{
 /* Mobile Styles - ALL mobile screens (≤767px) - 2 per row */
 @media (max-width: 767px) {
     .view-options {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        width: 100%;
+    }
+    
+    .sort-row {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .sort-controls {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        flex: 1;
+    }
+    
+    .sort-label {
+        font-size: 13px;
+    }
+    
+    .sort-select {
+        flex: 1;
+        font-size: 13px;
+        padding: 5px 8px;
+        border-radius: 3px 0 0 3px;
+        border-top: 1px solid #4B4B4B;
+        border-right: none;
+    }
+    
+    .sort-order-toggle {
+        font-size: 14px;
+        padding: 5px 9px;
+        min-width: 32px;
+        border-radius: 0 3px 3px 0;
+        border-top: 1px solid #4B4B4B;
+    }
+    
+    .histogram-container {
         display: none;
     }
+    
+    .grid-row {
+        display: none;
+    }
+    
     /* Wrapper container for positioning */
     nav {
         flex-wrap: nowrap;
@@ -520,8 +705,36 @@ footer p a:hover{
 /* Tablet Styles - 3 per row (768px to 1023px) */
 @media (min-width: 768px) and (max-width: 1023px) {
     .view-options {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0;
+    }
+    
+    .histogram-container {
         display: none;
     }
+    
+    .grid-row {
+        display: none;
+    }
+    
+    .sort-row {
+        width: 100%;
+    }
+    
+    .sort-select {
+        border-top: 1px solid #4B4B4B;
+    }
+    
+    .sort-order-toggle {
+        border-top: 1px solid #4B4B4B;
+    }
+    
+    .sort-controls {
+        justify-content: space-between;
+        width: 100%;
+    }
+    
     .wrapper, footer {
         padding: 10px 30px;
     }

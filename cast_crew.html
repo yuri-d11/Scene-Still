@@ -90,14 +90,30 @@
 				</div>
 			</div>
 			<div class="section-header" id="search-results-section" style="display: none;">
-				<h4 class="search-results-header">Search Results:</h4>
+				<h4 class="search-results-header section_start">Search Results:</h4>
 				<div class="view-options">
-					<div class="histogram-container">
-						<button class="histogram-bar" data-value="2" aria-label="2 items per row"></button>
-						<button class="histogram-bar" data-value="3" aria-label="3 items per row"></button>
-						<button class="histogram-bar" data-value="4" aria-label="4 items per row"></button>
-						<button class="histogram-bar" data-value="5" aria-label="5 items per row"></button>
-						<button class="histogram-bar" data-value="6" aria-label="6 items per row"></button>
+					<div class="grid-row">
+						<label class="grid-label">Grid #:</label>
+						<div class="histogram-container">
+							<button class="histogram-bar" data-value="2" aria-label="2 items per row">2</button>
+							<button class="histogram-bar" data-value="3" aria-label="3 items per row">3</button>
+							<button class="histogram-bar" data-value="4" aria-label="4 items per row">4</button>
+							<button class="histogram-bar" data-value="5" aria-label="5 items per row">5</button>
+							<button class="histogram-bar" data-value="6" aria-label="6 items per row">6</button>
+						</div>
+					</div>
+					<div class="sort-row">
+						<label for="sort-select" class="sort-label">Sort by:</label>
+						<div class="sort-controls">
+						<select id="sort-select" class="sort-select" aria-label="Sort films by">
+							<option value="alphabetical" selected>Title</option>
+							<option value="year">Release Year</option>
+							<option value="time-added">Date Added</option>
+						</select>
+							<button id="sort-order-toggle" class="sort-order-toggle" aria-label="Toggle sort order" title="Toggle ascending/descending">
+								<span class="sort-arrow">↓</span>
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
