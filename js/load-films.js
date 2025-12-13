@@ -89,7 +89,7 @@
         const fullTitle = `${film.movieName} (${film.movieYear})`;
         filmCard.innerHTML = `
             <a href="film.html?id=${film.movieId}">
-                <img src="${film.poster}" alt="${film.movieName} Poster">
+                <img src="${film.poster}" alt="${film.movieName} Poster" width="272" height="350" loading="lazy">
                 <h4 title="${fullTitle}">${film.movieName} (${film.movieYear})</h4>
             </a>
         `;
@@ -121,7 +121,7 @@
                 htmlContent += `
                     <div class="image-card" data-movie-id="${film.movieId}">
                         <a href="film.html?id=${film.movieId}">
-                            <img src="${film.poster}" alt="${film.movieName} Poster">
+                            <img src="${film.poster}" alt="${film.movieName} Poster" width="272" height="350" loading="lazy">
                             <h4 title="${fullTitle}">${film.movieName} (${film.movieYear})</h4>
                         </a>
                     </div>

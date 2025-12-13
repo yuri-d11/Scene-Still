@@ -6,7 +6,7 @@
   src: url("../fonts/Jost-VariableFont_wght.ttf") format('truetype');
   font-weight: 100 900;       
   font-style: normal;         
-  font-display: swap;
+  font-display: optional;
 }
 
 body {
@@ -370,6 +370,7 @@ a:hover{
     flex-wrap: wrap;
     margin: 0px;
     margin-bottom: 50px;
+    min-height: 800px;
 }
 .image-card {
 	text-align: center;
@@ -789,5 +790,21 @@ footer p a:hover{
     }
     .image-container.columns-6 .image-card {
         width: calc((100% - (30px * 5)) / 6);
+    }
+}
+
+/* Skeleton/Loading State */
+.image-card.loading img {
+    background: linear-gradient(90deg, #1a1515 25%, #2a2020 50%, #1a1515 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s ease-in-out infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
     }
 }
