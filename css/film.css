@@ -1,6 +1,16 @@
 @charset "utf-8";
 /* CSS Document for film pages */
 
+html {
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+body {
+	overflow-x: hidden;
+	width: 100%;
+}
+
 .navbar {
 			padding-left: 0px;
 			padding-right: 0px;

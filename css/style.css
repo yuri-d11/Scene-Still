@@ -9,6 +9,11 @@
   font-display: optional;
 }
 
+html {
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
 body {
 	font-family: Jost, sans-serif;
 	background-color: #120D0D;
@@ -17,6 +22,8 @@ body {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
+	overflow-x: hidden;
+	width: 100%;
 }
 
 .wrapper{
