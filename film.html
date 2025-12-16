@@ -450,6 +450,11 @@
                     const wrap = document.createElement('div');
                     wrap.className = 'thumbnail-wrapper';
                     
+                    // Set aspect ratio on wrapper to prevent layout shift
+                    if (aspectRatio) {
+                        wrap.style.aspectRatio = aspectRatio;
+                    }
+                    
                     const img = document.createElement('img');
                     
                     // PRIORITY 2: Use placeholder for all thumbnails, lazy load compressed versions
@@ -469,11 +474,6 @@
                     // Priority loading for first 6 visible thumbnails (faster HTTP/2 connection establishment)
                     if (index < 6) {
                         img.fetchPriority = 'high';
-                    }
-                    
-                    // Set aspect ratio on image to match main image approach
-                    if (aspectRatio) {
-                        img.style.aspectRatio = aspectRatio;
                     }
                     
                     // Don't add srcset - we'll handle loading manually through lazy-load.js

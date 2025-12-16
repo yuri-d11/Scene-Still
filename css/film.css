@@ -247,6 +247,8 @@
             border-radius: 4px;
             transition: border-color 0.3s ease;
             box-sizing: border-box;
+            overflow: hidden;
+            aspect-ratio: 1280 / 494; /* Default aspect ratio, overridden by inline style */
         }
 
         .thumbnail-wrapper.active {
@@ -254,17 +256,18 @@
         }
 
         .thumbnail-image {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: auto; /* Let aspect ratio control height, like main image */
-            object-fit: cover;
+            height: 100%;
             border-radius: 2px;
             cursor: pointer;
             transition: filter 0.2s ease, opacity 0.3s ease;
             box-shadow: 4px 5px 4px 0 rgba(0, 0, 0, 0.2);
             background: #333;
             opacity: 0.6;
-            display: block;
-            /* Aspect ratio will be set dynamically via JavaScript inline style */
+            object-fit: cover;
         }
         
         .thumbnail-image.thumbnail-loaded {
@@ -424,11 +427,9 @@
 			max-width: 100%;
 			flex-shrink: 0;
 			flex-grow: 0;
-			overflow: hidden;
+			overflow: visible;
 			padding: 0 6px;
 			box-sizing: border-box;
-			display: flex;
-			flex-direction: column;
 		}
 		
 		.thumbnail-slide .row {
@@ -437,7 +438,6 @@
 			margin-bottom: 0;
 			display: flex;
 			flex-wrap: wrap;
-			flex: 1;
 			align-content: flex-start;
 		}
 		
