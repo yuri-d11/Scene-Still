@@ -855,24 +855,9 @@
 				font-size: 13px; /* Removed width: 100% so it only wraps when necessary */
 			}
 			
-			/* Make slider indicators smaller on mobile to fit more */
-			.slider-indicator {
-				width: 28px;
-				height: 28px;
-				min-width: 28px;
-				min-height: 28px;
-				max-width: 28px;
-				max-height: 28px;
-				font-size: 13px;
-			}
-			
-			/* Ensure no gap between thumbnails and controls on mobile */
-			.thumbnail-slide [class*="col-"] {
-				margin-bottom: 10px;
-			}
-			
-			.thumbnail-slide [class*="col-"]:last-child {
-				margin-bottom: 0;
+			/* Override Bootstrap mb-4 class for slider columns to prevent gaps */
+			.thumbnail-slider .thumbnail-slide .mb-4 {
+				margin-bottom: 10px !important;
 			}
 		}
 		
@@ -884,21 +869,5 @@
 			
 			.palette-swatch .copy-prompt {
 				font-size: 0.8em;
-			}
-			
-			/* Further reduce slider indicators on very small screens */
-			.slider-indicator {
-				width: 26px;
-				height: 26px;
-				min-width: 26px;
-				min-height: 26px;
-				max-width: 26px;
-				max-height: 26px;
-				font-size: 12px;
-				gap: 6px;
-			}
-			
-			.slider-indicators {
-				gap: 6px;
 			}
 		}
