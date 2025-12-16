@@ -28,8 +28,10 @@
     <!-- Resource Hints -->
     <link rel="preconnect" href="https://api.themoviedb.org">
     <link rel="preconnect" href="https://image.tmdb.org">
+    <link rel="preconnect" href="https://i.ibb.co" crossorigin>
     <link rel="dns-prefetch" href="https://api.themoviedb.org">
     <link rel="dns-prefetch" href="https://image.tmdb.org">
+    <link rel="dns-prefetch" href="https://i.ibb.co">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" id="og-type">
@@ -220,7 +222,17 @@
         <button class="zoom-nav-btn zoom-nav-prev" id="zoom-nav-prev" aria-label="Previous image">
             <span class="zoom-nav-arrow">‹</span>
         </button>
-        <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Loading film still" class="zoomed-image" id="zoomed-image">
+        <div class="zoom-content-wrapper">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Loading film still" class="zoomed-image" id="zoomed-image">
+            <div id="zoom-controls" class="zoom-controls">
+                <button id="load-full-size-btn" class="zoom-control-btn load-btn">
+                    <span class="btn-text">Load Full Size</span>
+                </button>
+                <button id="download-full-size-btn" class="zoom-control-btn download-btn">
+                    <span class="btn-text">Download Full Size</span>
+                </button>
+            </div>
+        </div>
         <button class="zoom-nav-btn zoom-nav-next" id="zoom-nav-next" aria-label="Next image">
             <span class="zoom-nav-arrow">›</span>
         </button>
@@ -453,6 +465,11 @@
                     img.dataset.fullSrc = still;
                     img.alt = `${movieDetails.title} ${index + 1}`;
                     img.loading = 'lazy'; // Browser-level lazy loading hint
+                    
+                    // Priority loading for first 6 visible thumbnails (faster HTTP/2 connection establishment)
+                    if (index < 6) {
+                        img.fetchPriority = 'high';
+                    }
                     
                     // Set aspect ratio on image to match main image approach
                     if (aspectRatio) {

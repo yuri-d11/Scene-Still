@@ -292,6 +292,7 @@
 		.thumbnail-grid-wrapper {
 			position: relative;
 			overflow: hidden;
+			margin-bottom: 0;
 		}
 		.thumbnail-header {
 			display: flex;
@@ -311,6 +312,7 @@
 			gap: 12px;
 			margin-top: 10px;
 			margin-bottom: 0;
+			padding-top: 0;
 		}
 		
 		.slider-controls.active {
@@ -331,6 +333,7 @@
 			display: flex;
 			gap: 8px;
 			align-items: center;
+			flex-wrap: wrap;
 		}
 		
 		.slider-hint {
@@ -395,11 +398,6 @@
 			background-color: #FAFAFA !important;
 		}
 		
-		.thumbnail-grid-wrapper {
-			position: relative;
-			overflow: hidden;
-		}
-		
 		.mb-4{
 			margin-bottom: 1.0rem !important;
 		}
@@ -429,13 +427,18 @@
 			overflow: hidden;
 			padding: 0 6px;
 			box-sizing: border-box;
+			display: flex;
+			flex-direction: column;
 		}
 		
 		.thumbnail-slide .row {
 			margin-left: -5px;
 			margin-right: -5px;
+			margin-bottom: 0;
 			display: flex;
 			flex-wrap: wrap;
+			flex: 1;
+			align-content: flex-start;
 		}
 		
 		.thumbnail-slide [class*="col-"] {
@@ -537,8 +540,12 @@
             padding: 0 !important;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
             transform: scale(0.95);
+            opacity: 0.3;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .zoomed-image.full-loaded {
             opacity: 1;
-            transition: transform 0.3s ease;
         }
 
         .zoom-overlay.visible .zoomed-image {
@@ -648,6 +655,140 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Zoom controls container */
+        .zoom-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            max-width: 100%;
+            max-height: 100%;
+            pointer-events: none;
+        }
+
+        .zoom-content-wrapper > * {
+            pointer-events: auto;
+        }
+
+        .zoom-controls {
+            display: none;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .zoom-controls.visible {
+            display: flex;
+        }
+
+        .zoom-control-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #FAFAFA;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Jost', sans-serif;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            white-space: nowrap;
+        }
+
+        .zoom-control-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .zoom-control-btn:active {
+            transform: translateY(0);
+        }
+
+        .zoom-control-btn:disabled,
+        .zoom-control-btn.loaded {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .zoom-control-btn.fetching {
+            opacity: 0.7;
+            cursor: wait;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .zoom-control-btn:disabled:hover,
+        .zoom-control-btn.loaded:hover,
+        .zoom-control-btn.fetching:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .zoom-control-btn .btn-text {
+            display: block;
+        }
+
+        .load-btn {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: rgba(76, 175, 80, 0.4);
+        }
+
+        .load-btn:hover {
+            background: rgba(76, 175, 80, 0.35);
+            border-color: rgba(76, 175, 80, 0.6);
+        }
+
+        .download-btn {
+            background: rgba(33, 150, 243, 0.2);
+            border-color: rgba(33, 150, 243, 0.4);
+        }
+
+        .download-btn:hover {
+            background: rgba(33, 150, 243, 0.35);
+            border-color: rgba(33, 150, 243, 0.6);
+        }
+
+        /* Responsive adjustments for zoom controls */
+        @media (max-width: 768px) {
+            .zoom-controls {
+                flex-direction: column;
+                gap: 8px;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .zoom-control-btn {
+                width: 100%;
+                padding: 14px 20px;
+                font-size: 13px;
+            }
+
+            /* Hide load button on mobile, only show download */
+            .load-btn {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .zoom-control-btn {
+                padding: 12px 16px;
+                font-size: 12px;
+            }
+        }
+
         /* Main image small loader */
         .main-loading {
             position: absolute;
@@ -713,6 +854,26 @@
 			.slider-hint {
 				font-size: 13px; /* Removed width: 100% so it only wraps when necessary */
 			}
+			
+			/* Make slider indicators smaller on mobile to fit more */
+			.slider-indicator {
+				width: 28px;
+				height: 28px;
+				min-width: 28px;
+				min-height: 28px;
+				max-width: 28px;
+				max-height: 28px;
+				font-size: 13px;
+			}
+			
+			/* Ensure no gap between thumbnails and controls on mobile */
+			.thumbnail-slide [class*="col-"] {
+				margin-bottom: 10px;
+			}
+			
+			.thumbnail-slide [class*="col-"]:last-child {
+				margin-bottom: 0;
+			}
 		}
 		
 		/* Extra adjustments for very small screens */
@@ -723,5 +884,21 @@
 			
 			.palette-swatch .copy-prompt {
 				font-size: 0.8em;
+			}
+			
+			/* Further reduce slider indicators on very small screens */
+			.slider-indicator {
+				width: 26px;
+				height: 26px;
+				min-width: 26px;
+				min-height: 26px;
+				max-width: 26px;
+				max-height: 26px;
+				font-size: 12px;
+				gap: 6px;
+			}
+			
+			.slider-indicators {
+				gap: 6px;
 			}
 		}

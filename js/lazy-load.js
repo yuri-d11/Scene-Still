@@ -151,7 +151,7 @@
         }
 
         // PRIORITY 3: After thumbnails load, start loading intermediate webp versions
-        // Wait a bit to ensure thumbnails are rendered first
+        // Reduced delay for faster webp loading
         setTimeout(() => {
                 // If the CSV indicates this movie has webp intermediates, upgrade to webp.
                 // Otherwise (no webp available), upgrade visible thumbnails directly to full-resolution
@@ -168,7 +168,7 @@
                     // Fallback to attempting webp upgrade if anything goes wrong
                     loadWebpImages(thumbnailCount, isMobile);
                 }
-        }, 500);
+        }, 200); // Reduced from 500ms to 200ms for faster webp loading
     };
 
     // Load intermediate webp images (slightly compressed) in priority order
@@ -285,12 +285,16 @@
             loadThumbnail(thumbnails[i]);
         }
         
-        // Then upgrade to intermediate webp versions (if available)
+        // Then upgrade to intermediate webp versions (if available) - reduced delay for faster perceived loading
         setTimeout(() => {
+            const grid = document.getElementById('thumbnail-grid');
+            const hasWebp = grid?.dataset?.hasWebp === '1';
+            if (!hasWebp) return; // Skip if no webp versions exist
+            
             for (let i = startIndex; i < Math.min(endIndex, thumbnails.length); i++) {
                 const img = thumbnails[i];
                 const webp = img.dataset.webpSrc;
-                if (webp) {
+                if (webp && !img.src.includes(webp)) {
                     const tmp = new Image();
                     tmp.onload = () => {
                         img.src = webp;
@@ -300,7 +304,7 @@
                     tmp.src = webp;
                 }
             }
-        }, 300);
+        }, 100); // Reduced from 300ms to 100ms for faster webp loading on slide change
     };
 
     // Handle slide change - load new slide images

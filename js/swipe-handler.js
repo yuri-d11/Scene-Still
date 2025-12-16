@@ -223,6 +223,333 @@
 
     // Keep a reference to the current zoom preload to ignore stale callbacks
     let _currentZoomPreload = null;
+    
+    // Keep a reference to ongoing download to cancel it if needed
+    let _currentDownloadController = null;
+
+    // Helper function to get file extension from URL
+    const getFileExtension = (url) => {
+        if (!url) return '';
+        const match = url.match(/\.([a-zA-Z0-9]+)(?:\?|$)/);
+        return match ? match[1].toUpperCase() : '';
+    };
+
+    // Helper function to format file size
+    const formatFileSize = (bytes) => {
+        if (!bytes || bytes === 0) return '';
+        const mb = bytes / (1024 * 1024);
+        return `${mb.toFixed(2)} MB`;
+    };
+
+    // Helper function to fetch file size from URL with timeout and caching
+    const fileSizeCache = new Map();
+    const fetchFileSize = async (url) => {
+        // Check cache first
+        if (fileSizeCache.has(url)) {
+            return fileSizeCache.get(url);
+        }
+        
+        try {
+            // Add timeout to prevent slow requests from blocking
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+            
+            const response = await fetch(url, { 
+                method: 'HEAD',
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+            
+            const contentLength = response.headers.get('Content-Length');
+            const size = contentLength ? parseInt(contentLength, 10) : null;
+            
+            // Cache the result
+            if (size) {
+                fileSizeCache.set(url, size);
+            }
+            
+            return size;
+        } catch (error) {
+            // Don't log timeout errors as warnings, they're expected for slow servers
+            if (error.name !== 'AbortError') {
+                console.warn('Failed to fetch file size for:', url, error);
+            }
+            return null;
+        }
+    };
+
+    // Update button text with file format and size
+    const updateZoomButtonText = async (fullSrc) => {
+        const loadBtn = document.getElementById('load-full-size-btn');
+        const downloadBtn = document.getElementById('download-full-size-btn');
+        
+        if (!loadBtn || !downloadBtn || !fullSrc) return;
+        
+        const extension = getFileExtension(fullSrc);
+        const format = extension || 'Image';
+        
+        // Disable buttons and show loading state immediately
+        loadBtn.disabled = true;
+        downloadBtn.disabled = true;
+        loadBtn.classList.add('fetching');
+        downloadBtn.classList.add('fetching');
+        loadBtn.querySelector('.btn-text').textContent = `Loading ${format} info...`;
+        downloadBtn.querySelector('.btn-text').textContent = `Loading ${format} info...`;
+        
+        // Fetch size asynchronously and update when available
+        try {
+            const fileSize = await fetchFileSize(fullSrc);
+            
+            // Check if elements still exist and haven't been changed by user action
+            const currentLoadBtn = document.getElementById('load-full-size-btn');
+            const currentDownloadBtn = document.getElementById('download-full-size-btn');
+            
+            if (currentLoadBtn && currentLoadBtn.classList.contains('fetching')) {
+                currentLoadBtn.classList.remove('fetching');
+                // Only enable if not already loaded
+                if (!currentLoadBtn.classList.contains('loaded')) {
+                    currentLoadBtn.disabled = false;
+                }
+                
+                if (fileSize) {
+                    const sizeText = formatFileSize(fileSize);
+                    currentLoadBtn.querySelector('.btn-text').textContent = `Load Full Size ${format} (${sizeText})`;
+                } else {
+                    currentLoadBtn.querySelector('.btn-text').textContent = `Load Full Size ${format}`;
+                }
+            }
+            
+            if (currentDownloadBtn && currentDownloadBtn.classList.contains('fetching')) {
+                currentDownloadBtn.classList.remove('fetching');
+                currentDownloadBtn.disabled = false;
+                
+                if (fileSize) {
+                    const sizeText = formatFileSize(fileSize);
+                    currentDownloadBtn.querySelector('.btn-text').textContent = `Download Full Size ${format} (${sizeText})`;
+                } else {
+                    currentDownloadBtn.querySelector('.btn-text').textContent = `Download Full Size ${format}`;
+                }
+            }
+        } catch (error) {
+            // Re-enable buttons even on error
+            const currentLoadBtn = document.getElementById('load-full-size-btn');
+            const currentDownloadBtn = document.getElementById('download-full-size-btn');
+            
+            if (currentLoadBtn && currentLoadBtn.classList.contains('fetching')) {
+                currentLoadBtn.classList.remove('fetching');
+                if (!currentLoadBtn.classList.contains('loaded')) {
+                    currentLoadBtn.disabled = false;
+                }
+                currentLoadBtn.querySelector('.btn-text').textContent = `Load Full Size ${format}`;
+            }
+            
+            if (currentDownloadBtn && currentDownloadBtn.classList.contains('fetching')) {
+                currentDownloadBtn.classList.remove('fetching');
+                currentDownloadBtn.disabled = false;
+                currentDownloadBtn.querySelector('.btn-text').textContent = `Download Full Size ${format}`;
+            }
+        }
+    };
+
+    // Load full size image when button is clicked
+    const loadFullSizeImage = () => {
+        const zoomedImage = document.getElementById('zoomed-image');
+        const loadBtn = document.getElementById('load-full-size-btn');
+        
+        if (!zoomedImage) return;
+        
+        const fullSrc = zoomedImage.dataset.fullSrc;
+        const isLoaded = zoomedImage.dataset.isFullSizeLoaded === 'true';
+        
+        // If already loaded, do nothing
+        if (isLoaded || !fullSrc) return;
+        
+        // Show loading indicator
+        showZoomLoading();
+        zoomedImage.classList.remove('full-loaded');
+        
+        // Load the full size image
+        _currentZoomPreload = fullSrc;
+        zoomedImage.src = fullSrc;
+        
+        const handleLoad = () => {
+            if (_currentZoomPreload !== fullSrc) return;
+            zoomedImage.classList.add('full-loaded');
+            zoomedImage.dataset.isFullSizeLoaded = 'true';
+            hideZoomLoading();
+            _currentZoomPreload = null;
+            
+            // Update button to show loaded state
+            if (loadBtn) {
+                loadBtn.disabled = true;
+                loadBtn.classList.add('loaded');
+                loadBtn.querySelector('.btn-text').textContent = 'Full Size Image Loaded';
+            }
+        };
+        
+        const handleError = () => {
+            if (_currentZoomPreload !== fullSrc) return;
+            console.warn('Failed to load full-resolution image:', fullSrc);
+            zoomedImage.classList.add('full-loaded');
+            hideZoomLoading();
+            _currentZoomPreload = null;
+        };
+        
+        zoomedImage.addEventListener('load', handleLoad, { once: true });
+        zoomedImage.addEventListener('error', handleError, { once: true });
+    };
+
+    // Download full size image without loading it first
+    const downloadFullSizeImage = async () => {
+        const zoomedImage = document.getElementById('zoomed-image');
+        if (!zoomedImage) return;
+        
+        const fullSrc = zoomedImage.dataset.fullSrc;
+        if (!fullSrc) return;
+        
+        // Cancel any ongoing download
+        if (_currentDownloadController) {
+            _currentDownloadController.abort();
+        }
+        
+        // Create new AbortController for this download
+        _currentDownloadController = new AbortController();
+        const controller = _currentDownloadController;
+        
+        try {
+            // Show a brief loading state
+            const downloadBtn = document.getElementById('download-full-size-btn');
+            const originalText = downloadBtn ? downloadBtn.querySelector('.btn-text').textContent : '';
+            if (downloadBtn) {
+                downloadBtn.querySelector('.btn-text').textContent = 'Downloading...';
+                downloadBtn.disabled = true;
+            }
+            
+            // Fetch the image as a blob with abort signal
+            const response = await fetch(fullSrc, { signal: controller.signal });
+            if (!response.ok) throw new Error('Failed to download image');
+            
+            const blob = await response.blob();
+            
+            // Create a download link
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            
+            // Extract filename from URL or use default
+            const urlParts = fullSrc.split('/');
+            const filename = urlParts[urlParts.length - 1].split('?')[0] || 'film-still.' + getFileExtension(fullSrc).toLowerCase();
+            a.download = filename;
+            
+            // Trigger download
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // Clean up
+            window.URL.revokeObjectURL(url);
+            
+            // Clear controller reference
+            if (_currentDownloadController === controller) {
+                _currentDownloadController = null;
+            }
+            
+            // Restore button state
+            if (downloadBtn) {
+                downloadBtn.querySelector('.btn-text').textContent = originalText;
+                downloadBtn.disabled = false;
+            }
+        } catch (error) {
+            // Clear controller reference
+            if (_currentDownloadController === controller) {
+                _currentDownloadController = null;
+            }
+            
+            // Don't show error for aborted downloads
+            if (error.name === 'AbortError') {
+                return;
+            }
+            
+            console.error('Download failed:', error);
+            alert('Failed to download image. Please try again.');
+            
+            // Restore button state on error
+            const downloadBtn = document.getElementById('download-full-size-btn');
+            if (downloadBtn) {
+                const extension = getFileExtension(fullSrc);
+                const format = extension || 'Image';
+                downloadBtn.querySelector('.btn-text').textContent = `Download Full Size ${format}`;
+                downloadBtn.disabled = false;
+            }
+        }
+    };
+
+    // Update zoom image after navigation (next/previous)
+    const updateZoomImageAfterNavigation = () => {
+        const mainImage = document.getElementById('main-image');
+        const zoomedImage = document.getElementById('zoomed-image');
+        if (!mainImage || !zoomedImage) return;
+        
+        // Cancel any ongoing image load
+        _currentZoomPreload = null;
+        
+        // Cancel any ongoing download
+        if (_currentDownloadController) {
+            _currentDownloadController.abort();
+            _currentDownloadController = null;
+        }
+        
+        // Hide loading indicator if visible
+        hideZoomLoading();
+        
+        // Find thumbnail for current index
+        const thumbnailGrid = document.getElementById('thumbnail-grid');
+        const allThumbnails = thumbnailGrid ? Array.from(thumbnailGrid.querySelectorAll('.thumbnail-wrapper')) : [];
+        const targetThumbnail = allThumbnails[currentImageIndex];
+        
+        // Get full-res source
+        const thumbImg = targetThumbnail ? targetThumbnail.querySelector('.thumbnail-image') : null;
+        const fullSrc = (thumbImg && thumbImg.dataset.fullSrc) || mainImage.dataset.fullSrc || allImages[currentImageIndex] || '';
+        const webpPreview = (thumbImg && thumbImg.dataset.webpSrc) || thumbImg?.src || mainImage.src || '';
+        
+        if (fullSrc) {
+            // Show webp preview immediately
+            zoomedImage.src = webpPreview;
+            zoomedImage.classList.add('full-loaded');
+            zoomedImage.dataset.fullSrc = fullSrc;
+            zoomedImage.dataset.isFullSizeLoaded = 'false';
+            
+            // Ensure small main loader is hidden while zoom overlay is visible
+            if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+            
+            // Reset load button to default state
+            const loadBtn = document.getElementById('load-full-size-btn');
+            if (loadBtn) {
+                loadBtn.disabled = false;
+                loadBtn.classList.remove('loaded');
+            }
+            
+            // Reset download button to default state
+            const downloadBtn = document.getElementById('download-full-size-btn');
+            if (downloadBtn) {
+                downloadBtn.disabled = false;
+            }
+            
+            // Show zoom controls if different from webp
+            const zoomControls = document.getElementById('zoom-controls');
+            if (zoomControls && fullSrc !== webpPreview) {
+                zoomControls.classList.add('visible');
+                updateZoomButtonText(fullSrc);
+            } else if (zoomControls) {
+                zoomControls.classList.remove('visible');
+            }
+            
+            hideZoomLoading();
+        }
+        
+        // Update alt text
+        zoomedImage.alt = mainImage.alt || '';
+    };
 
     const isTouchDevice = () => {
         return (('ontouchstart' in window) ||
@@ -294,59 +621,67 @@
         zoomedImage.classList.add('full-loaded'); // Show the webp preview immediately
         zoomOverlay.classList.add('visible');
         
+        // Store full size URL in dataset for later use
+        zoomedImage.dataset.fullSrc = fullSrc;
+        zoomedImage.dataset.isFullSizeLoaded = 'false';
+        
+        // Reset load button to default state
+        const loadBtn = document.getElementById('load-full-size-btn');
+        if (loadBtn) {
+            loadBtn.disabled = false;
+            loadBtn.classList.remove('loaded');
+        }
+        
+        // Show zoom controls if webp preview is different from full size
+        const zoomControls = document.getElementById('zoom-controls');
+        if (zoomControls && fullSrc && fullSrc !== webpPreview) {
+            zoomControls.classList.add('visible');
+            // Update button text with format and prepare for size
+            updateZoomButtonText(fullSrc);
+        } else if (zoomControls) {
+            zoomControls.classList.remove('visible');
+        }
+        
         // Focus overlay so keyboard events (arrow keys) work
         setTimeout(() => {
             zoomOverlay.focus();
         }, 50);
 
-        // Load full-resolution image only when user opens zoom
-        if (fullSrc && fullSrc !== webpPreview) {
-            // Show loading indicator while upgrading to full-res
-            showZoomLoading();
-            
-            // Wait a tiny moment to ensure webp is visible, then start loading full-res
-            setTimeout(() => {
-                zoomedImage.classList.remove('full-loaded'); // Will hide during full-res load
-                _currentZoomPreload = fullSrc;
-                
-                // Set src directly for faster progressive loading
-                zoomedImage.src = fullSrc;
-            
-                // Set src directly for faster progressive loading
-                zoomedImage.src = fullSrc;
-            
-                // Hide loading spinner when image finishes
-                const handleLoad = () => {
-                    if (_currentZoomPreload !== fullSrc) return;
-                    zoomedImage.classList.add('full-loaded');
-                    hideZoomLoading();
-                    _currentZoomPreload = null;
-                };
-                const handleError = () => {
-                    if (_currentZoomPreload !== fullSrc) return;
-                    console.warn('Failed to load full-resolution image for zoom:', fullSrc);
-                    zoomedImage.classList.add('full-loaded'); // Show webp preview on error
-                    hideZoomLoading();
-                    _currentZoomPreload = null;
-                };
-                
-                zoomedImage.addEventListener('load', handleLoad, { once: true });
-                zoomedImage.addEventListener('error', handleError, { once: true });
-            }, 100);
-        } else {
-            // Ensure loader is hidden if nothing to load
-            hideZoomLoading();
-        }
+        // DO NOT automatically load full-resolution image
+        // User must click "Load Full Size" button
+        hideZoomLoading();
     };
 
     const closeZoom = () => {
         const zoomOverlay = document.getElementById('zoom-overlay');
+        const zoomControls = document.getElementById('zoom-controls');
+        const loadBtn = document.getElementById('load-full-size-btn');
+        const downloadBtn = document.getElementById('download-full-size-btn');
+        
         if (zoomOverlay) {
             zoomOverlay.classList.remove('visible');
             // ensure loading indicator is hidden when overlay is closed
             hideZoomLoading();
+            // hide controls when closing
+            if (zoomControls) {
+                zoomControls.classList.remove('visible');
+            }
+            // reset load button state
+            if (loadBtn) {
+                loadBtn.disabled = false;
+                loadBtn.classList.remove('loaded');
+            }
+            // reset download button state
+            if (downloadBtn) {
+                downloadBtn.disabled = false;
+            }
             // cancel any pending zoom preload so stale callbacks are ignored
             _currentZoomPreload = null;
+            // cancel any ongoing download
+            if (_currentDownloadController) {
+                _currentDownloadController.abort();
+                _currentDownloadController = null;
+            }
         }
     };
 
@@ -530,88 +865,7 @@
         goToNextImage();
         
         // Update the zoomed image to show the new full-resolution image
-        const mainImage = document.getElementById('main-image');
-        const zoomedImage = document.getElementById('zoomed-image');
-        if (!mainImage || !zoomedImage) return;
-        
-        // Find thumbnail for current index
-        const thumbnailGrid = document.getElementById('thumbnail-grid');
-        const allThumbnails = thumbnailGrid ? Array.from(thumbnailGrid.querySelectorAll('.thumbnail-wrapper')) : [];
-        const targetThumbnail = allThumbnails[currentImageIndex];
-        
-        // Get full-res source
-        const thumbImg = targetThumbnail ? targetThumbnail.querySelector('.thumbnail-image') : null;
-        const fullSrc = (thumbImg && thumbImg.dataset.fullSrc) || mainImage.dataset.fullSrc || allImages[currentImageIndex] || '';
-        const webpPreview = (thumbImg && thumbImg.dataset.webpSrc) || thumbImg?.src || mainImage.src || '';
-        
-        if (fullSrc) {
-                // Show webp preview immediately
-                zoomedImage.src = webpPreview;
-                zoomedImage.classList.add('full-loaded');
-                
-                // Ensure small main loader is hidden while zoom overlay is visible
-                if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
-
-                // Determine URL to load (use allImages fallback if thumbnail dataset is not yet populated)
-                const urlToLoad = fullSrc || allImages[currentImageIndex] || mainImage.dataset.fullSrc || '';
-                if (!urlToLoad) {
-                    hideZoomLoading();
-                } else if (urlToLoad === webpPreview) {
-                    // For movies without webp, still show loading indicator
-                    showZoomLoading();
-                    setTimeout(() => {
-                        zoomedImage.src = urlToLoad;
-                        _currentZoomPreload = urlToLoad;
-                        
-                        const handleLoad = () => {
-                            if (_currentZoomPreload !== urlToLoad) return;
-                            zoomedImage.classList.add('full-loaded');
-                            hideZoomLoading();
-                            _currentZoomPreload = null;
-                        };
-                        const handleError = () => {
-                            if (_currentZoomPreload !== urlToLoad) return;
-                            console.warn('Failed to load full-resolution image in zoom:', urlToLoad);
-                            zoomedImage.classList.add('full-loaded');
-                            hideZoomLoading();
-                            _currentZoomPreload = null;
-                        };
-                        
-                        zoomedImage.addEventListener('load', handleLoad, { once: true });
-                        zoomedImage.addEventListener('error', handleError, { once: true });
-                    }, 50);
-                } else {
-                    // Load full-res after showing webp preview
-                    setTimeout(() => {
-                        zoomedImage.classList.remove('full-loaded');
-                        showZoomLoading();
-                        
-                        // Set src directly for faster progressive loading
-                        zoomedImage.src = urlToLoad;
-                        _currentZoomPreload = urlToLoad;
-                    
-                        const handleLoad = () => {
-                            if (_currentZoomPreload !== urlToLoad) return;
-                            zoomedImage.classList.add('full-loaded');
-                            hideZoomLoading();
-                            _currentZoomPreload = null;
-                        };
-                        const handleError = () => {
-                            if (_currentZoomPreload !== urlToLoad) return;
-                            console.warn('Failed to load full-resolution image in zoom:', urlToLoad);
-                            zoomedImage.classList.add('full-loaded');
-                            hideZoomLoading();
-                            _currentZoomPreload = null;
-                        };
-                        
-                        zoomedImage.addEventListener('load', handleLoad, { once: true });
-                        zoomedImage.addEventListener('error', handleError, { once: true });
-                    }, 100);
-                }
-        }
-        
-        // Update alt text
-        zoomedImage.alt = mainImage.alt || '';
+        updateZoomImageAfterNavigation();
     };
 
     const goToPreviousImageInZoom = () => {
@@ -622,88 +876,7 @@
         goToPreviousImage();
         
         // Update the zoomed image to show the new full-resolution image
-        const mainImage = document.getElementById('main-image');
-        const zoomedImage = document.getElementById('zoomed-image');
-        if (!mainImage || !zoomedImage) return;
-        
-        // Find thumbnail for current index
-        const thumbnailGrid = document.getElementById('thumbnail-grid');
-        const allThumbnails = thumbnailGrid ? Array.from(thumbnailGrid.querySelectorAll('.thumbnail-wrapper')) : [];
-        const targetThumbnail = allThumbnails[currentImageIndex];
-        
-        // Get full-res source
-        const thumbImg = targetThumbnail ? targetThumbnail.querySelector('.thumbnail-image') : null;
-        const fullSrc = (thumbImg && thumbImg.dataset.fullSrc) || mainImage.dataset.fullSrc || allImages[currentImageIndex] || '';
-        const webpPreview = (thumbImg && thumbImg.dataset.webpSrc) || thumbImg?.src || mainImage.src || '';
-        
-        if (fullSrc) {
-                // Show webp preview immediately
-                zoomedImage.src = webpPreview;
-                zoomedImage.classList.add('full-loaded');
-                
-                // Ensure small main loader is hidden while zoom overlay is visible
-                if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
-
-                // Determine URL to load (use allImages fallback if thumbnail dataset is not yet populated)
-                const urlToLoad = fullSrc || allImages[currentImageIndex] || mainImage.dataset.fullSrc || '';
-                if (!urlToLoad) {
-                    hideZoomLoading();
-                } else if (urlToLoad === webpPreview) {
-                    // For movies without webp, still show loading indicator
-                    showZoomLoading();
-                    setTimeout(() => {
-                        zoomedImage.src = urlToLoad;
-                        _currentZoomPreload = urlToLoad;
-                        
-                        const handleLoad = () => {
-                            if (_currentZoomPreload !== urlToLoad) return;
-                            zoomedImage.classList.add('full-loaded');
-                            hideZoomLoading();
-                            _currentZoomPreload = null;
-                        };
-                        const handleError = () => {
-                            if (_currentZoomPreload !== urlToLoad) return;
-                            console.warn('Failed to load full-resolution image in zoom:', urlToLoad);
-                            zoomedImage.classList.add('full-loaded');
-                            hideZoomLoading();
-                            _currentZoomPreload = null;
-                        };
-                        
-                        zoomedImage.addEventListener('load', handleLoad, { once: true });
-                        zoomedImage.addEventListener('error', handleError, { once: true });
-                    }, 50);
-                } else {
-                    // Load full-res after showing webp preview
-                    setTimeout(() => {
-                        zoomedImage.classList.remove('full-loaded');
-                        showZoomLoading();
-                        
-                        // Set src directly for faster progressive loading
-                        zoomedImage.src = urlToLoad;
-                        _currentZoomPreload = urlToLoad;
-                    
-                        const handleLoad = () => {
-                            if (_currentZoomPreload !== urlToLoad) return;
-                            zoomedImage.classList.add('full-loaded');
-                            hideZoomLoading();
-                            _currentZoomPreload = null;
-                        };
-                        const handleError = () => {
-                            if (_currentZoomPreload !== urlToLoad) return;
-                            console.warn('Failed to load full-resolution image in zoom:', urlToLoad);
-                            zoomedImage.classList.add('full-loaded');
-                            hideZoomLoading();
-                            _currentZoomPreload = null;
-                        };
-                        
-                        zoomedImage.addEventListener('load', handleLoad, { once: true });
-                        zoomedImage.addEventListener('error', handleError, { once: true });
-                    }, 100);
-                }
-        }
-        
-        // Update alt text
-        zoomedImage.alt = mainImage.alt || '';
+        updateZoomImageAfterNavigation();
     };
 
     const initializeZoomOverlay = () => {
@@ -712,6 +885,8 @@
         const prevButton = document.getElementById('zoom-nav-prev');
         const nextButton = document.getElementById('zoom-nav-next');
         const zoomedImage = document.getElementById('zoomed-image');
+        const loadFullSizeBtn = document.getElementById('load-full-size-btn');
+        const downloadFullSizeBtn = document.getElementById('download-full-size-btn');
         
         if (closeButton) {
             closeButton.addEventListener('click', closeZoom);
@@ -728,6 +903,21 @@
             nextButton.addEventListener('click', (e) => {
                 e.stopPropagation();
                 goToNextImageInZoom();
+            });
+        }
+        
+        // Add event listeners for load and download buttons
+        if (loadFullSizeBtn) {
+            loadFullSizeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                loadFullSizeImage();
+            });
+        }
+        
+        if (downloadFullSizeBtn) {
+            downloadFullSizeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                downloadFullSizeImage();
             });
         }
         
