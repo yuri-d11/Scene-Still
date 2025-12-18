@@ -425,16 +425,39 @@
                     // If NO intermediate webp is available for this movie, load the full-resolution
                     // still as the main image so the page shows the full-quality image by default.
                     const hasWebpAvailable = webpStills && webpStills.length > 0;
-                    if (hasWebpAvailable) {
-                        mainImage.src = webpStills[0] || compressedStills[0] || localStills[0];
-                    } else {
-                        // No webp intermediates: show the full-resolution still immediately
-                        mainImage.src = localStills[0];
-                    }
+                    const initialImageUrl = hasWebpAvailable 
+                        ? (webpStills[0] || compressedStills[0] || localStills[0])
+                        : localStills[0];
+                    
+                    // Set placeholder first to avoid broken image icon
+                    mainImage.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
                     mainImage.alt = `${movieDetails.title} 1`;
                     mainImage.setAttribute('itemprop', 'image');
-                    // Keep main image's full-src available via dataset for zoom handler to load on demand
                     mainImage.dataset.fullSrc = localStills[0] || '';
+                    
+                    // Load initial image with retry mechanism
+                    if (window.SZ?.colorPalette?.loadImageWithRetry && initialImageUrl) {
+                        if (window.SZ?.mainLoader?.show) window.SZ.mainLoader.show();
+                        
+                        window.SZ.colorPalette.loadImageWithRetry(initialImageUrl)
+                            .then(() => {
+                                mainImage.src = initialImageUrl;
+                                if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+                            })
+                            .catch(() => {
+                                // Fallback: try compressed version if webp failed
+                                const fallbackUrl = compressedStills[0] || localStills[0];
+                                if (fallbackUrl && fallbackUrl !== initialImageUrl) {
+                                    mainImage.src = fallbackUrl;
+                                } else {
+                                    mainImage.src = initialImageUrl; // Try to show it anyway
+                                }
+                                if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+                            });
+                    } else {
+                        // Fallback if retry function not available
+                        mainImage.src = initialImageUrl;
+                    }
                 } else {
                     document.getElementById('main-image').src = ''; // Placeholder or error image
                 }

@@ -9,6 +9,134 @@
     const SWIPE_THRESHOLD = 50; // Minimum distance for a swipe
     const VERTICAL_THRESHOLD = 100; // Maximum vertical movement to still count as horizontal swipe
 
+    // Show slow loading notification to user
+    const showSlowLoadingNotification = () => {
+        let notification = document.getElementById('slow-loading-notification');
+        if (!notification) {
+            notification = document.createElement('div');
+            notification.id = 'slow-loading-notification';
+            notification.className = 'slow-loading-notification';
+            notification.innerHTML = '<span class="notification-icon">⚠️</span> <span class="notification-text">Image host is responding slowly, retrying...</span>';
+            document.body.appendChild(notification);
+        }
+        notification.classList.add('visible');
+    };
+    
+    // Hide slow loading notification
+    const hideSlowLoadingNotification = () => {
+        const notification = document.getElementById('slow-loading-notification');
+        if (notification) {
+            notification.classList.remove('visible');
+        }
+    };
+
+    // Detect if user has slow internet connection
+    const hasSlowConnection = () => {
+        try {
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (!connection) return false;
+            
+            // Check for slow connection types
+            const slowTypes = ['slow-2g', '2g', '3g'];
+            if (connection.effectiveType && slowTypes.includes(connection.effectiveType)) {
+                return true;
+            }
+            
+            // Check if Save-Data mode is enabled
+            if (connection.saveData) {
+                return true;
+            }
+            
+            // Check downlink speed (< 1.5 Mbps is considered slow)
+            if (connection.downlink && connection.downlink < 1.5) {
+                return true;
+            }
+            
+            return false;
+        } catch (e) {
+            return false; // Default to normal timeouts if detection fails
+        }
+    };
+
+    // Helper function to load image with automatic retry
+    const loadImageWithRetry = (url, maxRetries = 3, customTimeouts = null) => {
+        return new Promise((resolve, reject) => {
+            let attempt = 0;
+            
+            const tryLoad = () => {
+                attempt++;
+                const img = new Image();
+                let loadCompleted = false;
+                
+                // Use custom timeouts if provided, otherwise use standard timeouts
+                let timeoutDuration;
+                if (customTimeouts && customTimeouts[attempt - 1]) {
+                    timeoutDuration = customTimeouts[attempt - 1];
+                } else {
+                    // Progressive timeouts: 7s, 10s, 15s (normal) or 14s, 20s, 30s (slow)
+                    const isSlow = hasSlowConnection();
+                    const baseTimeouts = [7000, 10000, 15000];
+                    const slowTimeouts = [14000, 20000, 30000];
+                    const timeouts = isSlow ? slowTimeouts : baseTimeouts;
+                    timeoutDuration = timeouts[attempt - 1] || (isSlow ? 30000 : 15000);
+                }
+                
+                const timeoutId = setTimeout(() => {
+                    if (!loadCompleted) {
+                        loadCompleted = true;
+                        img.src = ''; // Stop the pending load
+                        
+                        if (attempt < maxRetries) {
+                            console.log(`Image load timeout (attempt ${attempt}/${maxRetries}), retrying:`, url);
+                            // Show notification on first retry to inform user
+                            if (attempt === 1) {
+                                showSlowLoadingNotification();
+                            }
+                            setTimeout(() => tryLoad(), 500); // Brief delay before retry
+                        } else {
+                            console.warn(`Image load failed after ${maxRetries} attempts:`, url);
+                            hideSlowLoadingNotification();
+                            reject(new Error('Max retries exceeded'));
+                        }
+                    }
+                }, timeoutDuration);
+                
+                img.onload = () => {
+                    if (!loadCompleted) {
+                        loadCompleted = true;
+                        clearTimeout(timeoutId);
+                        hideSlowLoadingNotification();
+                        resolve(url);
+                    }
+                };
+                
+                img.onerror = () => {
+                    if (!loadCompleted) {
+                        loadCompleted = true;
+                        clearTimeout(timeoutId);
+                        
+                        if (attempt < maxRetries) {
+                            console.log(`Image load error (attempt ${attempt}/${maxRetries}), retrying:`, url);
+                            // Show notification on first retry to inform user
+                            if (attempt === 1) {
+                                showSlowLoadingNotification();
+                            }
+                            setTimeout(() => tryLoad(), 500);
+                        } else {
+                            console.warn(`Image load failed after ${maxRetries} attempts:`, url);
+                            hideSlowLoadingNotification();
+                            reject(new Error('Max retries exceeded'));
+                        }
+                    }
+                };
+                
+                img.src = url;
+            };
+            
+            tryLoad();
+        });
+    };
+
     let allImages = []; // Array to store all full-res image URLs
     let currentImageIndex = 0; // Current image being displayed
     let indicatorsClicked = false; // Track if user has clicked the indicators
@@ -31,16 +159,38 @@
         
         try {
             const img = new Image();
+            let loadCompleted = false;
+            
+            // Add 10-second timeout for preload operations
+            const timeoutId = setTimeout(() => {
+                if (!loadCompleted) {
+                    loadCompleted = true;
+                    // Still mark as attempted to avoid repeated timeouts
+                    _preloadedUrls.add(url);
+                    img.onload = null;
+                    img.onerror = null;
+                    img.src = ''; // Stop the pending load
+                }
+            }, 10000);
+            
             img.onload = () => {
-                _preloadedUrls.add(url);
-                img.onload = null;
-                img.onerror = null;
+                if (!loadCompleted) {
+                    loadCompleted = true;
+                    clearTimeout(timeoutId);
+                    _preloadedUrls.add(url);
+                    img.onload = null;
+                    img.onerror = null;
+                }
             };
             img.onerror = () => {
-                // still mark as attempted to avoid repeated errors
-                _preloadedUrls.add(url);
-                img.onload = null;
-                img.onerror = null;
+                if (!loadCompleted) {
+                    loadCompleted = true;
+                    clearTimeout(timeoutId);
+                    // still mark as attempted to avoid repeated errors
+                    _preloadedUrls.add(url);
+                    img.onload = null;
+                    img.onerror = null;
+                }
             };
             img.src = url;
         } catch (e) {
@@ -368,35 +518,41 @@
         showZoomLoading();
         zoomedImage.classList.remove('full-loaded');
         
-        // Load the full size image
+        // Load the full size image with retry (1.5x longer timeouts for larger files)
+        // Fast connection: 10.5s, 15s, 22.5s | Slow connection: 21s, 30s, 45s
         _currentZoomPreload = fullSrc;
-        zoomedImage.src = fullSrc;
         
-        const handleLoad = () => {
-            if (_currentZoomPreload !== fullSrc) return;
-            zoomedImage.classList.add('full-loaded');
-            zoomedImage.dataset.isFullSizeLoaded = 'true';
-            hideZoomLoading();
-            _currentZoomPreload = null;
-            
-            // Update button to show loaded state
-            if (loadBtn) {
-                loadBtn.disabled = true;
-                loadBtn.classList.add('loaded');
-                loadBtn.querySelector('.btn-text').textContent = 'Full Size Image Loaded';
-            }
-        };
+        const isSlow = hasSlowConnection();
+        const fullSizeTimeouts = isSlow 
+            ? [21000, 30000, 45000]  // 1.5x slow connection times
+            : [10500, 15000, 22500]; // 1.5x fast connection times
         
-        const handleError = () => {
-            if (_currentZoomPreload !== fullSrc) return;
-            console.warn('Failed to load full-resolution image:', fullSrc);
-            zoomedImage.classList.add('full-loaded');
-            hideZoomLoading();
-            _currentZoomPreload = null;
-        };
-        
-        zoomedImage.addEventListener('load', handleLoad, { once: true });
-        zoomedImage.addEventListener('error', handleError, { once: true });
+        loadImageWithRetry(fullSrc, 3, fullSizeTimeouts)
+            .then(() => {
+                if (_currentZoomPreload !== fullSrc) return;
+                
+                zoomedImage.src = fullSrc;
+                zoomedImage.classList.add('full-loaded');
+                zoomedImage.dataset.isFullSizeLoaded = 'true';
+                hideZoomLoading();
+                _currentZoomPreload = null;
+                
+                // Update button to show loaded state
+                if (loadBtn) {
+                    loadBtn.disabled = true;
+                    loadBtn.classList.add('loaded');
+                    loadBtn.querySelector('.btn-text').textContent = 'Full Size Image Loaded';
+                }
+            })
+            .catch(() => {
+                if (_currentZoomPreload !== fullSrc) return;
+                
+                console.warn('Failed to load full-resolution image after retries:', fullSrc);
+                zoomedImage.classList.add('full-loaded');
+                hideZoomLoading();
+                _currentZoomPreload = null;
+                alert('Failed to load full-size image after multiple attempts. The image host may be unavailable.');
+            });
     };
 
     // Download full size image without loading it first
@@ -769,37 +925,37 @@
             if (hasWebp && webpSrc && mainImage && mainImage.src !== webpSrc) {
                 // Preload webp preview and show small main-image loader
                 if (window.SZ?.mainLoader?.show) window.SZ.mainLoader.show();
-                const tmp = new Image();
-                tmp.onload = () => {
-                    if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
-                    if (window.SZ?.colorPalette?.updateMainImageAndPalette) {
-                        window.SZ.colorPalette.updateMainImageAndPalette(webpSrc, targetThumbnail, false);
-                    }
-                };
-                tmp.onerror = () => {
-                    if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
-                    if (window.SZ?.colorPalette?.updateMainImageAndPalette) {
-                        window.SZ.colorPalette.updateMainImageAndPalette(previewUrl, targetThumbnail, false);
-                    }
-                };
-                tmp.src = webpSrc;
+                
+                loadImageWithRetry(webpSrc)
+                    .then(() => {
+                        if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+                        if (window.SZ?.colorPalette?.updateMainImageAndPalette) {
+                            window.SZ.colorPalette.updateMainImageAndPalette(webpSrc, targetThumbnail, false);
+                        }
+                    })
+                    .catch(() => {
+                        if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+                        if (window.SZ?.colorPalette?.updateMainImageAndPalette) {
+                            window.SZ.colorPalette.updateMainImageAndPalette(previewUrl, targetThumbnail, false);
+                        }
+                    });
             } else if (!hasWebp && fullSrc && mainImage && mainImage.src !== fullSrc) {
                 // For movies without webp, preload full-res and show loader
                 if (window.SZ?.mainLoader?.show) window.SZ.mainLoader.show();
-                const tmpFull = new Image();
-                tmpFull.onload = () => {
-                    if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
-                    if (window.SZ?.colorPalette?.updateMainImageAndPalette) {
-                        window.SZ.colorPalette.updateMainImageAndPalette(fullSrc, targetThumbnail, false);
-                    }
-                };
-                tmpFull.onerror = () => {
-                    if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
-                    if (window.SZ?.colorPalette?.updateMainImageAndPalette) {
-                        window.SZ.colorPalette.updateMainImageAndPalette(previewUrl, targetThumbnail, false);
-                    }
-                };
-                tmpFull.src = fullSrc;
+                
+                loadImageWithRetry(fullSrc)
+                    .then(() => {
+                        if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+                        if (window.SZ?.colorPalette?.updateMainImageAndPalette) {
+                            window.SZ.colorPalette.updateMainImageAndPalette(fullSrc, targetThumbnail, false);
+                        }
+                    })
+                    .catch(() => {
+                        if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+                        if (window.SZ?.colorPalette?.updateMainImageAndPalette) {
+                            window.SZ.colorPalette.updateMainImageAndPalette(previewUrl, targetThumbnail, false);
+                        }
+                    });
             } else {
                 if (window.SZ?.colorPalette?.updateMainImageAndPalette) {
                     window.SZ.colorPalette.updateMainImageAndPalette(previewUrl, targetThumbnail, false);
