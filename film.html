@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,23 +9,25 @@
     <meta name="googlebot" content="index, follow">
     <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
     <title id="page-title">Film Gallery | Scene Still</title>
-    <meta name="description" id="meta-description" content="Handpicked high quality film screencaptures. Explore the visual language of cinema through composition, light, and color.">
-    <meta name="keywords" content="film stills, movie screencaptures, cinematography, high quality stills, movie screenshots">
+    <meta name="description" id="meta-description"
+        content="Handpicked high quality film screencaptures. Explore the visual language of cinema through composition, light, and color.">
+    <meta name="keywords"
+        content="film stills, movie screencaptures, cinematography, high quality stills, movie screenshots">
     <link rel="canonical" href="" id="canonical-url">
-    
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QXMX7DRYJH"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
 
-            gtag('config', 'G-QXMX7DRYJH');
-        </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QXMX7DRYJH"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-QXMX7DRYJH');
+    </script>
     <!-- Prerendering hints for crawlers -->
     <meta name="fragment" content="!">
     <script type="application/ld+json" id="initial-structured-data"></script>
-    
+
     <!-- Resource Hints -->
     <link rel="preconnect" href="https://api.themoviedb.org">
     <link rel="preconnect" href="https://image.tmdb.org">
@@ -32,37 +35,113 @@
     <link rel="dns-prefetch" href="https://api.themoviedb.org">
     <link rel="dns-prefetch" href="https://image.tmdb.org">
     <link rel="dns-prefetch" href="https://i.ibb.co">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" id="og-type">
     <meta property="og:url" content="" id="og-url">
     <meta property="og:title" content="Film Gallery | Scene Still" id="og-title">
-    <meta property="og:description" content="Handpicked high quality film screencaptures. Explore the visual language of cinema through composition, light, and color." id="og-description">
+    <meta property="og:description"
+        content="Handpicked high quality film screencaptures. Explore the visual language of cinema through composition, light, and color."
+        id="og-description">
     <meta property="og:image" content="" id="og-image">
     <meta property="og:site_name" content="Scene Still">
-    
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" id="twitter-card">
     <meta property="twitter:url" content="" id="twitter-url">
     <meta property="twitter:title" content="Film Gallery | Scene Still" id="twitter-title">
-    <meta property="twitter:description" content="Handpicked high quality film screencaptures. Explore the visual language of cinema through composition, light, and color." id="twitter-description">
+    <meta property="twitter:description"
+        content="Handpicked high quality film screencaptures. Explore the visual language of cinema through composition, light, and color."
+        id="twitter-description">
     <meta property="twitter:image" content="" id="twitter-image">
     <meta property="twitter:creator" content="@YuriDandashi">
-    
+
     <!-- Critical CSS - inline for instant render -->
     <style>
-        @font-face{font-family:'Jost';src:url("fonts/Jost-VariableFont_wght.ttf") format('truetype');font-weight:100 900;font-style:normal;font-display:swap}
-        body{font-family:Jost,sans-serif;background-color:#120D0D;margin:0;padding:0;min-height:100vh;display:flex;flex-direction:column}
-        .wrapper{width:100%;max-width:1280px;margin:0 auto;padding:10px 50px;flex-grow:1}
-        nav{display:flex;justify-content:space-between;align-items:center;background-color:transparent;padding:.5rem 0;flex-wrap:wrap;position:relative}
-        .nav-list{list-style:none;display:flex;margin:0;padding:0;flex-wrap:wrap}
-        .nav-list li{margin-right:30px}
-        .nav-list li a{font-weight:400;font-size:16px;color:#FAFAFA;text-decoration:none;margin:8px 0;display:block}
-        h1{color:#FAFAFA;font-size:36px;font-weight:600;margin-top:8px}
-        .credits-container{margin-top:0;margin-bottom:10px}
-        .credit-line{margin-bottom:4px}
-        .credit-title,.credit-name{font-size:1.25rem;font-weight:400;color:#FAFAFA}
-        .credit-name{color:#B3B3B3}
+        @font-face {
+            font-family: 'Jost';
+            src: url("fonts/Jost-VariableFont_wght.ttf") format('truetype');
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: swap
+        }
+
+        body {
+            font-family: Jost, sans-serif;
+            background-color: #120D0D;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 10px 50px;
+            flex-grow: 1
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: transparent;
+            padding: .5rem 0;
+            flex-wrap: wrap;
+            position: relative
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            flex-wrap: wrap
+        }
+
+        .nav-list li {
+            margin-right: 30px
+        }
+
+        .nav-list li a {
+            font-weight: 400;
+            font-size: 16px;
+            color: #FAFAFA;
+            text-decoration: none;
+            margin: 8px 0;
+            display: block
+        }
+
+        h1 {
+            color: #FAFAFA;
+            font-size: 36px;
+            font-weight: 600;
+            margin-top: 8px
+        }
+
+        .credits-container {
+            margin-top: 0;
+            margin-bottom: 10px
+        }
+
+        .credit-line {
+            margin-bottom: 4px
+        }
+
+        .credit-title,
+        .credit-name {
+            font-size: 1.25rem;
+            font-weight: 400;
+            color: #FAFAFA
+        }
+
+        .credit-name {
+            color: #B3B3B3
+        }
+
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -70,44 +149,47 @@
             margin-top: 10px;
         }
     </style>
-    
+
     <!-- Minimal Bootstrap CSS - only used classes -->
     <link rel="stylesheet" href="css/bootstrap-minimal.css">
-    
-	<link rel="stylesheet" href="css/style.css">
-	<link rel="stylesheet" href="css/film.css">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/film.css">
 
 </head>
 
-    <body>
+<body>
     <div class="wrapper">
         <nav>
-			<button class="hamburger-menu" aria-label="Toggle navigation menu">
-				<span></span>
-				<span></span>
-				<span></span>
-			</button>
-			<ul class="nav-list">
-			  <li><a href="index.html">Films</a></li>
-			  <li><a href="cast_crew.html">Cast &amp; Crew</a></li>
-			  <li><a href="color_extractor.html">Color Extractor</a></li>
-			  <li><a href="about.html">About</a></li>
-			</ul>
-			<form class="search-form" action="#" method="get">
-                <input type="text" placeholder="Search by film or person..." name="search" class="search-input" id="search-input">
+            <button class="hamburger-menu" aria-label="Toggle navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-list">
+                <li><a href="index.html">Films</a></li>
+                <li><a href="cast_crew.html">Cast &amp; Crew</a></li>
+                <li><a href="color_extractor.html">Color Extractor</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+            <form class="search-form" action="#" method="get">
+                <input type="text" placeholder="Search by film or person..." name="search" class="search-input"
+                    id="search-input">
             </form>
-		</nav>
-        
+        </nav>
+
         <h1 id="movie-title">Loading Film Gallery...</h1>
         <noscript>
             <p>This page requires JavaScript to display film content. Please enable JavaScript in your browser.</p>
         </noscript>
-        
+
         <!-- Film description - provides text content for crawlers -->
         <div id="film-description" class="film-description">
-            <p>Explore this curated collection of high-quality film screencaptures showcasing the artistry of cinema through composition, lighting, and color. Each still captures a moment of visual storytelling from this acclaimed motion picture.</p>
+            <p>Explore this curated collection of high-quality film screencaptures showcasing the artistry of cinema
+                through composition, lighting, and color. Each still captures a moment of visual storytelling from this
+                acclaimed motion picture.</p>
         </div>
-        
+
         <div class="credits-container">
             <div class="credit-line">
                 <span class="credit-title">Director:</span>
@@ -117,7 +199,7 @@
                 <span class="credit-title">Cinematographer:</span>
                 <span class="credit-name" id="cinematographer">Loading...</span>
             </div>
-			<div class="credit-line">
+            <div class="credit-line">
                 <span class="credit-title">Cast:</span>
                 <span class="credit-name" id="cast">Loading...</span>
             </div>
@@ -145,7 +227,8 @@
                             <option value="year">Release Year</option>
                             <option value="time-added">Date Added</option>
                         </select>
-                        <button id="sort-order-toggle" class="sort-order-toggle" aria-label="Toggle sort order" title="Toggle ascending/descending">
+                        <button id="sort-order-toggle" class="sort-order-toggle" aria-label="Toggle sort order"
+                            title="Toggle ascending/descending">
                             <span class="sort-arrow">↓</span>
                         </button>
                     </div>
@@ -158,7 +241,9 @@
         <!-- Main Image -->
         <div class="mt-3" id="main-content">
             <div class="main-image-container">
-                <img id="main-image" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Loading film still" class="img-fluid main-image-placeholder" loading="eager" fetchpriority="high">
+                <img id="main-image" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                    alt="Loading film still" class="img-fluid main-image-placeholder" loading="eager"
+                    fetchpriority="high">
                 <div id="main-loading" class="main-loading" aria-hidden="true">
                     <div class="main-spinner" role="status" aria-label="Loading image"></div>
                 </div>
@@ -178,11 +263,14 @@
                 </div>
                 <div class="swipe-tutorial" id="swipe-tutorial">
                     <div class="swipe-hand">
-                        <svg class="hand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="hand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+                            stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path>
                             <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"></path>
                             <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"></path>
-                            <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path>
+                            <path
+                                d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15">
+                            </path>
                         </svg>
                         <div class="swipe-arrow">→</div>
                     </div>
@@ -191,27 +279,28 @@
             </div>
             <div id="main-palette-container" class="row no-gutters"></div>
         </div>
-		
-		<p id="thumbnail-instructions">Click one of the thumbnails below to select a main image. Click the main image to view and download full resolution.</p>
-		
-		<!-- Top Slider Controls (for mobile) -->
-		<div class="slider-controls slider-controls-top">
-			<div class="slider-indicators" id="slider-indicators-top"></div>
-			<span class="slider-hint">Click a side to show more images.</span>
-		</div>
-		
-        <!-- Thumbnail Grid -->
-		<div class="thumbnail-grid-wrapper">
-			<div class="row thumbnail-grid" id="thumbnail-grid">
-				<!-- Film stills will load here -->
+
+        <p id="thumbnail-instructions">Click one of the thumbnails below to select a main image. Click the main image to
+            view and download full resolution.</p>
+
+        <!-- Top Slider Controls (for mobile) -->
+        <div class="slider-controls slider-controls-top">
+            <div class="slider-indicators" id="slider-indicators-top"></div>
+            <span class="slider-hint">Click a side to show more images.</span>
         </div>
-		</div>
-		
-		<!-- Bottom Slider Controls -->
-		<div class="slider-controls slider-controls-bottom">
-			<div class="slider-indicators" id="slider-indicators-bottom"></div>
-			<span class="slider-hint">Click a side to show more images.</span>
-		</div>
+
+        <!-- Thumbnail Grid -->
+        <div class="thumbnail-grid-wrapper">
+            <div class="row thumbnail-grid" id="thumbnail-grid">
+                <!-- Film stills will load here -->
+            </div>
+        </div>
+
+        <!-- Bottom Slider Controls -->
+        <div class="slider-controls slider-controls-bottom">
+            <div class="slider-indicators" id="slider-indicators-bottom"></div>
+            <span class="slider-hint">Click a side to show more images.</span>
+        </div>
     </div>
     <footer>
         <hr>
@@ -223,7 +312,8 @@
             <span class="zoom-nav-arrow">‹</span>
         </button>
         <div class="zoom-content-wrapper">
-            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Loading film still" class="zoomed-image" id="zoomed-image">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Loading film still"
+                class="zoomed-image" id="zoomed-image">
             <div id="zoom-controls" class="zoom-controls">
                 <button id="load-full-size-btn" class="zoom-control-btn load-btn">
                     <span class="btn-text">Load Full Size</span>
@@ -253,19 +343,19 @@
     <script src="utils/utils-cache.js"></script>
     <script src="utils/utils-tmdb.js"></script>
     <script src="js/load-films.js"></script>
-        <script>
+    <script>
         // CRITICAL: Update page metadata IMMEDIATELY on load (synchronous, before any async operations)
         // This ensures Google sees unique content for each film page
-        (function() {
+        (function () {
             const urlParams = new URLSearchParams(window.location.search);
             const movieId = urlParams.get('id');
-            
+
             if (!movieId) {
                 // No movie ID - show error immediately
                 document.getElementById('page-title').textContent = 'Error: No Film Specified | Scene Still';
                 document.getElementById('meta-description').content = 'Film not found. Please select a film from the gallery.';
                 document.getElementById('movie-title').textContent = 'Error: No film ID provided in URL';
-                
+
                 // Add basic structured data to prevent soft 404
                 const errorData = {
                     "@context": "https://schema.org",
@@ -276,16 +366,16 @@
                 document.getElementById('initial-structured-data').textContent = JSON.stringify(errorData);
                 return;
             }
-            
+
             // Update title immediately with movie ID to make each page unique
             document.getElementById('page-title').textContent = `Film ${movieId} Gallery | Scene Still`;
             document.getElementById('meta-description').content = `High quality film screencaptures from this cinema masterpiece. View stunning stills, cinematography, and visual artistry.`;
             document.getElementById('movie-title').textContent = `Loading Film ${movieId}...`;
-            
+
             // Set canonical URL immediately
             const canonicalUrl = `https://www.scenestill.com/film?id=${movieId}`;
             document.getElementById('canonical-url').setAttribute('href', canonicalUrl);
-            
+
             // Add basic structured data immediately - will be replaced with full data when loaded
             const basicStructuredData = {
                 "@context": "https://schema.org",
@@ -295,14 +385,14 @@
                 "url": canonicalUrl
             };
             document.getElementById('initial-structured-data').textContent = JSON.stringify(basicStructuredData);
-            
+
             // Update Open Graph tags immediately
             document.getElementById('og-url').setAttribute('content', canonicalUrl);
             document.getElementById('og-title').setAttribute('content', `Film ${movieId} Gallery | Scene Still`);
             document.getElementById('twitter-url').setAttribute('content', canonicalUrl);
             document.getElementById('twitter-title').setAttribute('content', `Film ${movieId} Gallery | Scene Still`);
         })();
-        
+
         async function populateMoviePage() {
             const urlParams = new URLSearchParams(window.location.search);
             const TMDB_MOVIE_ID = urlParams.get('id');
@@ -329,7 +419,7 @@
                 document.getElementById('page-title').textContent = movieDetails.title + ' | Scene Still';
                 document.getElementById('meta-description').content = movieDetails.title + ' – handpicked high quality film screencaptures';
                 document.getElementById('movie-title').textContent = `${movieDetails.title} (${new Date(movieDetails.release_date).getFullYear()})`;
-                
+
                 // Update film description with specific content
                 const descriptionEl = document.getElementById('film-description');
                 if (descriptionEl && movieDetails.overview) {
@@ -361,7 +451,7 @@
 
                 // Set canonical URL
                 document.getElementById('canonical-url').setAttribute('href', currentUrl);
-                
+
                 document.getElementById('og-type').setAttribute('content', 'website');
                 document.getElementById('og-url').setAttribute('content', currentUrl);
                 document.getElementById('og-title').setAttribute('content', ogTitle);
@@ -425,24 +515,30 @@
                     // If NO intermediate webp is available for this movie, load the full-resolution
                     // still as the main image so the page shows the full-quality image by default.
                     const hasWebpAvailable = webpStills && webpStills.length > 0;
-                    const initialImageUrl = hasWebpAvailable 
+                    const initialImageUrl = hasWebpAvailable
                         ? (webpStills[0] || compressedStills[0] || localStills[0])
                         : localStills[0];
-                    
+
                     // Set placeholder first to avoid broken image icon
                     mainImage.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
                     mainImage.alt = `${movieDetails.title} 1`;
                     mainImage.setAttribute('itemprop', 'image');
                     mainImage.dataset.fullSrc = localStills[0] || '';
-                    
+
                     // Load initial image with retry mechanism
                     if (window.SZ?.colorPalette?.loadImageWithRetry && initialImageUrl) {
                         if (window.SZ?.mainLoader?.show) window.SZ.mainLoader.show();
-                        
+
                         window.SZ.colorPalette.loadImageWithRetry(initialImageUrl)
                             .then(() => {
                                 mainImage.src = initialImageUrl;
                                 if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+
+                                // Extract color palette for the initial image after it loads
+                                const firstThumbnailWrapper = document.querySelector('.thumbnail-wrapper');
+                                if (firstThumbnailWrapper && window.SZ?.colorPalette?.updateMainImageAndPalette) {
+                                    window.SZ.colorPalette.updateMainImageAndPalette(initialImageUrl, firstThumbnailWrapper, false);
+                                }
                             })
                             .catch(() => {
                                 // Fallback: try compressed version if webp failed
@@ -453,6 +549,13 @@
                                     mainImage.src = initialImageUrl; // Try to show it anyway
                                 }
                                 if (window.SZ?.mainLoader?.hide) window.SZ.mainLoader.hide();
+
+                                // Extract color palette even on fallback
+                                const firstThumbnailWrapper = document.querySelector('.thumbnail-wrapper');
+                                const finalUrl = (fallbackUrl && fallbackUrl !== initialImageUrl) ? fallbackUrl : initialImageUrl;
+                                if (firstThumbnailWrapper && window.SZ?.colorPalette?.updateMainImageAndPalette) {
+                                    window.SZ.colorPalette.updateMainImageAndPalette(finalUrl, firstThumbnailWrapper, false);
+                                }
                             });
                     } else {
                         // Fallback if retry function not available
@@ -472,14 +575,14 @@
                     col.className = 'col-lg-3 col-md-4 col-6 mb-4'; // lg-3: 4 cols on desktop, md-4: 3 cols on tablets, col-6: 2 cols on mobile
                     const wrap = document.createElement('div');
                     wrap.className = 'thumbnail-wrapper';
-                    
+
                     // Set aspect ratio on wrapper to prevent layout shift
                     if (aspectRatio) {
                         wrap.style.aspectRatio = aspectRatio;
                     }
-                    
+
                     const img = document.createElement('img');
-                    
+
                     // PRIORITY 2: Use placeholder for all thumbnails, lazy load compressed versions
                     img.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
                     img.className = 'thumbnail-image';
@@ -493,17 +596,17 @@
                     img.dataset.fullSrc = still;
                     img.alt = `${movieDetails.title} ${index + 1}`;
                     img.loading = 'lazy'; // Browser-level lazy loading hint
-                    
+
                     // Priority loading for first 6 visible thumbnails (faster HTTP/2 connection establishment)
                     if (index < 6) {
                         img.fetchPriority = 'high';
                     }
-                    
+
                     // Don't add srcset - we'll handle loading manually through lazy-load.js
-                    
+
                     // SEO: Add itemprop for schema.org ImageObject
                     img.setAttribute('itemprop', 'image');
-                    
+
                     wrap.appendChild(img);
                     col.appendChild(wrap);
                     grid.appendChild(col);
@@ -526,13 +629,6 @@
                 // Setup lazy loading for thumbnails
                 if (window.SZ?.lazyLoad?.setupThumbnails) {
                     window.SZ.lazyLoad.setupThumbnails(localStills.length);
-                }
-
-                // Initialize color palette after images are set
-                const mainImageElement = document.getElementById('main-image');
-                const firstThumbnailWrapper = grid.querySelector('.thumbnail-wrapper');
-                if (mainImageElement && firstThumbnailWrapper && window.SZ?.colorPalette?.updateMainImageAndPalette) {
-                    window.SZ.colorPalette.updateMainImageAndPalette(mainImageElement.src, firstThumbnailWrapper);
                 }
 
                 // Initialize swipe handler with all image URLs
@@ -561,7 +657,7 @@
                         "thumbnail": compressedStills[index] || webpStills[index] || still
                     }))
                 };
-                
+
                 // Replace initial structured data with full data
                 document.getElementById('initial-structured-data').textContent = JSON.stringify(structuredData);
 
@@ -572,6 +668,7 @@
             }
         }
         window.addEventListener('DOMContentLoaded', populateMoviePage);
-        </script>
+    </script>
 </body>
+
 </html>
